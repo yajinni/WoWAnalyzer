@@ -85,7 +85,7 @@ export default {
     id: 206930,
     name: 'Heart Strike',
     icon: 'inv_weapon_shortblade_40',
-  },  
+  },
 
   BONESTORM_HIT: {
     id: 196528,
