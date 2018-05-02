@@ -26,27 +26,16 @@ import Abilities from './Modules/Abilities';
 import Checklist from './Modules/Features/Checklist';
 import MasteryEffectiveness from './Modules/Features/MasteryEffectiveness';
 import AlwaysBeCasting from './Modules/Features/AlwaysBeCasting';
-import TyrsDeliverance from './Modules/Features/TyrsDeliverance';
 import CooldownThroughputTracker from './Modules/Features/CooldownThroughputTracker';
 import StatValues from './Modules/Features/StatValues';
 
 import RuleOfLaw from './Modules/Talents/RuleOfLaw';
 import DevotionAura from './Modules/Talents/DevotionAura';
-import AuraOfSacrifice from './Modules/Talents/AuraOfSacrifice';
 import AuraOfMercy from './Modules/Talents/AuraOfMercy';
 import HolyAvenger from './Modules/Talents/HolyAvenger';
 import DivinePurpose from './Modules/Talents/DivinePurpose';
 import CrusadersMight from './Modules/Talents/CrusadersMight';
 import JudgmentOfLight from './Modules/Talents/JudgmentOfLight';
-
-import RelicTraits from './Modules/Traits/RelicTraits';
-import DeliverTheLight from './Modules/Traits/DeliverTheLight';
-import ExpelTheDarkness from './Modules/Traits/ExpelTheDarkness';
-import SacredDawn from './Modules/Traits/SacredDawn';
-import SecondSunrise from './Modules/Traits/SecondSunrise';
-import ShockTreatment from './Modules/Traits/ShockTreatment';
-import TyrsMunificence from './Modules/Traits/TyrsMunificence';
-import JusticeThroughSacrifice from './Modules/Traits/JusticeThroughSacrifice';
 
 import DrapeOfShame from './Modules/Items/DrapeOfShame';
 import Ilterendi from './Modules/Items/Ilterendi';
@@ -91,29 +80,17 @@ class CombatLogParser extends CoreCombatLogParser {
     abilities: Abilities,
     masteryEffectiveness: MasteryEffectiveness,
     alwaysBeCasting: AlwaysBeCasting,
-    tyrsDeliverance: TyrsDeliverance,
     cooldownThroughputTracker: CooldownThroughputTracker,
     statValues: StatValues,
 
     // Talents
     ruleOfLaw: RuleOfLaw,
     devotionAura: DevotionAura,
-    auraOfSacrifice: AuraOfSacrifice,
     auraOfMercy: AuraOfMercy,
     holyAvenger: HolyAvenger,
     divinePurpose: DivinePurpose,
     crusadersMight: CrusadersMight,
     judgmentOfLight: JudgmentOfLight,
-
-    // Traits
-    relicTraits: RelicTraits,
-    deliverTheLight: DeliverTheLight,
-    expelTheDarkness: ExpelTheDarkness,
-    sacredDawn: SacredDawn,
-    secondSunrise: SecondSunrise,
-    shockTreatment: ShockTreatment,
-    tyrsMunificence: TyrsMunificence,
-    justiceThroughSacrifice: JusticeThroughSacrifice,
 
     // Items:
     drapeOfShame: DrapeOfShame,

@@ -23,7 +23,6 @@ import AlwaysBeCasting from './AlwaysBeCasting';
 import BeaconHealing from '../PaladinCore/BeaconHealing';
 import FillerLightOfTheMartyrs from '../PaladinCore/FillerLightOfTheMartyrs';
 import FillerFlashOfLight from '../PaladinCore/FillerFlashOfLight';
-import AuraOfSacrifice from '../Talents/AuraOfSacrifice';
 import Ilterendi from '../Items/Ilterendi';
 import Overhealing from '../PaladinCore/Overhealing';
 import JudgmentOfLight from '../Talents/JudgmentOfLight';
@@ -39,7 +38,6 @@ class Checklist extends CoreChecklist {
     fillerLightOfTheMartyrs: FillerLightOfTheMartyrs,
     fillerFlashOfLight: FillerFlashOfLight,
     manaValues: ManaValues,
-    auraOfSacrifice: AuraOfSacrifice,
     ilterendi: Ilterendi,
     velensFutureSight: VelensFutureSight,
     legendaryUpgradeChecker: LegendaryUpgradeChecker,
@@ -228,11 +226,6 @@ class Checklist extends CoreChecklist {
       requirements: () => {
         return [
           new Requirement({
-            name: <SpellLink id={SPELLS.AURA_OF_SACRIFICE_TALENT.id} />,
-            check: () => this.auraOfSacrifice.suggestionThresholds,
-            when: this.auraOfSacrifice.active,
-          }),
-          new Requirement({
             name: <ItemLink id={ITEMS.ILTERENDI_CROWN_JEWEL_OF_SILVERMOON.id} />,
             check: () => this.ilterendi.suggestionThresholds,
             when: this.ilterendi.active,
@@ -241,11 +234,6 @@ class Checklist extends CoreChecklist {
             name: <ItemLink id={ITEMS.VELENS_FUTURE_SIGHT.id} />,
             check: () => this.velensFutureSight.suggestionThresholds,
             when: this.velensFutureSight.active,
-          }),
-          new Requirement({
-            name: <SpellLink id={SPELLS.JUDGMENT_OF_LIGHT_TALENT.id} />,
-            check: () => this.judgmentOfLight.suggestionThresholds,
-            when: this.judgmentOfLight.active,
           }),
         ];
       },

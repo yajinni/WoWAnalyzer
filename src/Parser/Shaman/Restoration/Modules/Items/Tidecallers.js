@@ -58,7 +58,7 @@ class Tidecallers extends Analyzer {
       }
     }
 
-    if (spellId === SPELLS.HEALING_STREAM_TOTEM_HEAL.id || spellId === SPELLS.QUEENS_DECREE.id) {
+    if (spellId === SPELLS.HEALING_STREAM_TOTEM_HEAL.id) {
       this.hstHealing += healingDone / 6; // only add the extra 20% we're getting
     }
   }

@@ -8,6 +8,11 @@ import SpellLink from 'common/SpellLink';
 
 export default [
   {
+    date: new Date('2018-04-28'),
+    changes: 'Moved item bonuses down to the statistics.',
+    contributors: [Zerotorescue],
+  },
+  {
     date: new Date('2018-04-25'),
     changes: 'Reduced the size of stat values panel and moved the extra information to a tooltip.',
     contributors: [Zerotorescue],
@@ -30,6 +35,11 @@ export default [
   {
     date: new Date('2018-04-24'),
     changes: 'Implemented code splitting to reduce the initial time to render.',
+    contributors: [Zerotorescue],
+  },
+  {
+    date: new Date('2018-04-21'),
+    changes: 'Removed any remaining charts based on the chartist library that has been deprecated for 6 months.',
     contributors: [Zerotorescue],
   },
   {

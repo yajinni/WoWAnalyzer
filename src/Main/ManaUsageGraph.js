@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ChartistGraph from 'react-chartist';
-import Chartist from 'chartist';
-import 'chartist-plugin-legend';
+import {Line} from 'react-chartjs-2';
 
 import { formatThousands } from 'common/format';
+import ManaStyles from 'Main/ManaStyles.js';
 
-import 'Main/Mana.css';
 
 const formatDuration = (duration) => {
   const seconds = Math.floor(duration % 60);
@@ -14,38 +12,41 @@ const formatDuration = (duration) => {
 };
 
 const baseConfig = {
-  showArea: true,
-  showPoint: false,
-  fullWidth: true,
-  height: '350px',
-  lineSmooth: Chartist.Interpolation.simple({
-    fillHoles: true,
-  }),
-  axisX: {
-    labelInterpolationFnc: function skipLabels(seconds) {
-      if (seconds % 30 === 0) {
-        return formatDuration(seconds);
-      }
-      return null;
-    },
-    offset: 15,
+  responsive: true,
+  scales: {
+    yAxes: [{
+      gridLines: ManaStyles.gridLines,
+      ticks: {
+        callback: (percentage, index, values) => {
+          return formatThousands(percentage);
+        },
+        fontSize: 14,
+      },
+    }],
+    xAxes: [{
+      gridLines: ManaStyles.gridLines,
+      ticks: {
+        callback: (seconds, index, values) => {
+          if (seconds % 30 === 0) {
+            return formatDuration(seconds);
+          }
+          return null;
+        },
+        fontSize: 14,
+      },
+    }],
   },
-  axisY: {
-    onlyInteger: true,
-    offset: 100,
-    labelInterpolationFnc: function skipLabels(percentage) {
-      return formatThousands(percentage);
-    },
+  animation: {
+    duration: 0,
   },
-  plugins: [
-    Chartist.plugins.legend({
-      classNames: [
-        'mana',
-        'healing',
-        'mana-used',
-      ],
-    }),
-  ],
+  hover: {
+    animationDuration: 0,
+  },
+  responsiveAnimationDuration: 0,
+  tooltips: {
+    enabled: false,
+  },
+  legend: ManaStyles.legend,
 };
 
 class HealingDoneGraph extends React.PureComponent {
@@ -120,20 +121,20 @@ class HealingDoneGraph extends React.PureComponent {
 
     const chartData = {
       labels,
-      series: [
+      datasets: [
         {
-          className: 'mana',
-          name: 'Mana',
+          label: `Mana`,
+          ...ManaStyles.Mana,
           data: Object.keys(manaLevelPerFrame).map(key => manaLevelPerFrame[key] !== null ? manaLevelPerFrame[key] * max : null),
         },
         {
-          className: 'healing',
-          name: 'HPS',
+          label: `HPS`,
+          ...ManaStyles.HPS,
           data: Object.keys(healingPerFrame).map(key => healingPerFrame[key] !== null ? healingPerFrame[key] / interval : null),
         },
         {
-          className: 'mana-used',
-          name: 'Mana used',
+          label: `Mana used`,
+          ...ManaStyles.ManaUsed,
           data: Object.keys(manaUsagePerFrame).map(key => manaUsagePerFrame[key] !== null ? manaUsagePerFrame[key] * max : null),
         },
       ],
@@ -151,10 +152,11 @@ class HealingDoneGraph extends React.PureComponent {
         </div>
 
         <div className="graph-container">
-          <ChartistGraph
+          <Line
             data={chartData}
             options={baseConfig}
-            type="Line"
+            width={1100}
+            height={400}
           />
         </div>
       </div>

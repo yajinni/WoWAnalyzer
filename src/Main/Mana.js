@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ManaLevelGraph from 'Main/ManaLevelGraph';
 import ManaUsageGraph from 'Main/ManaUsageGraph';
 
+
 const Mana = ({ parser }) => (
   <div>
     <h1>Mana pool</h1>
@@ -24,8 +25,10 @@ const Mana = ({ parser }) => (
       manaUpdates={parser.modules.manaValues.manaUpdates}
       timestamp={parser.currentTimestamp}
     /> {/* the currentTimestamp makes sure the Mana tab re-renders after parsing events */}
+
   </div>
 );
+
 Mana.propTypes = {
   parser: PropTypes.object.isRequired,
 };

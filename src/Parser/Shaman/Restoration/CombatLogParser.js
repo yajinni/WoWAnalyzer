@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Tab from 'Main/Tab';
-import Mana from 'Main/Mana';
 import Feeding from 'Main/Feeding';
 
 import CoreCombatLogParser from 'Parser/Core/CombatLogParser';
@@ -22,38 +21,33 @@ import AncestralVigor from './Modules/Features/AncestralVigor';
 import TidalWaves from './Modules/Features/TidalWaves';
 import CastBehavior from './Modules/Features/CastBehavior'; 
 
+// Talents
 import TalentStatisticBox from './Modules/Talents/TalentStatisticBox';
 import Torrent from './Modules/Talents/Torrent';
 import UnleashLife from './Modules/Talents/UnleashLife';
 import Undulation from './Modules/Talents/Undulation';
-import AncestralGuidance from './Modules/Talents/AncestralGuidance';
-import EarthenShieldTotem from './Modules/Talents/EarthenShieldTotem';
+import EarthShield from './Modules/Talents/EarthShield';
+import EarthenWallTotem from './Modules/Talents/EarthenWallTotem';
+import Downpour from './Modules/Talents/Downpour';
 import CloudburstTotem from './Modules/Talents/CloudburstTotem';
 import Ascendance from './Modules/Talents/Ascendance';
 import Wellspring from './Modules/Talents/Wellspring';
 import HighTide from './Modules/Talents/HighTide';
 
+// Items
+import Restoration_Shaman_T21_2Set from './Modules/Items/T21_2Set';
+import Restoration_Shaman_T21_4Set from './Modules/Items/T21_4Set';
 import Nazjatar from './Modules/Items/Nazjatar';
 import UncertainReminder from './Modules/Items/UncertainReminder';
 import Jonat from './Modules/Items/Jonat';
 import Nobundo from './Modules/Items/Nobundo';
 import Tidecallers from './Modules/Items/Tidecallers';
-import Restoration_Shaman_T19_2Set from './Modules/Items/T19_2Set';
-import Restoration_Shaman_T20_4Set from './Modules/Items/T20_4Set';
 import Roots from './Modules/Items/Roots';
-import Restoration_Shaman_T21_2Set from './Modules/Items/T21_2Set';
-import Restoration_Shaman_T21_4Set from './Modules/Items/T21_4Set';
-import DeceiversGrandDesign from './Modules/Items/DeceiversGrandDesign';
-import SeaStarOfTheDepthmother from './Modules/Items/SeaStarOfTheDepthmother';
-import ArchiveOfFaith from './Modules/Items/ArchiveOfFaith';
-import HighfathersMachination from './Modules/Items/HighfathersMachination';
-import EonarsCompassion from './Modules/Items/EonarsCompassion';
-import TarratusKeystone from './Modules/Items/TarratusKeystone';
 import VelensFutureSight from './Modules/Items/VelensFutureSight';
 
+// Spells
 import ChainHeal from './Modules/Spells/ChainHeal';
 import HealingSurge from './Modules/Spells/HealingSurge';
-import GiftOfTheQueen from './Modules/Spells/GiftOfTheQueen';
 import HealingRain from './Modules/Spells/HealingRain';
 import HealingWave from './Modules/Spells/HealingWave';
 import LavaSurge from './Modules/Spells/LavaSurge';
@@ -89,35 +83,27 @@ class CombatLogParser extends CoreCombatLogParser {
     torrent: Torrent,
     unleashLife: UnleashLife,
     undulation: Undulation,
-    ancestralGuidance: AncestralGuidance,
-    earthenShieldTotem: EarthenShieldTotem,
+    earthShield: EarthShield,
+    earthenWallTotem: EarthenWallTotem,
+    downpour: Downpour,
     cloudburstTotem: CloudburstTotem,
     ascendance: Ascendance,
     wellspring: Wellspring,
     highTide: HighTide,
 
     // Items:
+    t21_2Set: Restoration_Shaman_T21_2Set,	
+    t21_4Set: Restoration_Shaman_T21_4Set,
     nobundo: Nobundo,
     nazjatar: Nazjatar,
     uncertainReminder: UncertainReminder,
     jonat: Jonat,
     tidecallers: Tidecallers,
-    t19_2Set: Restoration_Shaman_T19_2Set,
-    t20_4Set: Restoration_Shaman_T20_4Set,
     roots: Roots,
-    t21_2Set: Restoration_Shaman_T21_2Set,
-    t21_4Set: Restoration_Shaman_T21_4Set,
-    deceiversGrandDesign: DeceiversGrandDesign,
-    seaStarOfTheDepthmother: SeaStarOfTheDepthmother,
-    archiveOfFaith: ArchiveOfFaith,
-    highfathersMachinations: HighfathersMachination,
-    eonarsCompassion: EonarsCompassion,
-    tarratusKeystone: TarratusKeystone,
     velensFutureSight: VelensFutureSight,
 
     // Spells:
     chainHeal: ChainHeal,
-    giftOfTheQueen: GiftOfTheQueen,
     healingSurge: HealingSurge,
     healingRain: HealingRain,
     healingWave: HealingWave,
@@ -133,15 +119,6 @@ class CombatLogParser extends CoreCombatLogParser {
 
     results.tabs = [
       ...results.tabs,
-      {
-        title: 'Mana',
-        url: 'mana',
-        render: () => (
-          <Tab style={{ padding: '15px 22px' }}>
-            <Mana parser={this} />
-          </Tab>
-        ),
-      },
       {
         title: 'Feeding',
         url: 'feeding',

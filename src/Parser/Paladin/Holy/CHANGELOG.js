@@ -8,6 +8,11 @@ import SpellLink from 'common/SpellLink';
 
 export default [
   {
+    date: new Date('2018-04-15'),
+    changes: <React.Fragment>Updated everything for Battle for Azeroth compatibility.</React.Fragment>,
+    contributors: [Zerotorescue],
+  },
+  {
     date: new Date('2018-04-14'),
     changes: <React.Fragment>Changed the analysis of <SpellLink id={SPELLS.DEVOTION_AURA_TALENT.id} /> to use a method that will continue to work in Battle for Azeroth.</React.Fragment>,
     contributors: [Zerotorescue],
