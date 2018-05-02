@@ -7,6 +7,7 @@ import SpellIcon from 'common/SpellIcon';
 import { formatPercentage } from 'common/format';
 import DamageTracker from 'Parser/Core/Modules/AbilityTracker';
 import ExpandableStatisticBox from 'Main/ExpandableStatisticBox';
+import ReactTooltip from 'react-tooltip';
 
 const RPPERCHARGE = 6;
 const MaxCharges = 5;
@@ -117,7 +118,8 @@ class Tombstone extends Analyzer {
             {Object.values(this.tombstone).map((e, i) =>
               <tr key={i}>
                 <th>{this.tombstone[i].charges}</th>
-                <td><dfn data-tip='Testing Tooltip'>{this.tombstone[i].rpWasted}</dfn></td>
+                <td><dfn data-tip='Testing Tooltip'>{this.tombstone[i].rpWasted}</dfn>
+                  <ReactTooltip html place="bottom" /></td>
                 <td>{formatPercentage(this.tombstone[i].totalAbsorbed / this.tombstone[i].absorbSize)}%</td>
               </tr>
             )}
