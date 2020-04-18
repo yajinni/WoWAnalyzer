@@ -4,7 +4,7 @@
  * You can access these entries like other entries in the spells files by importing `common/SPELLS` and using the assigned property on the SPELLS object. Please try to avoid abbreviating properties.
  */
 
- // Trait IDs
+ // Trait IDs https://github.com/simulationcraft/simc/blob/bfa-dev/engine/dbc/generated/azerite.inc#L383
   //   2 = "Azeroth's Undying Gift"
   //   3 = "Sphere of Suppression"
   //   4 = "Worldvein Resonance"
@@ -60,6 +60,7 @@ export default {
     name: 'The Ever-Rising Tide',
     icon: 'inv_elemental_mote_mana',
   },
+  //Well of Existence
   WELL_OF_EXISTENCE: {
     id: 299936,
     traitId: 19,
@@ -135,10 +136,20 @@ export default {
     name: 'Conflict',
     icon: 'spell_azerite_essence_17',
   },
+  STRIFE_BUFF:{
+    id: 304056,
+    name: 'Strife',
+    icon: 'spell_azerite_essence_17',
+  },
   //Worldvein Resonance
   WORLDVEIN_RESONANCE: {
     id: 295186,
     traitId: 4,
+    name: 'Worldvein Resonance',
+    icon: 'inv_misc_azerite_01',
+  },
+  WORLDVEIN_RESONANCE_BUFF: {
+    id: 313310,
     name: 'Worldvein Resonance',
     icon: 'inv_misc_azerite_01',
   },
@@ -342,5 +353,121 @@ export default {
     id: 295838,
     name: 'Condensed Life Force',
     icon: 'spell_azerite_essence14',
+  },
+
+  // Blood of the Enemy
+  BLOOD_OF_THE_ENEMY: {
+    id: 297108,
+    traitId: 23,
+    name: 'Blood of the Enemy',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_SOAKED_STACKING_BUFF: {
+    id: 297162,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_SOAKED_HASTE_BUFF: {
+    id: 297168,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_OF_THE_ENEMY_MAJOR_RANK_THREE_CRIT_DAMAGE_BUFF: {
+    id: 298277,
+    name: 'Blood of the Enemy',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_OF_THE_ENEMY_MAJOR_RANK_TWO_REDUCED_CD: {
+    id: 298273,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_OF_THE_ENEMY_MINOR: {
+    id: 297147,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_OF_THE_ENEMY_MINOR_RANK_TWO_CRIT_BUFF: {
+    id: 298274,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  BLOOD_OF_THE_ENEMY_MINOR_RANK_THREE_PARTIAL_STACK_LOSS: {
+    id: 298275,
+    name: 'Blood-Soaked',
+    icon: 'inv__azerite-explosion',
+  },
+
+  SEETHING_RAGE: {
+    id: 297126,
+    name: 'Seething Rage',
+    icon: 'inv__azerite-explosion',
+  },
+  // The Formless Void
+  THE_FORMLESS_VOID: {
+    id: 313922,
+    traitId: 37,
+    name: 'Replica of Knowledge',
+    icon: 'ability_essence_replicaofknowledge',
+  },
+  SYMBIOTIC_PRESENCE: {
+    id: 313920,
+    name: 'Symbiotic Presence',
+    icon: 'ability_essence_replicaofknowledge',
+  },
+  SYMBIOTIC_PRESENCE_BUFF: {
+    id: 312915,
+    name: 'Symbiotic Presence',
+    icon: 'ability_essence_replicaofknowledge',
+  },
+
+  // Essence of the Focusing Iris
+  ESSENCE_OF_THE_FOCUSING_IRIS: {
+    id: 295258,
+    traitId: 5,
+    name: 'Focused Azerite Beam',
+    icon: 'spell_azerite_essence12',
+  },
+  ESSENCE_OF_THE_FOCUSING_IRIS_RANK_TWO: {
+    id: 299336,
+    name: 'Focused Azerite Beam',
+    icon: 'spell_azerite_essence12',
+  },
+  ESSENCE_OF_THE_FOCUSING_IRIS_RANK_THREE_FOUR: {
+    id: 299338,
+    name: 'Focused Azerite Beam',
+    icon: 'spell_azerite_essence12',
+  },
+  FOCUSED_AZERITE_BEAM_DAMAGE: { //The major from Focusing Iris
+    id: 295261,
+    name: 'Focused Azerite Beam',
+    icon: 'spell_azerite_essence12',
+  },
+  FOCUSED_ENERGY_RANK_ONE: {
+    id: 295246,
+    name: 'Focused Energy',
+    icon: 'inv_azerite-area-denial',
+  },
+  FOCUSED_ENERGY_RANK_TWO: {
+    id: 299335,
+    name: 'Focused Energy',
+    icon: 'inv_azerite-area-denial',
+  },
+  FOCUSED_ENERGY_RANK_THREE_FOUR: {
+    id: 299337,
+    name: 'Focused Energy',
+    icon: 'inv_azerite-area-denial',
+  },
+  FOCUSED_ENERGY_BUFF: { //The buff from the minor of Focusing Iris
+    id: 295248,
+    name: 'Focused Energy',
+    icon: 'inv_azerite-area-denial',
   },
 };

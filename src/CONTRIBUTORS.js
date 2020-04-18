@@ -433,6 +433,17 @@ export const HawkCorrigan = {
   nickname: 'HawkCorrigan',
   github: 'HawkCorrigan',
 };
+export const Vetyst = {
+  nickname: 'Vetyst',
+  github: 'djanse',
+  discord: 'vetyst#0001',
+  avatar: require('./interface/images/avatars/vetyst-avatar.png'),
+  mains: [{
+    name: 'Vetyst',
+    spec: SPECS.BALANCE_DRUID,
+    link: 'https://worldofwarcraft.com/en-gb/character/tarren-mill/vetyst',
+  }],
+};
 export const Anatta336 = {
   nickname: 'Anatta336',
   github: 'Anatta336',
@@ -816,4 +827,35 @@ export const Taleria = {
 export const axelkic = {
   nickname: 'axelkic',
   github: 'axelkic',
+};
+export const soloxcx = {
+  nickname: 'soloxcx',
+  github: 'soloxcx',
+  discord: 'Connor#7037',
+  avatar: require('./interface/images/avatars/soloxcx-avatar.jpg'),
+  mains: [{
+    name: 'Vaerminà',
+    spec: SPECS.OUTLAW_ROGUE,
+    link: 'https://worldofwarcraft.com/en-us/character/us/thrall/Vaermin%C3%A0',
+  }],
+};
+export const Torothin = {
+  nickname: 'Brad',
+  github: 'Torothin',
+  discord: 'Torothin#9751',
+};
+export const layday = {
+  nickname: 'layday',
+  github: 'layday',
+};
+export const FraunchToost = {
+  nickname: 'FraunchToost',
+  github: 'FraunchToost',
+  discord: 'FraunchToost#1207',
+  avatar: require('./interface/images/avatars/FraunchToost-avatar.png'),
+  mains: [{
+    name: 'Azamia',
+    spec: SPECS.MISTWEAVER_MONK,
+    link: 'https://worldofwarcraft.com/en-us/character/us/area-52/Azamia',
+  }],
 };

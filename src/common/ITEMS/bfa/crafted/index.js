@@ -1,3 +1,5 @@
+import ITEM_QUALITIES from 'game/ITEM_QUALITIES';
+
 export default {
   DARKMOON_DECK_BLOCKADES: {
     id: 159128,
@@ -39,6 +41,11 @@ export default {
     name: 'Vantus Rune',
     icon: 'ability_fomor_boss_rune_brown',
   },
+  VANTUS_RUNE_NYALOTHA: {
+    id: 171203,
+    name: 'Vantus Rune',
+    icon: 'inv_inscription_80_vantusrune_nyalotha',
+  },
   
   // Alchemy
   ENDLESS_TINCTURE_OF_FRACTIONAL_POWER: {
@@ -55,5 +62,28 @@ export default {
     id: 165928,
     name: 'Eternal Alchemist Stone',
     icon: 'inv_alchemist_81_eternalalchemiststone',
+  },
+  UNBOUND_ALCHEMIST_STONE: {
+    id: 171088,
+    name: 'Unbound Alchemist Stone',
+    icon: 'achievement_dungeon_ulduar80_heroic',
+  },
+  AWAKENED_ALCHEMIST_STONE: {
+    id: 171087,
+    name: 'Awakened Alchemist Stone',
+    icon: 'achievement_dungeon_ulduar80_normal',
+  },
+  PEERLESS_ALCHEMIST_STONE: {
+    id: 171085,
+    name: 'Peerless Alchemist Stone',
+    icon: 'achievement_dungeon_ulduar80_10man',
+  },
+
+  // yeah its not crafted but I don't want to open up the legendary category for 1 item
+  ASHJRAKAMAS_SHROUD_OF_RESOLVE: {
+    id: 169223,
+    name: 'Ashjra\'kamas, Shroud of Resolve',
+    icon: 'inv_misc_cape_deathwingraid_d_03',
+    quality: ITEM_QUALITIES.LEGENDARY,
   },
 };

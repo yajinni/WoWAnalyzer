@@ -1,14 +1,6 @@
 import React from 'react';
+import { PhaseConfig } from 'raids';
 
-import { END_EVENT_TYPE } from 'parser/shared/normalizers/FightEnd';
-import {
-  PHASE_START_EVENT_TYPE,
-  PHASE_END_EVENT_TYPE,
-} from 'common/fabricateBossPhaseEvents';
-import {
-  PRE_FILTER_BUFF_EVENT_TYPE,
-  PRE_FILTER_COOLDOWN_EVENT_TYPE,
-} from 'interface/report/TimeEventFilter';
 import EventFilter from './EventFilter';
 
 export enum EventType {
@@ -36,10 +28,21 @@ export enum EventType {
   CombatantInfo = 'combatantinfo',
 
   // Fabricated:
+  FightEnd = 'fightend',
   GlobalCooldown = 'globalcooldown',
   BeginChannel = 'beginchannel',
   EndChannel = 'endchannel',
   UpdateSpellUsable = 'updatespellusable',
+  BeaconTransfer = 'beacontransfer',
+  ChangeStats = 'changestats',
+
+  // Phases:
+  PhaseStart = 'phasestart',
+  PhaseEnd = 'phaseend',
+
+  // Time Filtering:
+  FilterCooldownInfo = 'filtercooldowninfo',
+  FilterBuffInfo = 'filterbuffinfo',
 }
 
 export interface Ability {
@@ -106,7 +109,7 @@ export interface EndChannelEvent extends Event {
   beginChannel: BeginChannelEvent;
 }
 export interface CastEvent extends Event {
-  type: EventType.Cast;
+  type: EventType.Cast | EventType.FilterCooldownInfo;
   ability: Ability;
   absorb?: number;
   armor?: number;
@@ -146,6 +149,11 @@ export interface CastEvent extends Event {
     inefficientCastReason?: React.ReactNode;
   };
 }
+export interface FilterCooldownInfoEvent extends CastEvent{
+  type: EventType.FilterCooldownInfo;
+
+  trigger: EventType;
+}
 export interface HealEvent extends Event {
   type: EventType.Heal;
 
@@ -166,12 +174,19 @@ export interface HealEvent extends Event {
   attackPower: number;
   spellPower: number;
   armor: number;
+  /** The current total absorb shields on the target I think? */
   absorb: number;
+  /** The amount of healing absorbed by a healing taken-debuff. */
+  absorbed?: number;
   x: number;
   y: number;
   facing: number;
   mapID: number;
   itemLevel: number;
+}
+export interface BeaconHealEvent extends Omit<HealEvent, 'type'> {
+  type: EventType.BeaconTransfer,
+  originalHeal: HealEvent,
 }
 export interface AbsorbedEvent extends Event {
   type: EventType.Absorbed;
@@ -200,6 +215,7 @@ export interface DamageEvent extends Event {
   sourceID?: number;
   sourceIsFriendly: true;
   targetID: number;
+  targetInstance: number,
   targetIsFriendly: false;
   ability: Ability;
   hitType: number;
@@ -285,7 +301,7 @@ export interface ApplyDebuffStackEvent extends BuffEvent {
   ability: Ability;
   stack: number;
 }
-export interface RemoveBuffStack extends BuffEvent {
+export interface RemoveBuffStackEvent extends BuffEvent {
   type: EventType.RemoveBuffStack;
 
   sourceID: number;
@@ -295,7 +311,7 @@ export interface RemoveBuffStack extends BuffEvent {
   ability: Ability;
   stack: number;
 }
-export interface RemoveDebuffStack extends BuffEvent {
+export interface RemoveDebuffStackEvent extends BuffEvent {
   type: EventType.RemoveBuffStack;
 
   sourceID: number;
@@ -369,10 +385,12 @@ export interface SummonEvent extends Event {
     petOwner: number;
     icon: string;
   };
+  targetID: number;
   targetInstance: number;
   targetIsFriendly: boolean;
   ability: Ability;
 }
+
 export interface GlobalCooldownEvent extends Event {
   type: EventType.GlobalCooldown;
   ability: Ability;
@@ -381,6 +399,11 @@ export interface GlobalCooldownEvent extends Event {
   targetID: number;
   timestamp: number;
   trigger: CastEvent;
+  __fabricated: true;
+}
+export interface FightEndEvent extends Event {
+  type: EventType.FightEnd;
+  timestamp: number;
   __fabricated: true;
 }
 export interface UpdateSpellUsableEvent extends Event {
@@ -406,30 +429,82 @@ export interface UpdateSpellUsableEvent extends Event {
 
   __fabricated: true;
 }
+
+export interface Stats {
+  agility: number
+  armor: number
+  avoidance: number
+  crit: number
+  haste: number
+  intellect: number
+  leech: number
+  mastery: number
+  speed: number
+  stamina: number
+  strength: number
+  versatility: number
+}
+
+export interface ChangeStatsEvent extends Event {
+  targetID: number
+  trigger: any
+  after: Stats
+  before: Stats
+  delta: Stats
+}
+
+export interface PhaseEvent extends Event {
+  phase: PhaseConfig;
+  __fabricated: true;
+}
+
+export interface PhaseStartEvent extends PhaseEvent {
+  type: EventType.PhaseStart;
+}
+
+export interface PhaseEndEvent extends PhaseEvent {
+  type: EventType.PhaseEnd;
+}
+
+export interface Item {
+  id: number;
+  quality: number;
+  icon: string;
+  itemLevel: number;
+  bonusIDs?: number[];
+  permanentEnchant?: number;
+  gems?: Array<Gem>;
+}
+
+export interface Gem {
+  id: number;
+  itemLevel: number;
+  icon: string;
+}
+
+export interface Buff {
+  source: number;
+  ability: number;
+  stacks: number;
+  icon: string;
+  name?: string;
+}
+
+export interface Trait {
+  traitID: number;
+  rank: number;
+  spellID: number;
+  icon: string;
+  slot: number;
+  isMajor: boolean;
+}
+
 export interface CombatantInfoEvent extends Event {
   type: EventType.CombatantInfo;
   pin: string;
   sourceID: number;
-  gear: Array<{
-    id: number;
-    quality: number;
-    icon: string;
-    itemLevel: number;
-    bonusIDs?: number[];
-    permanentEnchant?: number;
-    gems?: Array<{
-      id: number;
-      itemLevel: number;
-      icon: string;
-    }>;
-  }>;
-  auras: Array<{
-    source: number;
-    ability: number;
-    stacks: number;
-    icon: string;
-    name?: string;
-  }>;
+  gear: Array<Item>;
+  auras: Array<Buff>;
   faction: number;
   specID: number;
   strength: number;
@@ -469,15 +544,9 @@ export interface CombatantInfoEvent extends Event {
     spellID: number;
     icon: string;
     slot: number;
+    isMajor: false;
   }>;
-  heartOfAzeroth: Array<{
-    traitID: number;
-    rank: number;
-    spellID: number;
-    icon: string;
-    slot: number;
-    isMajor: boolean;
-  }>;
+  heartOfAzeroth: Array<Trait>;
 }
 
 const Events = {
@@ -673,19 +742,19 @@ const Events = {
     return new EventFilter(EventType.Resurrect);
   },
   get fightend() {
-    return new EventFilter(END_EVENT_TYPE);
+    return new EventFilter(EventType.FightEnd);
   },
   get phasestart() {
-    return new EventFilter(PHASE_START_EVENT_TYPE);
+    return new EventFilter(EventType.PhaseStart);
   },
   get phaseend() {
-    return new EventFilter(PHASE_END_EVENT_TYPE);
+    return new EventFilter(EventType.PhaseEnd);
   },
   get prefiltercd() {
-    return new EventFilter(PRE_FILTER_COOLDOWN_EVENT_TYPE);
+    return new EventFilter(EventType.FilterCooldownInfo);
   },
   get prefilterbuff() {
-    return new EventFilter(PRE_FILTER_BUFF_EVENT_TYPE);
+    return new EventFilter(EventType.FilterBuffInfo);
   },
   get GlobalCooldown() {
     return new EventFilter(EventType.GlobalCooldown);
@@ -698,6 +767,9 @@ const Events = {
   },
   get EndChannel() {
     return new EventFilter(EventType.EndChannel);
+  },
+  get ChangeStats() {
+    return new EventFilter(EventType.ChangeStats);
   },
 };
 

@@ -1,11 +1,21 @@
 import React from 'react';
 
-import { niseko, blazyb } from 'CONTRIBUTORS';
+import { niseko, blazyb, Torothin } from 'CONTRIBUTORS';
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
 import { change, date } from 'common/changelog';
 
 export default [
+  change(date(2020, 4, 14), <>Fixed a bug with the <SpellLink id={SPELLS.HIGH_TIDE_TALENT.id} /> that caused it to be valued lower than it should have been.</>, niseko),
+  change(date(2020, 3, 16), <><SpellLink id={SPELLS.HIGH_TIDE_TALENT.id} /> buff usage added as a value tooltip for Hight Tide healing.</>, [Torothin]),
+  change(date(2020, 3, 16), <>Filtered out pet healing from the <SpellLink id={SPELLS.VISION_OF_PERFECTION.id} /> module by default.</>, niseko),
+  change(date(2020, 2, 28), <><SpellLink id={SPELLS.RIPTIDE.id} /> is going to complain a lot less about its usage.</>, [niseko]),
+  change(date(2020, 2, 28), <>Added a statistic for <SpellLink id={SPELLS.ANCESTRAL_RESONANCE.id} />.</>, [niseko]),
+  change(date(2020, 2, 19), 'Added a toggle to the Mastery Effectiveness panel to show effectiveness by spell instead of player.', niseko),
+  change(date(2020, 2, 5), 'Enabled the link to Questionably Live in the Stat Values panel.', niseko),
+  change(date(2020, 1, 31), <>Added <SpellLink id={SPELLS.NATURAL_HARMONY_TRAIT.id} /> to Restoration Shaman.</>, niseko),
+  change(date(2020, 1, 2), <>Added a small statistic for <SpellLink id={SPELLS.ANCESTRAL_PROTECTION_TOTEM_TALENT.id} />.</>, niseko),
+  change(date(2019, 12, 18), <>Added a list of <SpellLink id={SPELLS.CHAIN_HEAL.id} /> casts that only hit one target to the <SpellLink id={SPELLS.CHAIN_HEAL.id} /> statistic, if that happened.</>, niseko),
   change(date(2019, 12, 10), <>Fixed a bug affecting <SpellLink id={SPELLS.EARTHEN_WALL_TOTEM_TALENT.id} /> statistics when used pre-pull.</>, [niseko]),
   change(date(2019, 11, 1), <><SpellLink id={SPELLS.TURN_OF_THE_TIDE_TRAIT.id} /> azerite trait support.</>, [niseko]),
   change(date(2019, 11, 1), <>Removed <SpellLink id={SPELLS.TIDAL_WAVES_BUFF.id} /> checklist rule as it doesn't line up with current shaman gameplay anymore.</>, niseko),

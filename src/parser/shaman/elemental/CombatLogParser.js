@@ -34,6 +34,7 @@ import LavaShock from './modules/azerite/LavaShock';
 import SynapseShock from '../shared/azerite/SynapseShock';
 import EchoOfTheElementals from './modules/azerite/EchoOfTheElementals';
 
+import EarthShield from '../shared/talents/EarthShield';
 import SpiritWolf from '../shared/talents/SpiritWolf';
 import StaticCharge from '../shared/talents/StaticCharge';
 import AnkhNormalizer from '../shared/normalizers/AnkhNormalizer';
@@ -41,6 +42,7 @@ import AstralShift from '../shared/spells/AstralShift';
 import PackSpirit from '../shared/azerite/PackSpirit';
 import SereneSpirit from '../shared/azerite/SereneSpirit';
 import IgneousPotential from '../shared/azerite/IgneousPotential';
+import AncestralResonance from '../shared/azerite/AncestralResonance';
 
 //Resources
 import MaelstromDetails from '../shared/maelstromchart/MaelstromDetails';
@@ -76,6 +78,7 @@ class CombatLogParser extends CoreCombatLogParser {
     unlimitedPowerTimesByStacks: UnlimitedPowerTimesByStacks,
     unlimitedPower: UnlimitedPower,
     icefury: Icefury,
+    earthShield: EarthShield,
 
     // Azerite
     naturalHarmony: NaturalHarmony,
@@ -94,6 +97,7 @@ class CombatLogParser extends CoreCombatLogParser {
     packSpirit: PackSpirit,
     sereneSpirit: SereneSpirit,
     igneousPotential: IgneousPotential,
+    ancestralResonance: AncestralResonance,
   };
 
 }

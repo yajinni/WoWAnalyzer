@@ -4,7 +4,6 @@ import { findByBossId } from 'raids';
 import { formatDuration, formatNumber, formatPercentage } from 'common/format';
 import DeathRecapTracker from 'interface/others/DeathRecapTracker';
 import MODULE_ERROR from 'parser/core/MODULE_ERROR';
-
 // Normalizers
 import ApplyBuffNormalizer from '../shared/normalizers/ApplyBuff';
 import CancelledCastsNormalizer from '../shared/normalizers/CancelledCasts';
@@ -12,10 +11,8 @@ import PrePullCooldownsNormalizer from '../shared/normalizers/PrePullCooldowns';
 import FightEndNormalizer from '../shared/normalizers/FightEnd';
 import PhaseChangesNormalizer from '../shared/normalizers/PhaseChanges';
 import MissingCastsNormalizer from '../shared/normalizers/MissingCasts';
-
 // Enhancers
 import SpellTimeWaitingOnGlobalCooldown from '../shared/enhancers/SpellTimeWaitingOnGlobalCooldown';
-
 // Core modules
 import HealingDone from '../shared/modules/throughput/HealingDone';
 import DamageDone from '../shared/modules/throughput/DamageDone';
@@ -45,7 +42,6 @@ import DeathDowntime from '../shared/modules/downtime/DeathDowntime';
 import TotalDowntime from '../shared/modules/downtime/TotalDowntime';
 import DistanceMoved from '../shared/modules/others/DistanceMoved';
 import DispelTracker from '../shared/modules/DispelTracker';
-
 // Tabs
 import RaidHealthTab from '../shared/modules/features/RaidHealthTab';
 
@@ -59,14 +55,12 @@ import Healthstone from '../shared/modules/items/Healthstone';
 import HealthPotion from '../shared/modules/items/HealthPotion';
 import CombatPotion from '../shared/modules/items/CombatPotion';
 import PreparationRuleAnalyzer from '../shared/modules/features/Checklist/PreparationRuleAnalyzer';
-
 // Racials
 import ArcaneTorrent from '../shared/modules/racials/bloodelf/ArcaneTorrent';
 import GiftOfTheNaaru from '../shared/modules/racials/draenei/GiftOfTheNaaru';
 import MightOfTheMountain from '../shared/modules/racials/dwarf/MightOfTheMountain';
 import Stoneform from '../shared/modules/racials/dwarf/Stoneform';
 import Berserking from '../shared/modules/racials/troll/Berserking';
-
 // Shared Buffs
 import VantusRune from '../shared/modules/spells/VantusRune';
 // BFA
@@ -92,12 +86,10 @@ import AzerokksResonatingHeart from '../shared/modules/items/bfa/dungeons/Azerok
 import VesselOfSkitteringShadows from '../shared/modules/items/bfa/dungeons/VesselOfSkitteringShadows';
 import LadyWaycrestsMusicBox from '../shared/modules/items/bfa/dungeons/LadyWaycrestsMusicBox';
 import IgnitionMagesFuse from '../shared/modules/items/bfa/dungeons/IgnitionMagesFuse';
-
 // PVP
 import DreadGladiatorsMedallion from '../shared/modules/items/bfa/pvp/DreadGladiatorsMedallion';
 import DreadGladiatorsInsignia from '../shared/modules/items/bfa/pvp/DreadGladiatorsInsignia';
 import DreadGladiatorsBadge from '../shared/modules/items/bfa/pvp/DreadGladiatorsBadge';
-
 //Enchants
 import DeadlyNavigation from '../shared/modules/items/bfa/enchants/DeadlyNavigation';
 import MasterfulNavigation from '../shared/modules/items/bfa/enchants/MasterfulNavigation';
@@ -110,7 +102,7 @@ import CoastalSurge from '../shared/modules/items/bfa/enchants/CoastalSurge';
 import DarkmoonDeckTides from '../shared/modules/items/bfa/crafted/DarkmoonDeckTides';
 import DarkmoonDeckFathoms from '../shared/modules/items/bfa/crafted/DarkmoonDeckFathoms';
 import DarkmoonDeckBlockades from '../shared/modules/items/bfa/crafted/DarkmoonDeckBlockades';
-import EternalAlchemistStone from '../shared/modules/items/bfa/crafted/EternalAlchemistStone';
+import AlchemistStone from '../shared/modules/items/bfa/crafted/AlchemistStone';
 // Azerite Traits
 import Gemhide from '../shared/modules/spells/bfa/azeritetraits/Gemhide';
 import CrystallineCarapace from '../shared/modules/spells/bfa/azeritetraits/CrystallineCarapace';
@@ -118,7 +110,7 @@ import Gutripper from '../shared/modules/spells/bfa/azeritetraits/Gutripper';
 import HeedMyCall from '../shared/modules/spells/bfa/azeritetraits/HeedMyCall';
 import LaserMatrix from '../shared/modules/spells/bfa/azeritetraits/LaserMatrix';
 import MeticulousScheming from '../shared/modules/spells/bfa/azeritetraits/MeticulousScheming';
-import OverWhelmingPower from '../shared/modules/spells/bfa/azeritetraits/OverwhelmingPower';
+import OverwhelmingPower from '../shared/modules/spells/bfa/azeritetraits/OverwhelmingPower';
 import ElementalWhirl from '../shared/modules/spells/bfa/azeritetraits/ElementalWhirl';
 import BloodRite from '../shared/modules/spells/bfa/azeritetraits/BloodRite';
 import BondedSouls from '../shared/modules/spells/bfa/azeritetraits/BondedSouls';
@@ -137,13 +129,16 @@ import SwirlingSands from '../shared/modules/spells/bfa/azeritetraits/SwirlingSa
 import Tradewinds from '../shared/modules/spells/bfa/azeritetraits/Tradewinds';
 import TreacherousCovenant from '../shared/modules/spells/bfa/azeritetraits/TreacherousCovenant';
 import LoyalToTheEnd from '../shared/modules/spells/bfa/azeritetraits/LoyalToTheEnd';
-
 // Essences
 import TheEverRisingTide from '../shared/modules/spells/bfa/essences/TheEverRisingTide';
 import TheWellOfExistence from '../shared/modules/spells/bfa/essences/TheWellOfExistence';
 import TheCrucibleofFlame from '../shared/modules/spells/bfa/essences/TheCrucibleofFlame';
 import WorldveinResonance from '../shared/modules/spells/bfa/essences/WorldveinResonance';
 import NullDynamo from '../shared/modules/spells/bfa/essences/NullDynamo';
+import BloodOfTheEnemy from '../shared/modules/spells/bfa/essences/BloodOfTheEnemy';
+import Strife from '../shared/modules/spells/bfa/essences/Strife';
+import TheFormlessVoid from '../shared/modules/spells/bfa/essences/TheFormlessVoid';
+import EssenceOfTheFocusingIris from '../shared/modules/spells/bfa/essences/EssenceOfTheFocusingIris';
 
 // Uldir
 import TwitchingTentacleofXalzaix from '../shared/modules/items/bfa/raids/uldir/TwitchingTentacleofXalzaix';
@@ -174,17 +169,39 @@ import TridentOfDeepOcean from '../shared/modules/items/bfa/raids/crucibleofstor
 import VoidStone from '../shared/modules/items/bfa/raids/crucibleofstorms/VoidStone';
 import ZaxasjsDeepstriders from '../shared/modules/items/bfa/raids/crucibleofstorms/ZaxasjsDeepstriders';
 // Azsharas Eternal Palace
-
 import AshvanesRazorCoral from '../shared/modules/items/bfa/raids/azsharaseternalpalace/AshvanesRazorCoral';
 import BloodthirstyUrchin from '../shared/modules/items/bfa/raids/azsharaseternalpalace/BloodthirstyUrchin';
 import DribblingInkpod from '../shared/modules/items/bfa/raids/azsharaseternalpalace/DribblingInkpod';
+import AzsharasFontofPower from '../shared/modules/items/bfa/raids/azsharaseternalpalace/AzsharasFontofPower';
+// Nyalotha
+import VitaChargedTitanshard from '../shared/modules/items/bfa/raids/nyalothathewakingcity/VitaChargedTitanshard';
+import VoidTwistedTitanshard from '../shared/modules/items/bfa/raids/nyalothathewakingcity/VoidTwistedTitanshard';
+import TitanicEmpowerment from '../shared/modules/items/bfa/raids/nyalothathewakingcity/TitanicEmpowerment';
+import ForbiddenObsidianClaw from '../shared/modules/items/bfa/raids/nyalothathewakingcity/ForbiddenObsidianClaw';
+import HummingBlackDragonscale from '../shared/modules/items/bfa/raids/nyalothathewakingcity/HummingBlackDragonscale';
+// Corruptions
+import IneffableTruth from '../shared/modules/spells/bfa/corruptions/IneffableTruth';
+import HonedMind from '../shared/modules/spells/bfa/corruptions/HonedMind';
+import SurgingVitality from '../shared/modules/spells/bfa/corruptions/SurgingVitality';
+import RacingPulse from '../shared/modules/spells/bfa/corruptions/RacingPulse';
+import DeadlyMomentum from '../shared/modules/spells/bfa/corruptions/DeadlyMomentum';
+import VoidRitual from '../shared/modules/spells/bfa/corruptions/VoidRitual';
+import Siphoner from '../shared/modules/spells/bfa/corruptions/Siphoner';
+import FlashOfInsight from '../shared/modules/spells/bfa/corruptions/FlashOfInsight';
+import Versatile from '../shared/modules/spells/bfa/corruptions/Versatile';
+import Severe from '../shared/modules/spells/bfa/corruptions/Severe';
+import Masterful from '../shared/modules/spells/bfa/corruptions/Masterful';
+import Expedient from '../shared/modules/spells/bfa/corruptions/Expedient';
+
+// Legendaries
+import Ashjrakamas from '../shared/modules/items/bfa/Ashjrakamas';
 
 import ParseResults from './ParseResults';
 import EventsNormalizer from './EventsNormalizer';
 import EventEmitter from './modules/EventEmitter';
-
 // This prints to console anything that the DI has to do
 const debugDependencyInjection = false;
+const MAX_DI_ITERATIONS = 100;
 const isMinified = process.env.NODE_ENV === 'production';
 
 class CombatLogParser {
@@ -292,7 +309,7 @@ class CombatLogParser {
     darkmoonDeckTides: DarkmoonDeckTides,
     darkmoonDeckFathoms: DarkmoonDeckFathoms,
     darkmoonDeckBlockades: DarkmoonDeckBlockades,
-    eternalAlchemistStone: EternalAlchemistStone,
+    alchemistStone: AlchemistStone,
     // Enchants
     deadlyNavigation: DeadlyNavigation,
     masterfulNavigation: MasterfulNavigation,
@@ -309,7 +326,7 @@ class CombatLogParser {
     heedMyCall: HeedMyCall,
     laserMatrix: LaserMatrix,
     meticulousScheming: MeticulousScheming,
-    overwhelmingPower: OverWhelmingPower,
+    overwhelmingPower: OverwhelmingPower,
     elementalWhirl: ElementalWhirl,
     bloodRite: BloodRite,
     bondedSouls: BondedSouls,
@@ -319,7 +336,7 @@ class CombatLogParser {
     blightborneInfusion: BlightborneInfusion,
     archiveOfTheTitans: ArchiveOfTheTitans,
     savior: Savior,
-    woundBinder:WoundBinder,
+    woundBinder: WoundBinder,
     synergisticGrowth: SynergisticGrowth,
     bracingChill: BracingChill,
     ephemeralRecovery: EphemeralRecovery,
@@ -331,10 +348,14 @@ class CombatLogParser {
 
     // Essences
     theEverRisingTide: TheEverRisingTide,
-    theWellOfExistence : TheWellOfExistence,
+    theWellOfExistence: TheWellOfExistence,
     theCrucibleofFlame: TheCrucibleofFlame,
     worldveinResonance: WorldveinResonance,
     nullDynamo: NullDynamo,
+    bloodOfTheEnemy: BloodOfTheEnemy,
+    strife: Strife,
+    theFormlessVoid: TheFormlessVoid,
+    essenceOfTheFocusingIris: EssenceOfTheFocusingIris,
 
     // Uldir
     twitchingTentacleofXalzaix: TwitchingTentacleofXalzaix,
@@ -364,10 +385,35 @@ class CombatLogParser {
     tridentOfDeepOcean: TridentOfDeepOcean,
     voidStone: VoidStone,
     zaxasjsDeepstriders: ZaxasjsDeepstriders,
-    //Azsharas Eternal Palace
+    // Eternal Palace
     ashvanesRazorCoral: AshvanesRazorCoral,
+    azsharasFontofPower: AzsharasFontofPower,
     bloodthirstyUrchin: BloodthirstyUrchin,
     dribblingInkpod: DribblingInkpod,
+
+    // Nyalotha The Waking City
+    vitaChargedTitanshard: VitaChargedTitanshard,
+    voidTwistedTitanshard: VoidTwistedTitanshard,
+    titanicEmpowerment: TitanicEmpowerment,
+    forbiddenObsidianClaw: ForbiddenObsidianClaw,
+    hummingBlackDragonscale: HummingBlackDragonscale,
+
+    // Corruptions
+    ineffableTruth: IneffableTruth,
+    honedMind: HonedMind,
+    surgingVitality: SurgingVitality,
+    racingPulse: RacingPulse,
+    deadlyMomentum: DeadlyMomentum,
+    voidRitual: VoidRitual,
+    siphoner: Siphoner,
+    flashOfInsight: FlashOfInsight,
+    versatile: Versatile,
+    severe: Severe,
+    masterful: Masterful,
+    expedient: Expedient,
+
+    // Legendaries
+    ashjrakamas: Ashjrakamas,
   };
   // Override this with spec specific modules when extending
   static specModules = {};
@@ -510,7 +556,7 @@ class CombatLogParser {
     this._modules[desiredModuleName] = module;
     return module;
   }
-  initializeModules(modules, iteration = 0) {
+  initializeModules(modules, iteration = 1) {
     // TODO: Refactor and test, this dependency injection thing works really well but it's hard to understand or change.
     const failedModules = [];
     Object.keys(modules).forEach(desiredModuleName => {
@@ -532,26 +578,33 @@ class CombatLogParser {
         }
         // The priority goes from lowest (most important) to highest, seeing as modules are loaded after their dependencies are loaded, just using the count of loaded modules is sufficient.
         const priority = Object.keys(this._modules).length;
-        try{
+        try {
           this.loadModule(moduleClass, {
             ...options,
             ...availableDependencies,
             priority,
           }, desiredModuleName);
-        }catch(e){
+        } catch (e) {
           if (process.env.NODE_ENV !== 'production') {
             throw e;
           }
-          this.disabledModules[MODULE_ERROR.INITIALIZATION].push({key: isMinified ? desiredModuleName : moduleClass.name, module: moduleClass, error: e});
+          this.disabledModules[MODULE_ERROR.INITIALIZATION].push({ key: isMinified ? desiredModuleName : moduleClass.name, module: moduleClass, error: e });
           debugDependencyInjection && console.warn(moduleClass.name, 'disabled due to error during initialization: ', e);
         }
 
       } else {
-        const disabledDependencies = missingDependencies.map(d => d.name).filter(x => this.disabledModules[MODULE_ERROR.INITIALIZATION].map(d => d.module.name).includes(x)); //see if a dependency was previously disabled due to an error
-        if(disabledDependencies.length !== 0){ //if a dependency was already marked as disabled due to an error, mark this module as disabled
-          this.disabledModules[MODULE_ERROR.DEPENDENCY].push({key: isMinified ? desiredModuleName : moduleClass.name, module: moduleClass});
+        const disabledDependencies = missingDependencies
+          .map(d => d.name)
+          .filter(x =>
+            this.disabledModules[MODULE_ERROR.INITIALIZATION]
+              .map(d => d.module.name)
+              .includes(x),
+          ); // see if a dependency was previously disabled due to an error
+        if (disabledDependencies.length !== 0) {
+          // if a dependency was already marked as disabled due to an error, mark this module as disabled
+          this.disabledModules[MODULE_ERROR.DEPENDENCY].push({ key: isMinified ? desiredModuleName : moduleClass.name, module: moduleClass });
           debugDependencyInjection && console.warn(moduleClass.name, 'disabled due to error during initialization of a dependency.');
-        }else{
+        } else {
           debugDependencyInjection && console.warn(moduleClass.name, 'could not be loaded, missing dependencies:', missingDependencies.map(d => d.name));
           failedModules.push(desiredModuleName);
         }
@@ -564,8 +617,10 @@ class CombatLogParser {
       failedModules.forEach(key => {
         newBatch[key] = modules[key];
       });
-      if (iteration > 100) {
+      if (iteration > MAX_DI_ITERATIONS) {
         // Sometimes modules can't be imported at all because they depend on modules not enabled or have a circular dependency. Stop trying after a while.
+        // eslint-disable-next-line no-debugger
+        debugger;
         throw new Error(`Failed to load modules: ${Object.keys(newBatch).join(', ')}`);
       }
       this.initializeModules(newBatch, iteration + 1);
@@ -613,11 +668,11 @@ class CombatLogParser {
   }
 
   deepDisable(module, state, error = undefined) {
-    if(!module.active){
+    if (!module.active) {
       return; //return early
     }
     console.error('Disabling', isMinified ? module.key : module.constructor.name);
-    this.disabledModules[state].push({key: isMinified ? module.key : module.constructor.name, module: module.constructor, ...(error && {error: error})});
+    this.disabledModules[state].push({ key: isMinified ? module.key : module.constructor.name, module: module.constructor, ...(error && { error: error }) });
     module.active = false;
     this.activeModules.forEach(active => {
         const deps = active.constructor.dependencies;
@@ -686,7 +741,7 @@ class CombatLogParser {
         .every((key, index) => {
           const module = this._modules[key];
 
-          try{
+          try {
             if (module.statistic) {
               let basePosition = index;
               if (module.statisticOrder !== undefined) {
@@ -712,9 +767,9 @@ class CombatLogParser {
               }
             }
             if (module.suggestions) {
-              module.suggestions(results.suggestions.when, { i18n });
+              module.suggestions(results.suggestions.when);
             }
-          }catch(e){ //error occured during results generation of module, disable module and all modules depending on it
+          } catch (e) { //error occured during results generation of module, disable module and all modules depending on it
             if (process.env.NODE_ENV !== 'production') {
               throw e;
             }
@@ -728,7 +783,7 @@ class CombatLogParser {
 
     //keep trying to generate results until no "new" errors are found anymore to weed out all the inaccurate / errored modules
     let generated = false;
-    while(!generated){
+    while (!generated) {
       results = new ParseResults();
 
       results.tabs = [];

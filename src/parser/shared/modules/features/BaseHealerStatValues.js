@@ -14,14 +14,13 @@ import CritEffectBonus from 'parser/shared/modules/helpers/CritEffectBonus';
 import StatTracker from 'parser/shared/modules/StatTracker';
 import { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import StatisticWrapper from 'interface/others/StatisticWrapper';
+import InfoIcon from 'interface/icons/Info';
 
 import CORE_SPELL_INFO from './SpellInfo';
 import STAT, { getClassNameColor, getIcon, getName } from './STAT';
+import QELiveLogo from './images/QE-Logo-New-Small.png';
 
 const DEBUG = false;
-
-// 5% int bonus from wearing all of the highest armor rating (Leather, Mail, Plate) means each new point of int worth 1.05 vs character sheet int
-export const ARMOR_INT_BONUS = .05;
 
 /**
  * This is currently completely focussed on Healer stat weights but it should be relatively easy to modify it to work for a DPS, it just requires some work. The only reason no effort was put towards this is that we currently have no DPS interested in implementing this so it would be wasted time. If you do want to implement stat weights for a DPS this should provide you with a very good basis.
@@ -37,7 +36,7 @@ class BaseHealerStatValues extends Analyzer {
   /**
    * QE Live Link Setter
    * As of right now this is only enabled for MW, Resto Druid, and Holy Pally
-   * Unless you talk to Voulk, the creator of QElive, Do not flip the switch for other healers 
+   * Unless you talk to Voulk, the creator of QElive, Do not flip the switch for other healers
    */
   qeLive = false;
 
@@ -212,7 +211,7 @@ class BaseHealerStatValues extends Analyzer {
       return 0; // Leech doesn't proc from multipliers such as Velen's Future Sight
     }
     if (this.playerHealthMissing > 0) { // if the player is full HP this would have overhealed.
-      const healIncreaseFromOneLeech = 1 / this.statTracker.leechRatingPerPercent;
+      const healIncreaseFromOneLeech = this.statTracker.statMultiplier.leech / this.statTracker.leechRatingPerPercent;
       return healVal.raw * healIncreaseFromOneLeech;
     }
     return 0;
@@ -222,9 +221,7 @@ class BaseHealerStatValues extends Analyzer {
       // If a spell overheals, it could not have healed for more. Seeing as Int only adds HP on top of the existing heal we can skip it as increasing the power of this heal would only be more overhealing.
       return 0;
     }
-    const currInt = this.statTracker.currentIntellectRating;
-    // noinspection PointlessArithmeticExpressionJS
-    const healIncreaseFromOneInt = (1 + ARMOR_INT_BONUS) / currInt;
+    const healIncreaseFromOneInt = this.statTracker.statMultiplier.intellect / this.statTracker.currentIntellectRating;
     return healVal.effective * healIncreaseFromOneInt;
   }
   _getCritChance(event) {
@@ -255,19 +252,20 @@ class BaseHealerStatValues extends Analyzer {
       const rawBaseHealing = healVal.raw / critMult;
       const effectiveCritHealing = Math.max(0, healVal.effective - rawBaseHealing);
       const rating = this.statTracker.currentCritRating;
+      const healIncreaseFromOneCrit = this.statTracker.statMultiplier.crit * ratingCritChanceContribution / rating;
 
-      return effectiveCritHealing * ratingCritChanceContribution / rating;
+      return effectiveCritHealing * healIncreaseFromOneCrit;
     }
     return 0;
   }
   _hasteHpct(event, healVal) {
     const currHastePerc = this.statTracker.currentHastePercentage;
-    const healIncreaseFromOneHaste = 1 / this.statTracker.hasteRatingPerPercent;
+    const healIncreaseFromOneHaste = this.statTracker.statMultiplier.haste / this.statTracker.hasteRatingPerPercent;
     const baseHeal = healVal.effective / (1 + currHastePerc);
     return baseHeal * healIncreaseFromOneHaste;
   }
   _hasteHpm(event, healVal) {
-    const healIncreaseFromOneHaste = 1 / this.statTracker.hasteRatingPerPercent;
+    const healIncreaseFromOneHaste = this.statTracker.statMultiplier.haste / this.statTracker.hasteRatingPerPercent;
     const noHasteHealing = healVal.effective / (1 + this.statTracker.currentHastePercentage);
     return noHasteHealing * healIncreaseFromOneHaste;
   }
@@ -280,7 +278,7 @@ class BaseHealerStatValues extends Analyzer {
       return 0;
     }
     const currVersPerc = this.statTracker.currentVersatilityPercentage;
-    const healIncreaseFromOneVers = 1 / this.statTracker.versatilityRatingPerPercent;
+    const healIncreaseFromOneVers = this.statTracker.statMultiplier.versatility / this.statTracker.versatilityRatingPerPercent;
     const baseHeal = healVal.effective / (1 + currVersPerc);
     return baseHeal * healIncreaseFromOneVers;
   }
@@ -297,7 +295,7 @@ class BaseHealerStatValues extends Analyzer {
   _versatilityDamageReduction(event, damageVal) {
     const amount = damageVal.effective;
     const currentVersDamageReductionPercentage = this.statTracker.currentVersatilityPercentage / 2;
-    const damageReductionIncreaseFromOneVers = 1 / this.statTracker.versatilityRatingPerPercent / 2; // the DR part is only 50% of the Versa percentage
+    const damageReductionIncreaseFromOneVers = this.statTracker.statMultiplier.versatility / this.statTracker.versatilityRatingPerPercent / 2; // the DR part is only 50% of the Versa percentage
 
     const noVersDamage = amount / (1 - currentVersDamageReductionPercentage);
     return noVersDamage * damageReductionIncreaseFromOneVers;
@@ -409,18 +407,17 @@ class BaseHealerStatValues extends Analyzer {
   _getTooltip(stat) {
     switch (stat) {
       case STAT.HASTE_HPCT:
-        return 'HPCT stands for "Healing per Cast Time". This is the value that 1% Haste would be worth if you would cast everything you are already casting (and that can be casted quicker) 1% faster. Mana is not accounted for in any way and you should consider the Haste stat weight 0 if you run out of mana while doing everything else right.';
+        return 'HPCT stands for "Healing per Cast Time". This is the value that Haste would be worth if you would cast everything you are already casting (and that scales with Haste) faster. Mana is not accounted for in any way and you should consider the Haste stat weight 0 if you run out of mana while doing everything else right.';
       case STAT.HASTE_HPM:
         return 'HPM stands for "Healing per Mana". In valuing Haste, it considers only the faster HoT ticking and not the reduced cast times. Effectively it models haste\'s bonus to mana efficiency. This is typically the better calculation to use for raid encounters where mana is an issue.';
-      case STAT.VERSATILITY:
-        return 'Weight includes only the boost to healing, and does not include the damage reduction.';
       case STAT.VERSATILITY_DR:
-        return 'Weight includes both healing boost and damage reduction, counting damage reduction as additional throughput.';
+        return 'Weight includes both healing boost and damage reduction, counting the damage reduced as additional throughput.';
       default:
         return null;
     }
   }
   moreInformationLink = null;
+  static position = STATISTIC_ORDER.CORE(9);
   statistic() {
     const results = this._prepareResults();
     const qeLink = results.reduce((urlParts, stat) => {
@@ -437,55 +434,55 @@ class BaseHealerStatValues extends Analyzer {
       return urlParts;
     }, []).join('&');
     return (
-      <StatisticWrapper position={STATISTIC_ORDER.CORE(11)}>
+      <StatisticWrapper position={this.constructor.position}>
         <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-          <div className="panel items">
-            <div className="panel-heading">
-              <h4>
-                <TooltipElement
-                  content={(
-                    <>
-                      These stat values are calculated using the actual circumstances of this encounter. These values reveal the value of the last 1 rating of each stat, they may not necessarily be the best way to gear. The stat values are likely to differ based on fight, raid size, items used, talents chosen, etc.<br /><br />
-                      DPS gains are not included in any of the stat values.
-                    </>
-                  )}
-                >
-                  Stat Values
-                </TooltipElement>
-
-                <div className="pull-right">
-                  {this.qeLive && this.selectedCombatant.characterProfile && (
-                    <>
-                      <Tooltip content="Opens in a new tab. Leverage the QE Live Tool to directly compare gear, azerite traits, and trinkets based on your stat values.">
-                        <a
-                          href={`https://www.questionablyepic.com/live?import=WoWA&spec=${this.selectedCombatant.specId}&pname=${this.selectedCombatant.name}&realm=${this.selectedCombatant.characterProfile.realm}&region=${this.selectedCombatant.characterProfile.region}&${qeLink}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn"
-                          style={{ fontSize: 20, padding: '6px 0' }}
-                        >QE Live</a>
-                      </Tooltip>
-                       | 
-                    </>
-                  )}
-                  {this.moreInformationLink && (
-                    <a href={this.moreInformationLink}>
-                      More info
-                    </a>
-                  )}
-                </div>
-              </h4>
-            </div>
-            <div className="panel-body">
-              <table className="data-table compact">
+          <div className="panel items statistic">
+            {this.moreInformationLink && (
+              <a
+                href={this.moreInformationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Tooltip content="Click for more information.">
+                  <div
+                    className="detail-corner"
+                    data-place="top"
+                  >
+                    <InfoIcon />
+                  </div>
+                </Tooltip>
+              </a>
+            )}
+            <div className="panel-body" style={{ padding: '10px 0 16px' }}>
+              <table className="data-table compact" style={{ margin: 0 }}>
                 <thead>
-                  <tr>
-                    <th style={{ minWidth: 30 }}>
-                      <b>Stat</b>
+                  <tr className="text-muted">
+                    <th style={{ minWidth: 30, fontWeight: 400 }}>
+                      <TooltipElement
+                        content={(
+                          <>
+                            These stat values are calculated using the actual circumstances of this encounter. These values reveal the value of the last 1 rating of each stat, they may not necessarily be the best way to gear. The stat values are likely to differ based on fight, raid size, items used, talents chosen, etc.<br /><br />
+                            DPS gains are not included in any of the stat values.
+                          </>
+                        )}
+                      >
+                        Stat Values
+                      </TooltipElement>
+                      {this.qeLive && this.selectedCombatant.characterProfile && (
+                        <Tooltip content="Opens in a new tab. Leverage the QE Live Tool to directly compare gear, azerite traits, and trinkets based on your stat values.">
+                          <a
+                            href={`https://www.questionablyepic.com/live?import=WoWA&spec=${this.selectedCombatant.specId}&pname=${this.selectedCombatant.name}&realm=${this.selectedCombatant.characterProfile.realm}&region=${this.selectedCombatant.characterProfile.region}&${qeLink}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img src={QELiveLogo} alt="Questionably Epic Live" style={{ height: '1.2em', marginLeft: 15 }} /> Open Questionably Epic Live
+                          </a>
+                        </Tooltip>
+                      )}
                     </th>
-                    <th className="text-right" style={{ minWidth: 30 }} colSpan={2}>
+                    <th className="text-right" style={{ minWidth: 30, fontWeight: 400 }} colSpan={2}>
                       <TooltipElement content="Normalized so Intellect is always 1.00.">
-                        <strong>Value</strong>
+                        Value
                       </TooltipElement>
                     </th>
                   </tr>

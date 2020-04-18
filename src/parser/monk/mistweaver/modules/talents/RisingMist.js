@@ -15,7 +15,7 @@ import HotTracker from '../core/HotTracker';
 
 const debug = false;
 
-const RISING_MIST_EXTENSION = 2000;
+const RISING_MIST_EXTENSION = 4000;
 const UPLIFTED_SPIRITS_REDUCTION = 1000;
 
 const UNAFFECTED_SPELLS = [
@@ -190,7 +190,7 @@ class RisingMist extends Analyzer {
     return this.risingMistCount === 0 ? 0 : (this.risingMists.reduce((acc, risingMist) => acc + risingMist.duration, 0) / this.risingMistCount) / 1000;
   }
   get hotHealing() {
-    return this.risingMists.reduce((acc, risingMist) => acc + risingMist.healing, 0);
+    return this.hotTracker.healingAfterFallOff;
   }
 
   get directHealing() {

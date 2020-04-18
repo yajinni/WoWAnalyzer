@@ -27,11 +27,11 @@ export default [
   255724, // proc from a Legion Antorus trinket
   SPELLS.GALECALLERS_BOON_CAST.id, //This can be used off GCD
   SPELLS.MUTILATE_OFFHAND.id, // Mutilate off hand
-  SPELLS.DIRE_BEAST_SECONDARY_WITH_SCENT.id, //A secondary cast event from Dire Beast talent
-  SPELLS.DIRE_BEAST_SECONDARY_WITHOUT_SCENT.id, //A secondary cast event from Dire Beast talent
+  SPELLS.DIRE_BEAST_SUMMON.id, //A secondary cast event from Dire Beast talent
   SPELLS.DIVINE_HYMN_HEAL.id, //The heal component of divine hymn
   SPELLS.CHARGE_2.id, // The damage component of charge
   285503, // Lady Jaina Proudmoore boss mechanic (picking up munitions barrel)
   285347, // Plague of Fire - King Rastakhan mechanic
   SPELLS.CLOUDBURST_TOTEM_RECALL.id, // Cloudburst reactivation
+  316944, // Dragon's Flight - Feather Fall (DNT)
 ];

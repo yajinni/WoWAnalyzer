@@ -44,6 +44,7 @@ import Ascendance from './modules/talents/Ascendance';
 import Wellspring from './modules/talents/Wellspring';
 import HighTide from './modules/talents/HighTide';
 import NaturesGuardian from './modules/talents/NaturesGuardian';
+import AncestralProtectionTotem from './modules/talents/AncestralProtectionTotem';
 // Spells
 import ChainHeal from './modules/spells/ChainHeal';
 import HealingSurge from './modules/spells/HealingSurge';
@@ -68,6 +69,8 @@ import PackSpirit from '../shared/azerite/PackSpirit';
 import SereneSpirit from '../shared/azerite/SereneSpirit';
 import SynapseShock from '../shared/azerite/SynapseShock';
 import IgneousPotential from '../shared/azerite/IgneousPotential';
+import NaturalHarmony from '../shared/azerite/NaturalHarmony';
+import AncestralResonance from '../shared/azerite/AncestralResonance';
 
 import CloudburstNormalizer from './normalizers/CloudburstNormalizer';
 
@@ -116,6 +119,7 @@ class CombatLogParser extends CoreCombatLogParser {
     wellspring: Wellspring,
     highTide: HighTide,
     naturesGuardian: NaturesGuardian,
+    ancestralProtectionTotem: AncestralProtectionTotem,
     talentStatisticBox: TalentStatisticBox,
 
     // Spells:
@@ -138,15 +142,17 @@ class CombatLogParser extends CoreCombatLogParser {
     turnOfTheTide: TurnOfTheTide,
     visionOfPerfection: VisionOfPerfection,
 
-    // Essences
-    lucidDreams: LucidDreams,
-
     // Shared:
     spiritWolf: SpiritWolf,
     staticCharge: StaticCharge,
     astralShift: AstralShift,
     packSpirit: PackSpirit,
     sereneSpirit: SereneSpirit,
+    naturalHarmony: NaturalHarmony,
+    ancestralResonance: AncestralResonance,
+
+    // Essences
+    lucidDreams: LucidDreams,
 
     // Normalizers:
     cloudburstNormalizer: CloudburstNormalizer,

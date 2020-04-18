@@ -62,15 +62,10 @@ export default {
     name: 'Dire Beast',
     icon: 'ability_hunter_longevity',
   },
-  DIRE_BEAST_SECONDARY_WITH_SCENT: { // Dire Beast ID with Scent of Blood talent
-    id: 132764,
+  DIRE_BEAST_SUMMON: {
+    id: 306229,
     name: 'Dire Beast',
     icon: 'ability_hunter_sickem',
-  },
-  DIRE_BEAST_SECONDARY_WITHOUT_SCENT: { // Dire Beast ID without Scent of Blood talent
-    id: 219199,
-    name: 'Dire Beast',
-    icon: 'ability_hunter_longevity',
   },
   STAMPEDE_DAMAGE: {
     id: 201594,
@@ -111,27 +106,42 @@ export default {
   },
   BARBED_SHOT_BUFF: { //1st stack of Barbed Shot on the player
     id: 246152,
-    name: 'Barbed Shot 1',
+    name: 'Barbed Shot (1)',
     icon: 'ability_hunter_barbedshot',
   },
   BARBED_SHOT_BUFF_STACK_2: { //2nd stack of Barbed Shot on the player
     id: 246851,
-    name: 'Barbed Shot 2',
+    name: 'Barbed Shot (2)',
     icon: 'ability_hunter_barbedshot',
   },
   BARBED_SHOT_BUFF_STACK_3: { //3rd stack of Barbed Shot on the player
     id: 246852,
-    name: 'Barbed Shot 3',
+    name: 'Barbed Shot (3)',
     icon: 'ability_hunter_barbedshot',
   },
   BARBED_SHOT_BUFF_STACK_4: { //4th stack of Barbed Shot on the player
     id: 246853,
-    name: 'Barbed Shot 4',
+    name: 'Barbed Shot (4)',
     icon: 'ability_hunter_barbedshot',
   },
   BARBED_SHOT_BUFF_STACK_5: { //5th stack of Barbed Shot on the player
     id: 246854,
-    name: 'Barbed Shot 5',
+    name: 'Barbed Shot (5)',
+    icon: 'ability_hunter_barbedshot',
+  },
+  BARBED_SHOT_BUFF_STACK_6: { //6th stack of Barbed Shot on the player
+    id: 284255,
+    name: 'Barbed Shot (6)',
+    icon: 'ability_hunter_barbedshot',
+  },
+  BARBED_SHOT_BUFF_STACK_7: { //7th stack of Barbed Shot on the player
+    id: 284257,
+    name: 'Barbed Shot (7)',
+    icon: 'ability_hunter_barbedshot',
+  },
+  BARBED_SHOT_BUFF_STACK_8: { //8th stack of Barbed Shot on the player
+    id: 284258,
+    name: 'Barbed Shot (8)',
     icon: 'ability_hunter_barbedshot',
   },
   BARBED_SHOT_PET_BUFF: {
@@ -587,7 +597,7 @@ export default {
     name: 'Dismiss Pet',
     icon: 'spell_nature_spiritwolf',
   },
-  PLAY_DEAD: {
+  PLAY_DEAD: { //Is also Wake Up
     id: 209997,
     name: 'Play Dead',
     icon: 'inv_misc_pelt_bear_03',
@@ -639,17 +649,17 @@ export default {
     name: 'Survival of the Fittest',
     icon: 'spell_nature_spiritarmor',
   },
-  CLAW: {
+  CLAW_BASIC_ATTACK: {
     id: 16827,
     name: 'Claw',
     icon: 'ability_druid_rake',
   },
-  SMACK: {
+  SMACK_BASIC_ATTACK: {
     id: 49966,
     name: 'Smack',
     icon: 'ability_druid_bash',
   },
-  BITE: {
+  BITE_BASIC_ATTACK: {
     id: 17253,
     name: 'Bite',
     icon: 'ability_druid_ferociousbite',

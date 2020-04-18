@@ -6,13 +6,10 @@ import Checklist from './modules/checklist/Module';
 //Features
 import CooldownThroughputTracker from './modules/features/CooldownThroughputTracker';
 import AlwaysBeCasting from './modules/features/AlwaysBeCasting';
-import TimeFocusCapped from '../shared/modules/features/TimeFocusCapped';
-import FocusUsage from '../shared/modules/features/FocusUsage';
+import FocusUsage from '../shared/modules/resources/FocusUsage';
 //Normalizer
 import TipOfTheSpearNormalizer from './normalizers/TipOfTheSpear';
-//Focus
-import FocusTracker from '../shared/modules/features/focuschart/FocusTracker';
-import FocusTab from '../shared/modules/features/focuschart/FocusTab';
+
 //Spells
 import KillCommand from './modules/spells/KillCommand';
 import ButcheryCarve from './modules/spells/ButcheryCarve';
@@ -20,6 +17,14 @@ import SerpentSting from './modules/spells/SerpentSting';
 import CoordinatedAssault from './modules/spells/CoordinatedAssault';
 import WildfireBomb from './modules/spells/WildfireBomb';
 import RaptorStrike from './modules/spells/RaptorStrike';
+
+//Focus
+import FocusTracker from '../shared/modules/resources/FocusTracker';
+import FocusDetails from '../shared/modules/resources/FocusDetails';
+import SpellFocusCost from '../shared/modules/resources/SpellFocusCost';
+import SurvivalFocusCapTracker from './modules/core/SurvivalFocusCapTracker';
+import Focus from './modules/core/Focus';
+
 //Talents
 import Trailblazer from '../shared/modules/talents/Trailblazer';
 import NaturalMending from '../shared/modules/talents/NaturalMending';
@@ -46,6 +51,7 @@ import LatentPoison from './modules/spells/azeritetraits/LatentPoison';
 import BlurOfTalons from './modules/spells/azeritetraits/BlurOfTalons';
 import PrimevalIntuition from './modules/spells/azeritetraits/PrimevalIntuition';
 import DireConsequences from '../shared/modules/spells/azeritetraits/DireConsequences';
+import WildfireCluster from './modules/spells/azeritetraits/WildfireCluster';
 
 class CombatLogParser extends CoreCombatLogParser {
   static specModules = {
@@ -56,15 +62,17 @@ class CombatLogParser extends CoreCombatLogParser {
     // Features
     alwaysBeCasting: AlwaysBeCasting,
     cooldownThroughputTracker: CooldownThroughputTracker,
-    timeFocusCapped: TimeFocusCapped,
     focusUsage: FocusUsage,
+
+    //Resources
+    focusTracker: FocusTracker,
+    focusDetails: FocusDetails,
+    spellFocusCost: SpellFocusCost,
+    survivalFocusCapTracker: SurvivalFocusCapTracker,
+    focus: Focus,
 
     //Normalizers
     tipOfTheSpearNormalizer: TipOfTheSpearNormalizer,
-
-    //Focus Chart
-    focusTracker: FocusTracker,
-    focusTab: FocusTab,
 
     //Spells
     killCommand: KillCommand,
@@ -102,6 +110,7 @@ class CombatLogParser extends CoreCombatLogParser {
     blurOfTalons: BlurOfTalons,
     primevalIntuition: PrimevalIntuition,
     direConsequences: DireConsequences,
+    wildfireCluster: WildfireCluster,
 
     // Survival's throughput benefit isn't as big as for other classes
     arcaneTorrent: [ArcaneTorrent, { castEfficiency: 0.5 }],

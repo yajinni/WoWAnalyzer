@@ -14,6 +14,7 @@ import BeaconTargets from './modules/beacons/BeaconTargets';
 import MissingBeacons from './modules/beacons/MissingBeacons';
 import FailedBeaconTransfers from './modules/beacons/FailedBeaconTransfers';
 import DirectBeaconHealing from './modules/beacons/DirectBeaconHealing';
+import BeaconUptime from './modules/beacons/BeaconUptime';
 
 import PaladinAbilityTracker from './modules/core/PaladinAbilityTracker';
 import CastBehavior from './modules/CastBehavior';
@@ -50,6 +51,7 @@ import GraceOfTheJusticar from './modules/azeritetraits/GraceOfTheJusticar';
 import GlimmerOfLight from './modules/azeritetraits/GlimmerOfLight';
 import LightsDecree from './modules/azeritetraits/LightsDecree';
 import RadiantIncandescence from './modules/azeritetraits/RadiantIncandescence';
+import VisionOfPerfection from './modules/azeritetraits/VisionOfPerfection';
 
 import { ABILITIES_AFFECTED_BY_HEALING_INCREASES } from './constants';
 
@@ -74,6 +76,7 @@ class CombatLogParser extends CoreCombatLogParser {
     missingBeacons: MissingBeacons,
     failedBeaconTransfers: FailedBeaconTransfers,
     directBeaconHealing: DirectBeaconHealing,
+    beaconUptime: BeaconUptime,
     castBehavior: CastBehavior,
     overhealing: Overhealing,
     fillerLightOfTheMartyrs: FillerLightOfTheMartyrs,
@@ -115,6 +118,7 @@ class CombatLogParser extends CoreCombatLogParser {
     radiantIncandescence: RadiantIncandescence,
     glimmerOfLight: GlimmerOfLight,
     lightsDecree: LightsDecree,
+    visionOfPerfection: VisionOfPerfection,
   };
 }
 
