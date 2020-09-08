@@ -3,15 +3,17 @@ import React from 'react';
 import SPELLS from 'common/SPELLS';
 import Analyzer from 'parser/core/Analyzer';
 import StatTracker from 'parser/shared/modules/StatTracker';
-import { formatNumber } from 'common/format';
+import { formatNumber, formatPercentage } from 'common/format';
 import StatisticGroup from 'interface/statistics/StatisticGroup';
 import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 import ItemStatistic from 'interface/statistics/ItemStatistic';
 import SpellLink from 'common/SpellLink';
 import HasteIcon from 'interface/icons/Haste';
+import UptimeIcon from 'interface/icons/Uptime';
 import ItemDamageDone from 'interface/ItemDamageDone';
 import Abilities from 'parser/core/modules/Abilities';
 import { calculatePrimaryStat } from 'common/stats';
+import { EventType } from 'parser/core/Events';
 
 const MINOR_SPELL_IDS = {
   1: SPELLS.FOCUSED_ENERGY_RANK_ONE.id,
@@ -85,16 +87,20 @@ class EssenceOfTheFocusingIris extends Analyzer {
     const uptimeOnStack = event.timestamp - this.lastStackTimestamp;
     this.totalHaste += this.currentStacks * this.hasteBuff * uptimeOnStack;
 
-    if (event.type === 'applybuff') {
+    if (event.type === EventType.ApplyBuff) {
       // With Rank two or above the buff application grants you three stacks instead of 1.
       this.currentStacks = (this.rank >= 2 ? 3 : 1);
-    } else if (event.type === 'removebuff') {
+    } else if (event.type === EventType.RemoveBuff) {
       this.currentStacks = 0;
     } else {
       this.currentStacks = event.stack;
     }
 
     this.lastStackTimestamp = event.timestamp;
+  }
+
+  get uptime() {
+    return this.selectedCombatant.getBuffUptime(SPELLS.FOCUSED_ENERGY_BUFF.id) / this.owner.fightDuration;
   }
 
   on_byPlayer_applybuff(event) {
@@ -145,8 +151,8 @@ class EssenceOfTheFocusingIris extends Analyzer {
           <div className="pad">
             <label><SpellLink id={MINOR_SPELL_IDS[rank]} /> - Minor Rank {rank}</label>
             <div className="value">
-              <HasteIcon /> {formatNumber(this.averageHasteGain)} <small>average Haste gained</small>
-            </div>
+              <HasteIcon /> {formatNumber(this.averageHasteGain)} <small>average Haste gained</small> <br />
+              <UptimeIcon /> {formatPercentage(this.uptime)}% <small>uptime</small>            </div>
           </div>
         </ItemStatistic>
         {this.hasMajor && (

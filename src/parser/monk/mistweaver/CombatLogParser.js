@@ -15,7 +15,7 @@ import LucidDreams from 'parser/shared/modules/spells/bfa/essences/LucidDreamsHe
 
 import GlobalCooldown from './modules/core/GlobalCooldown';
 import CoreChanneling from './modules/core/Channeling';
-import HotTracker from './modules/core/HotTracker';
+import HotTrackerMW from './modules/core/HotTrackerMW';
 import SpellUsable from './modules/core/SpellUsable';
 
 // Normalizers
@@ -71,8 +71,6 @@ import MistweaverHealingEfficiencyDetails from './modules/features/MistweaverHea
 import HealingEfficiencyTracker from './modules/features/MistweaverHealingEfficiencyTracker';
 import ManaTracker from '../../core/healingEfficiency/ManaTracker';
 
-
-
 import { ABILITIES_AFFECTED_BY_HEALING_INCREASES } from './constants';
 import EssenceFontHealingBreakdown from './modules/features/EssenceFontHealingBreakdown';
 
@@ -89,7 +87,7 @@ class CombatLogParser extends CoreCombatLogParser {
     lowHealthHealing: LowHealthHealing,
     channeling: CoreChanneling,
     globalCooldown: GlobalCooldown,
-    hotTracker: HotTracker,
+    hotTrackerMW: HotTrackerMW,
     spellUsable: SpellUsable,
 
     // Generic healer things
