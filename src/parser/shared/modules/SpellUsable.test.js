@@ -230,9 +230,12 @@ describe('core/Modules/SpellUsable', () => {
           type: EventType.Cast,
         },
         maxCharges: 1,
+        name: undefined,
         timePassed: 0,
         sourceID: parser.playerId,
         targetID: parser.playerId,
+        targetIsFriendly: true,
+        __fabricated: true,
       });
     });
     it('casting a spell already on cooldown before the cooldown runs out restarts the cooldown and fires both endcooldown and begincooldown events', () => {
@@ -268,8 +271,12 @@ describe('core/Modules/SpellUsable', () => {
             type: EventType.Cast,
           },
           maxCharges: 1,
+          name: undefined,
+          timePassed: undefined,
           sourceID: parser.playerId,
           targetID: parser.playerId,
+          targetIsFriendly: true,
+          __fabricated: true,
         });
       }
       {
@@ -289,6 +296,7 @@ describe('core/Modules/SpellUsable', () => {
           isOnCooldown: true,
           isAvailable: false,
           chargesAvailable: 0,
+          name: undefined,
           chargesOnCooldown: 1,
           cooldownTriggerEvent: {
             ability: {
@@ -301,6 +309,8 @@ describe('core/Modules/SpellUsable', () => {
           timePassed: 0,
           sourceID: parser.playerId,
           targetID: parser.playerId,
+          targetIsFriendly: true,
+          __fabricated: true,
         });
       }
     });
@@ -336,9 +346,12 @@ describe('core/Modules/SpellUsable', () => {
           type: EventType.Cast,
         },
         maxCharges: 2,
+        name: undefined,
         timePassed: 0,
         sourceID: parser.playerId,
         targetID: parser.playerId,
+        targetIsFriendly: true,
+        __fabricated: true,
       });
     });
     it('a spell going off cooldown triggers an `updatespellusable` event indicating the spell going off cooldown', () => {
@@ -374,9 +387,13 @@ describe('core/Modules/SpellUsable', () => {
           timestamp: 0,
           type: EventType.Cast,
         },
+        timePassed: undefined,
         maxCharges: 1,
+        name: undefined,
         sourceID: parser.playerId,
         targetID: parser.playerId,
+        targetIsFriendly: true,
+        __fabricated: true,
       });
     });
     it('a spell having a charge restored while there\'s still another charge recharging, triggers an `updatespellusable` event indicating the charge being available again and another `updatespellusable` event to indicate the cooldown starting to recharge the next charge', () => {
@@ -415,9 +432,12 @@ describe('core/Modules/SpellUsable', () => {
             type: EventType.Cast,
           },
           maxCharges: 2,
+          name: undefined,
           timePassed: 7500,
           sourceID: parser.playerId,
           targetID: parser.playerId,
+          targetIsFriendly: true,
+          __fabricated: true,
         });
       }
       {
@@ -446,9 +466,12 @@ describe('core/Modules/SpellUsable', () => {
             type: EventType.Cast,
           },
           maxCharges: 2,
+          name: undefined,
           timePassed: 0,
           sourceID: parser.playerId,
           targetID: parser.playerId,
+          targetIsFriendly: true,
+          __fabricated: true,
         });
       }
     });

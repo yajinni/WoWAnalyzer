@@ -7,7 +7,10 @@ import Abilities from 'parser/core/modules/Abilities';
 import SpellUsable from 'parser/shared/modules/SpellUsable';
 import HIT_TYPES from 'game/HIT_TYPES';
 import { formatNumber, formatPercentage } from 'common/format';
-import { REDUCTION_TIME as RP_REDUCTION_TIME } from '../talents/RighteousProtector';
+
+import { t } from '@lingui/macro';
+
+import { REDUCTION_TIME as RP_REDUCTION_TIME } from 'parser/paladin/protection/modules/talents/RighteousProtector';
 
 const HEAL_DELAY_THRESHOLD = 2000;
 
@@ -153,18 +156,20 @@ export default class LightOfTheProtector extends Analyzer {
   }
 
   suggestions(when) {
-    when(this.delaySuggestion).addSuggestion((suggest, actual, recommended) => {
-      return suggest(<>You should delay your <SpellLink id={this.activeSpell.id} /> cast as little as possible after being hit to maximize its effect and to minimize the chance that you waste healing resources.</>)
+    when(this.delaySuggestion).addSuggestion((suggest, actual, recommended) => suggest(<>You should delay your <SpellLink id={this.activeSpell.id} /> cast as little as possible after being hit to maximize its effect and to minimize the chance that you waste healing resources.</>)
         .icon(SPELLS.LIGHT_OF_THE_PROTECTOR.icon)
-        .actual(`${actual.toFixed(2)}s Average Delay`)
-        .recommended(`< ${recommended.toFixed(2)}s is recommended`);
-    });
+        .actual(t({
+      id: "paladin.protection.suggestions.lightOfTheProtector.averageDelay",
+      message: `${actual.toFixed(2)}s Average Delay`
+    }))
+        .recommended(`< ${recommended.toFixed(2)}s is recommended`));
 
-    when(this.overhealSuggestion).addSuggestion((suggest, actual, recommended) => {
-      return suggest(<>You should avoid casting <SpellLink id={this.activeSpell.id} /> while at very high health to avoid overhealing.</>)
+    when(this.overhealSuggestion).addSuggestion((suggest, actual, recommended) => suggest(<>You should avoid casting <SpellLink id={this.activeSpell.id} /> while at very high health to avoid overhealing.</>)
         .icon(SPELLS.LIGHT_OF_THE_PROTECTOR.icon)
-        .actual(`${formatPercentage(actual)}% Overhealing`)
-        .recommended(`< ${formatPercentage(recommended)}% is recommended`);
-    });
+        .actual(t({
+      id: "paladin.protection.suggestions.lightOfTheProtector.overhealing",
+      message: `${formatPercentage(actual)}% Overhealing`
+    }))
+        .recommended(`< ${formatPercentage(recommended)}% is recommended`));
   }
 }

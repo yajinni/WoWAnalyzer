@@ -1,11 +1,14 @@
 import React from 'react';
 import SpellIcon from 'common/SpellIcon';
-import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
+import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import Statistic from 'interface/statistics/Statistic';
+import HasteIcon from 'interface/icons/Haste';
+import BoringValue from 'interface/statistics/components/BoringValueText';
 import SPELLS from 'common/SPELLS';
-import ITEMS from 'common/ITEMS';
 import { formatPercentage, formatThousands } from 'common/format';
 
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Events from 'parser/core/Events';
 
 export const HIGH_TOLERANCE_HASTE = {
   [SPELLS.LIGHT_STAGGER_DEBUFF.id]: 0.08,
@@ -14,7 +17,7 @@ export const HIGH_TOLERANCE_HASTE = {
 };
 
 function hasHighTolerance(combatant) {
-  return combatant.hasTalent(SPELLS.HIGH_TOLERANCE_TALENT.id) || combatant.hasFinger(ITEMS.SOUL_OF_THE_GRANDMASTER.id);
+  return combatant.hasTalent(SPELLS.HIGH_TOLERANCE_TALENT.id);
 }
 
 function hasteFnGenerator(value) {
@@ -28,15 +31,6 @@ export const HIGH_TOLERANCE_HASTE_FNS = {
 };
 
 class HighTolerance extends Analyzer {
-  staggerDurations = {
-    [SPELLS.LIGHT_STAGGER_DEBUFF.id]: 0,
-    [SPELLS.MODERATE_STAGGER_DEBUFF.id]: 0,
-    [SPELLS.HEAVY_STAGGER_DEBUFF.id]: 0,
-  };
-
-  _staggerLevel = null;
-  _lastDebuffApplied = 0;
-
   get meanHaste() {
     return Object.keys(HIGH_TOLERANCE_HASTE)
       .map(key => this.staggerDurations[key] * HIGH_TOLERANCE_HASTE[key])
@@ -59,12 +53,23 @@ class HighTolerance extends Analyzer {
     return this.owner.fightDuration - this.lightDuration - this.moderateDuration - this.heavyDuration;
   }
 
+  staggerDurations = {
+    [SPELLS.LIGHT_STAGGER_DEBUFF.id]: 0,
+    [SPELLS.MODERATE_STAGGER_DEBUFF.id]: 0,
+    [SPELLS.HEAVY_STAGGER_DEBUFF.id]: 0,
+  };
+  _staggerLevel = null;
+  _lastDebuffApplied = 0;
+
   constructor(...args) {
     super(...args);
     this.active = hasHighTolerance(this.selectedCombatant);
+    this.addEventListener(Events.applydebuff.to(SELECTED_PLAYER), this.onApplyDebuff);
+    this.addEventListener(Events.removedebuff.to(SELECTED_PLAYER), this.onRemoveDebuff);
+    this.addEventListener(Events.fightend, this.onFightend);
   }
 
-  on_toPlayer_applydebuff(event) {
+  onApplyDebuff(event) {
     if (!HIGH_TOLERANCE_HASTE[event.ability.guid]) {
       return;
     }
@@ -72,7 +77,7 @@ class HighTolerance extends Analyzer {
     this._staggerLevel = event.ability.guid;
   }
 
-  on_toPlayer_removedebuff(event) {
+  onRemoveDebuff(event) {
     if (!HIGH_TOLERANCE_HASTE[event.ability.guid]) {
       return;
     }
@@ -80,7 +85,7 @@ class HighTolerance extends Analyzer {
     this._staggerLevel = null;
   }
 
-  on_fightend() {
+  onFightend() {
     if (this._staggerLevel !== null) {
       this.staggerDurations[this._staggerLevel] += this.owner.fight.end_time - this._lastDebuffApplied;
     }
@@ -88,10 +93,9 @@ class HighTolerance extends Analyzer {
 
   statistic() {
     return (
-      <StatisticBox
-        icon={<SpellIcon id={SPELLS.HIGH_TOLERANCE_TALENT.id} />}
-        value={`${formatPercentage(this.meanHaste)}%`}
-        label="Avg. Haste from High Tolerance"
+      <Statistic
+        position={STATISTIC_ORDER.OPTIONAL()}
+        size="flexible"
         tooltip={(
           <>
             You spent:
@@ -103,10 +107,15 @@ class HighTolerance extends Analyzer {
             </ul>
           </>
         )}
-      />
+      >
+        <BoringValue label={<><SpellIcon id={SPELLS.HIGH_TOLERANCE_TALENT.id} /> Avg. Haste from High Tolerance</>}>
+          <>
+            <HasteIcon /> {formatPercentage(this.meanHaste)} %
+          </>
+        </BoringValue>
+      </Statistic>
     );
   }
-  statisticOrder = STATISTIC_ORDER.OPTIONAL();
 }
 
 export default HighTolerance;

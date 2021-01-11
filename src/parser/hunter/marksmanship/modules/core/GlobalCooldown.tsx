@@ -1,44 +1,60 @@
 import CoreGlobalCooldown from 'parser/shared/modules/GlobalCooldown';
 import SPELLS from 'common/SPELLS';
-import SteadyFocus from 'parser/hunter/marksmanship/modules/talents/SteadyFocus';
-
-const STEADY_FOCUS_GCD_REDUCTION_PER_STACK = 0.2;
-
-const MIN_GCD = 750;
-
-/**
- * Steady Focus:
- * Using Steady Shot reduces the cast time of Steady Shot by 20%, stacking up to 2 times.  Using any other shot removes this effect.
- */
+import Events, { BeginCastEvent, CastEvent } from 'parser/core/Events';
+import { MIN_GCD } from 'parser/hunter/shared/constants';
+import Haste from 'parser/shared/modules/Haste';
+import { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
 
 class GlobalCooldown extends CoreGlobalCooldown {
   static dependencies = {
     ...CoreGlobalCooldown.dependencies,
-    steadyFocus: SteadyFocus,
+    haste: Haste,
   };
 
-  protected steadyFocus!: SteadyFocus;
+  protected haste!: Haste;
 
-  on_byPlayer_cast(event: any) {
+  aimedShotTimestamp: number | null = null;
+
+  /**
+   * Barrage and Rapid FIre GCDs are triggered when fabricating channel events
+   */
+  constructor(options: Options) {
+    super(options);
+    this.addEventListener(Events.begincast.by(SELECTED_PLAYER).spell(SPELLS.AIMED_SHOT), this.startAimedShot);
+  }
+
+  startAimedShot(event: BeginCastEvent) {
+    if (!event.__fabricated) {
+      this.aimedShotTimestamp = event.timestamp;
+    }
+  }
+
+  onCast(event: CastEvent) {
     const spellId = event.ability.guid;
-    if (spellId === SPELLS.RAPID_FIRE.id) {
-      // This GCD gets handled by the `beginchannel` event
+    if (spellId === SPELLS.BARRAGE_TALENT.id || spellId === SPELLS.RAPID_FIRE.id) {
       return;
     }
-    super.on_byPlayer_cast(event);
+    const isOnGCD = this.isOnGlobalCooldown(spellId);
+    if (!isOnGCD) {
+      return;
+    }
+    super.onCast(event);
   }
 
   getGlobalCooldownDuration(spellId: number) {
-    const gcd = super.getGlobalCooldownDuration(spellId);
+    let gcd = super.getGlobalCooldownDuration(spellId);
     if (!gcd) {
       return 0;
     }
-    if (spellId && spellId === SPELLS.STEADY_SHOT.id && this.selectedCombatant.hasBuff(SPELLS.STEADY_FOCUS_BUFF.id)) {
-      const steadyFocusMultiplier = 1 - STEADY_FOCUS_GCD_REDUCTION_PER_STACK * this.steadyFocus.steadyFocusStacks;
-      return Math.max(MIN_GCD, (gcd * steadyFocusMultiplier));
+    if (spellId === SPELLS.AIMED_SHOT.id && this.aimedShotTimestamp === null) {
+      return 0;
+    }
+    if (spellId === SPELLS.WILD_SPIRITS.id) {
+      gcd = gcd / (1 + this.haste.current);
     }
     return Math.max(MIN_GCD, gcd);
   }
+
 }
 
 export default GlobalCooldown;

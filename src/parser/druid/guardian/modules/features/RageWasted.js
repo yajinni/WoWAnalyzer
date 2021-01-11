@@ -5,7 +5,9 @@ import RESOURCE_TYPES from 'game/RESOURCE_TYPES';
 import SpellLink from 'common/SpellLink';
 import SpellIcon from 'common/SpellIcon';
 import StatisticBox from 'interface/others/StatisticBox';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Events from 'parser/core/Events';
+import { t } from '@lingui/macro';
 
 // NOTE: "Raw" rage is what shows up in combat log events (divided by 10 and rounded to get in-game rage).
 // We deal with raw rage here to prevent accuracy loss.
@@ -27,58 +29,6 @@ const RAGE_GENERATORS = {
 };
 
 class RageWasted extends Analyzer {
-  rageWastedBySpell = {};
-  totalRageGained = 0;
-  _currentRawRage = 0;
-
-  // Currently always 1000, but in case a future tier set/talent/artifact trait increases this it should "just work"
-  _currentMaxRage = 0;
-
-  synchronizeRage(event) {
-    if (!event.classResources) {
-      console.log('no classResources', event);
-      return;
-    }
-    const rageResource = event.classResources.find(resource => resource.type === RESOURCE_TYPES.RAGE.id);
-    if (rageResource) {
-      this._currentRawRage = rageResource.amount;
-      this._currentMaxRage = rageResource.max;
-    }
-  }
-
-  registerRageWaste(abilityID, waste) {
-    if (!this.rageWastedBySpell[abilityID]) {
-      this.rageWastedBySpell[abilityID] = waste;
-    } else {
-      this.rageWastedBySpell[abilityID] += waste;
-    }
-  }
-
-  on_byPlayer_energize(event) {
-    this.synchronizeRage(event);
-    if (event.resourceChangeType !== RESOURCE_TYPES.RAGE.id) {
-      return;
-    }
-
-    if (event.waste > 0) {
-      this.registerRageWaste(event.ability.guid, event.waste);
-    }
-
-    this.totalRageGained += event.resourceChange + event.waste;
-  }
-
-  on_byPlayer_cast(event) {
-    if (event.ability.guid === SPELLS.MELEE.id) {
-      if (this._currentRawRage + RAW_RAGE_GAINED_FROM_MELEE > this._currentMaxRage) {
-        const realRageWasted = Math.floor((this._currentRawRage + RAW_RAGE_GAINED_FROM_MELEE - this._currentMaxRage) / 10);
-        this.registerRageWaste(event.ability.guid, realRageWasted);
-      }
-      // Convert from raw rage to real rage
-      this.totalRageGained += RAW_RAGE_GAINED_FROM_MELEE / 10;
-    }
-    this.synchronizeRage(event);
-  }
-
   get totalWastedRage() {
     return Object.keys(this.rageWastedBySpell)
       .map(key => this.rageWastedBySpell[key])
@@ -104,15 +54,73 @@ class RageWasted extends Analyzer {
       .reduce((str, spell) => <>{str}<br />{spell.name}: {spell.waste}</>, 'Rage wasted per spell:');
   }
 
+  rageWastedBySpell = {};
+  totalRageGained = 0;
+  _currentRawRage = 0;
+  // Currently always 1000, but in case a future tier set/talent/artifact trait increases this it should "just work"
+  _currentMaxRage = 0;
+
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.energize.by(SELECTED_PLAYER), this.onEnergize);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER), this.onCast);
+  }
+
+  synchronizeRage(event) {
+    if (!event.classResources) {
+      console.log('no classResources', event);
+      return;
+    }
+    const rageResource = event.classResources.find(resource => resource.type === RESOURCE_TYPES.RAGE.id);
+    if (rageResource) {
+      this._currentRawRage = rageResource.amount;
+      this._currentMaxRage = rageResource.max;
+    }
+  }
+
+  registerRageWaste(abilityID, waste) {
+    if (!this.rageWastedBySpell[abilityID]) {
+      this.rageWastedBySpell[abilityID] = waste;
+    } else {
+      this.rageWastedBySpell[abilityID] += waste;
+    }
+  }
+
+  onEnergize(event) {
+    this.synchronizeRage(event);
+    if (event.resourceChangeType !== RESOURCE_TYPES.RAGE.id) {
+      return;
+    }
+
+    if (event.waste > 0) {
+      this.registerRageWaste(event.ability.guid, event.waste);
+    }
+
+    this.totalRageGained += event.resourceChange + event.waste;
+  }
+
+  onCast(event) {
+    if (event.ability.guid === SPELLS.MELEE.id) {
+      if (this._currentRawRage + RAW_RAGE_GAINED_FROM_MELEE > this._currentMaxRage) {
+        const realRageWasted = Math.floor((this._currentRawRage + RAW_RAGE_GAINED_FROM_MELEE - this._currentMaxRage) / 10);
+        this.registerRageWaste(event.ability.guid, realRageWasted);
+      }
+      // Convert from raw rage to real rage
+      this.totalRageGained += RAW_RAGE_GAINED_FROM_MELEE / 10;
+    }
+    this.synchronizeRage(event);
+  }
+
   suggestions(when) {
     when(this.wastedRageRatio).isGreaterThan(0)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<span>You are wasting rage.  Try to spend rage before you reach the rage cap so you aren't losing out on potential <SpellLink id={SPELLS.IRONFUR.id} />s or <SpellLink id={SPELLS.MAUL.id} />s.</span>)
-          .icon(SPELLS.BRISTLING_FUR.icon)
-          .actual(`${formatPercentage(actual)}% wasted rage`)
-          .recommended(`${formatPercentage(recommended)}% is recommended`)
-          .regular(recommended + 0.02).major(recommended + 0.05);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<span>You are wasting rage.  Try to spend rage before you reach the rage cap so you aren't losing out on potential <SpellLink id={SPELLS.IRONFUR.id} />s or <SpellLink id={SPELLS.MAUL.id} />s.</span>)
+        .icon(SPELLS.BRISTLING_FUR.icon)
+        .actual(t({
+      id: "druid.guardian.suggestions.rage.wasted",
+      message: `${formatPercentage(actual)}% wasted rage`
+    }))
+        .recommended(`${formatPercentage(recommended)}% is recommended`)
+        .regular(recommended + 0.02).major(recommended + 0.05));
   }
 
   statistic() {

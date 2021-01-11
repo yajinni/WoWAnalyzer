@@ -1,17 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
-import { Trans, t } from '@lingui/macro';
-
 import SPECS from 'game/SPECS';
 import ROLES from 'game/ROLES';
 import getAverageItemLevel from 'game/getAverageItemLevel';
 import getFightName from 'common/getFightName';
 import { fetchCombatants, LogNotFoundError } from 'common/fetchWclApi';
 import { captureException } from 'common/errorLogger';
-import { i18n } from 'interface/RootLocalizationProvider';
 import ActivityIndicator from 'interface/common/ActivityIndicator';
 import DocumentTitle from 'interface/DocumentTitle';
 import { setCombatants } from 'interface/actions/combatants';
@@ -21,8 +13,19 @@ import Tooltip from 'common/Tooltip';
 import PlayerSelection from 'interface/report/PlayerSelection';
 import RaidCompositionDetails from 'interface/report/RaidCompositionDetails';
 import ReportDurationWarning, { MAX_REPORT_DURATION } from 'interface/report/ReportDurationWarning';
+import AdvancedLoggingWarning from 'interface/report/AdvancedLoggingWarning';
 import ReportRaidBuffList from 'interface/ReportRaidBuffList';
 import { fetchCharacter } from 'interface/actions/characters';
+import { generateFakeCombatantInfo } from 'interface/report/CombatantInfoFaker';
+import Panel from 'interface/others/Panel';
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { Link, withRouter } from 'react-router-dom';
+import { Trans, t } from '@lingui/macro';
+
 import handleApiError from './handleApiError';
 
 const defaultState = {
@@ -31,13 +34,14 @@ const defaultState = {
   combatantsFightId: null,
 };
 
+const FAKE_PLAYER_IF_DEV_ENV = false;
+
 class PlayerLoader extends React.PureComponent {
   tanks = 0;
   healers = 0;
   dps = 0;
   ranged = 0;
   ilvl = 0;
-  heartLvl = 0;
 
   static propTypes = {
     report: PropTypes.shape({
@@ -51,10 +55,14 @@ class PlayerLoader extends React.PureComponent {
       exportedCharacters: PropTypes.any,
       start: PropTypes.number.isRequired,
       end: PropTypes.number.isRequired,
+      gameVersion: PropTypes.number.isRequired,
     }).isRequired,
     fight: PropTypes.shape({
       id: PropTypes.number.isRequired,
+      // replace with actual fight interface when converting to TS
+      // eslint-disable-next-line @typescript-eslint/camelcase
       start_time: PropTypes.number.isRequired,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       end_time: PropTypes.number.isRequired,
     }).isRequired,
     setCombatants: PropTypes.func.isRequired,
@@ -97,41 +105,24 @@ class PlayerLoader extends React.PureComponent {
   }
 
   async loadCombatants(report, fight) {
-    let numberOfCombatantsWithLoadedHeart = 0;
+    if (report.gameVersion === 2) {
+      return;
+    }
     try {
-      const { fetchCharacter } = this.props;
-      const combatants = await fetchCombatants(report.code, fight.start_time, fight.end_time);
-      const characterDataPromises = combatants.map(player => {
-        const friendly = report.friendlies.find(friendly => friendly.id === player.sourceID);
-        if (!friendly) {
-          // unsure why this happens, but it can
-          return Promise.resolve();
-        }
-        const exportedCharacter = report.exportedCharacters ? report.exportedCharacters.find(char => char.name === friendly.name) : null;
-        if (!exportedCharacter) {
-          return Promise.resolve();
-        }
-        return fetchCharacter(friendly.guid, exportedCharacter.region, exportedCharacter.server, exportedCharacter.name).then(data => {
-          return Promise.resolve(data);
-        }).catch(() => {
-          // This guy failed to load - this is nice to have data
-          // We can ignore this and we'll just drop him from the overall averages later
-          return Promise.resolve();
-        });
-      });
-      let characterDatas = await Promise.all(characterDataPromises);
-      // Filter for only loaded characterDatas
-      characterDatas = characterDatas.filter(value => value);
+      const combatants = await fetchCombatants(report.code, fight.start_time, fight.end_time); 
       combatants.forEach(player => {
+        if (process.env.NODE_ENV === 'development' && FAKE_PLAYER_IF_DEV_ENV) {
+          console.error('This player (sourceID: ' + player.sourceID + ') has an error. Because you\'re in development environment, we have faked the missing information, see CombatantInfoFaker.ts for more information.');
+          player = generateFakeCombatantInfo(player);
+        }
         if (player.error || player.specID === -1) {
           return;
         }
         const friendly = report.friendlies.find(friendly => friendly.id === player.sourceID);
-        if(!friendly) {
-          console.error("friendly missing from report for player", player.sourceID);
+        if (!friendly) {
+          console.error('friendly missing from report for player', player.sourceID);
           return;
         }
-        const characterData = characterDatas ? characterDatas.find(data => data.id === friendly.guid) : null;
         switch (SPECS[player.specID].role) {
           case ROLES.TANK:
             this.tanks += 1;
@@ -145,19 +136,13 @@ class PlayerLoader extends React.PureComponent {
           case ROLES.DPS.RANGED:
             this.ranged += 1;
             break;
-          default: break;
+          default:
+            break;
         }
         // Gear may be null for broken combatants
         this.ilvl += player.gear ? getAverageItemLevel(player.gear) : 0;
-        if (characterData && characterData.heartOfAzeroth) {
-          numberOfCombatantsWithLoadedHeart += 1;
-          this.heartLvl += characterData.heartOfAzeroth.azeriteItemLevel;
-        }
       });
       this.ilvl /= combatants.length;
-      if (numberOfCombatantsWithLoadedHeart > 0) {
-        this.heartLvl /= numberOfCombatantsWithLoadedHeart;
-      }
       if (this.props.report !== report || this.props.fight !== fight) {
         return; // the user switched report/fight already
       }
@@ -196,7 +181,28 @@ class PlayerLoader extends React.PureComponent {
   }
 
   renderLoading() {
-    return <ActivityIndicator text={i18n._(t`Fetching player info...`)} />;
+    return (
+      <ActivityIndicator text={t({
+        id: "interface.report.renderLoading.fetchingPlayerInfo",
+        message: `Fetching player info...`
+      })} />
+    );
+  }
+
+  renderClassicWarning() {
+    return (
+      <div className="container offset">
+        <Panel title={<Trans id="interface.report.renderClassicWarning.classicUnsupported">Sorry, Classic WoW Logs are not supported</Trans>}>
+          <div className="flex wrapable">
+            <div className="flex-main" style={{ minWidth: 400 }}>
+              <Trans id="interface.report.renderClassicWarning.classicUnsupportedDetails">
+                The current report contains encounters from World of Warcraft: Classic. Currently WoWAnalyzer does not support, and does not have plans to support, Classic WoW logs.
+              </Trans><br /><br />
+            </div>
+          </div>
+        </Panel>
+      </div>
+    );
   }
 
   render() {
@@ -205,6 +211,10 @@ class PlayerLoader extends React.PureComponent {
     const error = this.state.error;
     if (error) {
       return this.renderError(error);
+    }
+
+    if (report.gameVersion === 2) {
+      return this.renderClassicWarning();
     }
 
     const combatants = this.state.combatants;
@@ -222,30 +232,42 @@ class PlayerLoader extends React.PureComponent {
       if (player) {
         // Player data was in the report, but there was another issue
         if (hasDuplicatePlayers) {
-          alert(i18n._(t`It appears like another "${playerName}" is in this log, please select the correct one`));
+          alert(t({
+            id: "interface.report.render.hasDuplicatePlayers",
+            message: `It appears like another "${playerName}" is in this log, please select the correct one`
+          }));
         } else if (!combatant) {
-          alert(i18n._(t`Player data does not seem to be available for the selected player in this fight.`));
+          alert(t({
+            id: "interface.report.render.dataNotAvailable",
+            message: `Player data does not seem to be available for the selected player in this fight.`
+          }));
         } else if (combatant.error || !combatant.specID) {
-          alert(i18n._(t`The data received from WCL for this player is corrupt, this player can not be analyzed in this fight.`));
+          alert(t({
+            id: "interface.report.render.logCorrupted",
+            message: `The data received from WCL for this player is corrupt, this player can not be analyzed in this fight.`
+          }));
         }
       }
       return (
         <div className="container offset">
           <div style={{ position: 'relative', marginBottom: 15 }}>
             <div className="back-button">
-              <Tooltip content={i18n._(t`Back to fight selection`)}>
+              <Tooltip content={t({
+                id: "interface.report.render.backToFightSelection",
+                message: `Back to fight selection`
+              })}>
                 <Link to={`/report/${report.code}`}>
                   <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
                   <label>
-                    {' '}<Trans>Fight selection</Trans>
+                    {' '}<Trans id="interface.report.render.labelFightSelection">Fight selection</Trans>
                   </label>
                 </Link>
               </Tooltip>
             </div>
             <div className="flex wrapable" style={{ marginBottom: 15 }}>
               <div className="flex-main">
-                <h1 style={{ lineHeight: 1.4, margin: 0 }}><Trans>Player selection</Trans></h1>
-                <small style={{ marginTop: -5 }}><Trans>Select the player you wish to analyze.</Trans></small>
+                <h1 style={{ lineHeight: 1.4, margin: 0 }}><Trans id="interface.report.render.playerSelection">Player selection</Trans></h1>
+                <small style={{ marginTop: -5 }}><Trans id="interface.report.render.playerSelectionDetails">Select the player you wish to analyze.</Trans></small>
               </div>
               <div className="flex-sub">
                 <RaidCompositionDetails
@@ -254,7 +276,6 @@ class PlayerLoader extends React.PureComponent {
                   dps={this.dps}
                   ranged={this.ranged}
                   ilvl={this.ilvl}
-                  heartLvl={this.heartLvl}
                 />
               </div>
             </div>
@@ -262,6 +283,8 @@ class PlayerLoader extends React.PureComponent {
 
           {fight.end_time > MAX_REPORT_DURATION &&
           <ReportDurationWarning duration={reportDuration} />}
+
+          {combatants.length === 0 && <AdvancedLoggingWarning />}
 
           <PlayerSelection
             players={report.friendlies.map(friendly => {
@@ -287,20 +310,21 @@ class PlayerLoader extends React.PureComponent {
       );
     }
 
-    return (
-      <>
-        {/* TODO: Refactor the DocumentTitle away */}
-        <DocumentTitle title={i18n._(t`${getFightName(report, fight)} by ${player.name} in ${report.title}`)} />
+    return <>
+      {/* TODO: Refactor the DocumentTitle away */}
+      <DocumentTitle title={t({
+        id: "interface.report.render.documentTitle",
+        message: `${getFightName(report, fight)} by ${player.name} in ${report.title}`
+      })} />
 
-        {this.props.children(player, combatant, combatants)}
-      </>
-    );
+      {this.props.children(player, combatant, combatants)}
+    </>;
   }
 }
 
-const mapStateToProps = state => ({
-  playerName: getPlayerName(state),
-  playerId: getPlayerId(state),
+const mapStateToProps = (state, props) => ({
+  playerName: getPlayerName(props.location.pathname),
+  playerId: getPlayerId(props.location.pathname),
 });
 export default compose(
   withRouter,

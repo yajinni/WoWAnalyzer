@@ -1,34 +1,17 @@
 import React from 'react';
 
 import SPELLS from 'common/SPELLS';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValue from 'interface/statistics/components/BoringSpellValue';
 import EventGrouper from 'parser/core/EventGrouper';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 import SpellLink from 'common/SpellLink';
+import Events from 'parser/core/Events';
 
 const PENANCE_MINIMUM_RECAST_TIME = 3500; // Minimum duration from one Penance to Another
 
 class Penance extends Analyzer {
-  _boltCount = 3;
-  hits = 0;
-  eventGrouper = new EventGrouper(PENANCE_MINIMUM_RECAST_TIME);
-
-  constructor(...args) {
-    super(...args);
-
-    // Castigation Penance bolt count to 4 (from 3)
-    this._boltCount = this.selectedCombatant.hasTalent(
-      SPELLS.CASTIGATION_TALENT.id,
-    )
-      ? 4
-      : 3;
-  }
-
-  static isPenance = spellId =>
-    spellId === SPELLS.PENANCE.id || spellId === SPELLS.PENANCE_HEAL.id || spellId === SPELLS.PENANCE_CAST.id;
-
   get missedBolts() {
     return [...this.eventGrouper].reduce(
       (missedBolts, cast) => missedBolts + (this._boltCount - cast.length),
@@ -44,7 +27,23 @@ class Penance extends Analyzer {
     return [...this.eventGrouper].slice(-1)[0].length - 1; // -1 here for legacy code
   }
 
-  on_byPlayer_damage(event) {
+  _boltCount = 3;
+  hits = 0;
+  eventGrouper = new EventGrouper(PENANCE_MINIMUM_RECAST_TIME);
+
+  constructor(options) {
+    super(options);
+
+    // Castigation Penance bolt count to 4 (from 3)
+    this._boltCount = this.selectedCombatant.hasTalent(SPELLS.CASTIGATION_TALENT.id) ? 4 : 3;
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER), this.onDamage);
+    this.addEventListener(Events.heal.by(SELECTED_PLAYER), this.onHeal);
+  }
+
+  static isPenance = (spellId) =>
+    spellId === SPELLS.PENANCE.id || spellId === SPELLS.PENANCE_HEAL.id || spellId === SPELLS.PENANCE_CAST.id;
+
+  onDamage(event) {
     if (!Penance.isPenance(event.ability.guid)) {
       return;
     }
@@ -54,7 +53,7 @@ class Penance extends Analyzer {
     event.penanceBoltNumber = this.currentBoltNumber;
   }
 
-  on_byPlayer_heal(event) {
+  onHeal(event) {
     if (!Penance.isPenance(event.ability.guid)) {
       return;
     }

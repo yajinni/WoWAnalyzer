@@ -21,6 +21,7 @@ import DiscordButton from 'interface/common/thirdpartybuttons/Discord';
 import './Home.scss';
 import ReportSelectionHeader from './ReportSelectionHeader';
 import NotFound from './NotFound';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 const News = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'News' */ 'interface/news').then(exports => exports.default)));
 const NewsPage = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'News' */ 'interface/news/Page').then(exports => exports.default)));
@@ -29,7 +30,7 @@ const Premium = lazyLoadComponent(() => retryingPromise(() => import(/* webpackC
 const AboutPage = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'AboutPage' */ 'interface/AboutPage').then(exports => exports.default)));
 const HelpWanted = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'HelpWantedPage' */ 'interface/HelpWantedPage').then(exports => exports.default)));
 const ContributorPage = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'ContributorPage' */ 'interface/ContributorPage').then(exports => exports.default)));
-const Search = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'Search' */ 'interface/search').then(exports => exports.default)));
+const Search = lazyLoadComponent(() => retryingPromise(() => import(/* webpackChunkName: 'Search' */ 'interface/Search').then(exports => exports.default)));
 
 class Home extends React.PureComponent {
   static propTypes = {
@@ -47,27 +48,27 @@ class Home extends React.PureComponent {
     return [
       {
         icon: NewsIcon,
-        name: <Trans>News</Trans>,
+        name: <Trans id="interface.home.page.news">News</Trans>,
         url: 'news',
       },
       {
         icon: FingerprintFilledIcon,
-        name: <Trans>Specs</Trans>,
+        name: <Trans id="interface.home.page.specs">Specs</Trans>,
         url: 'specs',
       },
       {
         icon: Logo,
-        name: <Trans>About</Trans>,
+        name: <Trans id="interface.home.page.about">About</Trans>,
         url: 'about',
       },
       {
         icon: PremiumIcon,
-        name: <Trans>Premium</Trans>,
+        name: <Trans id="interface.home.page.premium">Premium</Trans>,
         url: 'premium',
       },
       {
         icon: HelpWantedIcon,
-        name: <Trans>Help wanted</Trans>,
+        name: <Trans id="interface.home.page.helpWanted">Help wanted</Trans>,
         url: 'help-wanted',
       },
     ];
@@ -85,6 +86,7 @@ class Home extends React.PureComponent {
             <div className="col-xs-12 col-sm-6">
               {!premium && <PatreonButton style={{ marginRight: 10 }} />}
               <DiscordButton style={{ marginRight: 10 }} />
+              <LanguageSwitcher />
             </div>
             <div className="col-xs-12 col-sm-6 text-right">
               <a href="https://github.com/WoWAnalyzer/WoWAnalyzer/actions?query=workflow%3ABuild">

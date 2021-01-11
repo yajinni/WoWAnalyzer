@@ -5,7 +5,9 @@ import Gore from './Gore';
 
 const mockSpellUsable = {
   isOnCooldown: () => false,
-  endCooldown: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  endCooldown: () => {
+  },
 };
 
 describe('Druid/Guardian/Gore', () => {

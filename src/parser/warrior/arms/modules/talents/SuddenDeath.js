@@ -20,12 +20,12 @@ class SuddenDeath extends Analyzer {
     super(...args);
     this.active = this.selectedCombatant.hasTalent(SPELLS.SUDDEN_DEATH_TALENT_ARMS.id);
     this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(SPELLS.EXECUTE_DAMAGE), this._onExecuteDamage);
-    this.addEventListener(Events.applybuff.by(SELECTED_PLAYER).spell(SPELLS.SUDDEN_DEATH_TALENT_ARMS_BUFF), this._countSuddenDeathProc);
-    this.addEventListener(Events.refreshbuff.by(SELECTED_PLAYER).spell(SPELLS.SUDDEN_DEATH_TALENT_ARMS_BUFF), this._countSuddenDeathProc);
+    this.addEventListener(Events.applybuff.by(SELECTED_PLAYER).spell(SPELLS.SUDDEN_DEATH_ARMS_TALENT_BUFF), this._countSuddenDeathProc);
+    this.addEventListener(Events.refreshbuff.by(SELECTED_PLAYER).spell(SPELLS.SUDDEN_DEATH_ARMS_TALENT_BUFF), this._countSuddenDeathProc);
   }
 
   _onExecuteDamage(event) {
-    if (!this.selectedCombatant.hasBuff(SPELLS.SUDDEN_DEATH_TALENT_ARMS_BUFF.id)) {
+    if (!this.selectedCombatant.hasBuff(SPELLS.SUDDEN_DEATH_ARMS_TALENT_BUFF.id)) {
       return;
     }
     this.totalDamages += event.amount + (event.absorbed || 0);

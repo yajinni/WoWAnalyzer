@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import Enemies from 'parser/shared/modules/Enemies';
 import calculateEffectiveDamage from 'parser/core/calculateEffectiveDamage';
 
@@ -9,6 +9,7 @@ import SpellIcon from 'common/SpellIcon';
 import { formatNumber, formatPercentage } from 'common/format';
 
 import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
+import Events from 'parser/core/Events';
 
 const NEMESIS_BUFF_IDS = [
   SPELLS.NEMESIS_DEMON.id,
@@ -25,25 +26,32 @@ const NEMESIS_BUFF_IDS = [
 
 const NEMESIS_DAMAGE_MODIFIER = 0.25;
 
+/** @Deprecated - talent/spell no longer exists in the prepatch or SL **/
 class Nemesis extends Analyzer {
+  get hasNemesisBuff() {
+    const buffs = this.selectedCombatant.activeBuffs();
+    return buffs.some(buff => NEMESIS_BUFF_IDS.includes(buff.ability.guid));
+  }
+
+  get nemesisUptimePercent() {
+    const enemyUptime = this.enemies.getBuffUptime(SPELLS.NEMESIS_TALENT.id);
+    const playerUptime = NEMESIS_BUFF_IDS.reduce((uptime, spellId) => uptime + this.selectedCombatant.getBuffUptime(spellId), 0);
+    return (enemyUptime + playerUptime) / this.owner.fightDuration;
+  }
+
   static dependencies = {
     enemies: Enemies,
   };
-
   everHadNemesisBuff = false;
   bonusDmg = 0;
 
   constructor(...args) {
     super(...args);
     this.active = this.selectedCombatant.hasTalent(SPELLS.NEMESIS_TALENT.id);
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER), this.onDamage);
   }
 
-  get hasNemesisBuff() {
-    const buffs = this.selectedCombatant.activeBuffs();
-    return buffs.some(buff => NEMESIS_BUFF_IDS.includes(buff.ability.guid));
-  }
-
-  on_byPlayer_damage(event) {
+  onDamage(event) {
     if (event.targetIsFriendly) {
       return;
     }
@@ -54,12 +62,6 @@ class Nemesis extends Analyzer {
     if (enemy && (enemy.hasBuff(SPELLS.NEMESIS_TALENT.id) || this.hasNemesisBuff)) {
       this.bonusDmg += calculateEffectiveDamage(event, NEMESIS_DAMAGE_MODIFIER);
     }
-  }
-
-  get nemesisUptimePercent() {
-    const enemyUptime = this.enemies.getBuffUptime(SPELLS.NEMESIS_TALENT.id);
-    const playerUptime = NEMESIS_BUFF_IDS.reduce((uptime, spellId) => uptime + this.selectedCombatant.getBuffUptime(spellId), 0);
-    return (enemyUptime + playerUptime) / this.owner.fightDuration;
   }
 
   statistic() {

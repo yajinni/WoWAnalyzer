@@ -8,13 +8,17 @@ import { formatThousands, formatNumber, formatPercentage } from 'common/format';
 
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 
 /*
   Internal Combustion (Tier 30 Destruction talent):
     Chaos Bolt consumes up to 5 sec of Immolate's damage over time effect on your target, instantly dealing that much damage.
  */
 class InternalCombustion extends Analyzer {
+  get dps() {
+    return this.damage / this.owner.fightDuration * 1000;
+  }
+
   damage = 0;
 
   constructor(...args) {
@@ -27,14 +31,10 @@ class InternalCombustion extends Analyzer {
     this.damage += (event.amount || 0) + (event.absorbed || 0);
   }
 
-  get dps() {
-    return this.damage / this.owner.fightDuration * 1000;
-  }
-
   statistic() {
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(2)}
+        category={STATISTIC_CATEGORY.TALENTS}
         size="small"
         tooltip={`${formatThousands(this.damage)} damage`}
       >

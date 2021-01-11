@@ -2,7 +2,6 @@ import React from 'react';
 import { Trans, t } from '@lingui/macro';
 import { Link } from 'react-router-dom';
 
-import { i18n } from 'interface/RootLocalizationProvider';
 import DocumentTitle from 'interface/DocumentTitle';
 import Panel from 'interface/others/Panel';
 
@@ -11,7 +10,7 @@ const HelpWanted = () => (
     <DocumentTitle title="Help wanted" />
 
     <Panel
-      title={<Trans>Help wanted</Trans>}
+      title={<Trans id="interface.helpWantedPage.helpWantedTitle">Help wanted</Trans>}
       bodyStyle={{
         textAlign: 'justify',
         padding: 0,
@@ -21,7 +20,7 @@ const HelpWanted = () => (
       }}
     >
       <div style={{ padding: '15px 20px', marginBottom: 5 }}>
-        <Trans>
+        <Trans id="interface.helpWantedPage.helpWanted">
           WoWAnalyzer is completely open source and relies on mostly volunteer
           contributors to implement spec-specific analysis. You don't need to to
           do anything special to contribute. See the{' '}
@@ -39,7 +38,10 @@ const HelpWanted = () => (
       <img
         src="https://media.giphy.com/media/l1J3vV5lCmv8qx16M/giphy.gif"
         style={{ width: '100%' }}
-        alt={i18n._(t`Sharing is caring`)}
+        alt={t({
+          id: "interface.helpWantedPage.sharingIsCaring",
+          message: `Sharing is caring`
+        })}
       />
     </Panel>
   </>

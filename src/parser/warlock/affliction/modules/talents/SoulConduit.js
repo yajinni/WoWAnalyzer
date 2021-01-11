@@ -6,12 +6,11 @@ import Events from 'parser/core/Events';
 import SPELLS from 'common/SPELLS';
 import { formatPercentage, formatThousands } from 'common/format';
 
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 import { findMax, binomialPMF } from 'parser/shared/modules/helpers/Probability';
 
-import { UNSTABLE_AFFLICTION_DEBUFFS } from '../../constants';
 import SoulShardTracker from '../soulshards/SoulShardTracker';
 
 const TICKS_PER_UA = 4;
@@ -28,7 +27,7 @@ class SoulConduit extends Analyzer {
   constructor(...args) {
     super(...args);
     this.active = this.selectedCombatant.hasTalent(SPELLS.SOUL_CONDUIT_TALENT.id);
-    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(UNSTABLE_AFFLICTION_DEBUFFS), this.onUnstableAfflictionDamage);
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(SPELLS.UNSTABLE_AFFLICTION), this.onUnstableAfflictionDamage);
   }
 
   onUnstableAfflictionDamage(event) {
@@ -47,8 +46,8 @@ class SoulConduit extends Analyzer {
     const { max } = findMax(totalSpent, (k, n) => binomialPMF(k, n, SC_PROC_CHANCE));
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(5)}
-        size="small"
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
         tooltip={(
           <>
             You gained {shardsGained} Shards from this talent, {max > 0 ? <>which is <strong>{formatPercentage(shardsGained / max)}%</strong> of Shards you were most likely to get in this fight ({max} Shards).</> : 'while you were most likely to not get any Shards.'}<br />

@@ -3,7 +3,8 @@ import { Trans } from '@lingui/macro';
 
 import SPELLS from 'common/SPELLS';
 import { formatPercentage } from 'common/format';
-import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Analyzer, { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
+import { ThresholdStyle, When } from 'parser/core/ParseResults';
 import Events, { ApplyBuffEvent, CastEvent, RefreshBuffEvent } from 'parser/core/Events';
 
 // Don't refresh with more than 4.5 seconds left on Flametongue buff
@@ -14,10 +15,8 @@ class FlametongueRefresh extends Analyzer {
   protected flametongueCasts: number = 0;
   protected earlyRefresh: number = 0;
 
-  constructor(options: any) {
+  constructor(options: Options) {
     super(options);
-
-    this.active = !this.selectedCombatant.hasTalent(SPELLS.SEARING_ASSAULT_TALENT.id);
 
     this.addEventListener(
       Events.cast.by(SELECTED_PLAYER)
@@ -38,6 +37,22 @@ class FlametongueRefresh extends Analyzer {
     );
   }
 
+  get refreshPercentageCast() {
+    return this.earlyRefresh / this.flametongueCasts;
+  }
+
+  get flametongueEarlyRefreshThreshold() {
+    return {
+      actual: this.earlyRefresh,
+      isGreaterThan: {
+        minor: 0,
+        average: 3,
+        major: 5,
+      },
+      style: ThresholdStyle.NUMBER,
+    };
+  }
+
   onCast(event: CastEvent) {
     this.flametongueCasts += 1;
   }
@@ -55,42 +70,26 @@ class FlametongueRefresh extends Analyzer {
     this.flametongueTimestamp = event.timestamp;
   }
 
-  get refreshPercentageCast() {
-    return this.earlyRefresh / this.flametongueCasts;
-  }
-
-  get flametongueEarlyRefreshThreshold() {
-    return {
-      actual: this.earlyRefresh,
-      isGreaterThan: {
-        minor: 0,
-        average: 3,
-        major: 5,
-      },
-      style: 'number',
-    };
-  }
-
-  suggestions(when: any) {
+  suggestions(when: When) {
     when(this.flametongueEarlyRefreshThreshold)
       .addSuggestion(
-        (suggest: any, actual: any, recommended: any) => {
-          return suggest(
-            <>Avoid refreshing Flametongue with more then 4.5 sec left on the buff.
-              Some early refreshes are unavoidable.</>)
-            .icon(SPELLS.FLAMETONGUE_BUFF.icon)
-            .actual(
-              <Trans>
-                {actual} of {this.flametongueCasts} ({formatPercentage(
-                this.refreshPercentageCast,
-                0,
-              )}%) early refreshes
-              </Trans>,
-            )
-            .recommended(
-              <Trans>{recommended} recommended</Trans>,
-            );
-        },
+        (suggest, actual, recommended) => suggest(
+          <><Trans id="shaman.enhancement.modules.core.flametongueRefresh.suggestion">
+            Avoid refreshing Flametongue with more then 4.5 sec left on the buff.
+            Some early refreshes are unavoidable.
+          </Trans></>)
+          .icon(SPELLS.FLAMETONGUE_BUFF.icon)
+          .actual(
+            <Trans id="shaman.enhancement.modules.core.flametongueRefresh.actual">
+              {actual} of {this.flametongueCasts} ({formatPercentage(
+              this.refreshPercentageCast,
+              0,
+            )}%) early refreshes
+            </Trans>,
+          )
+          .recommended(
+            <Trans id="shaman.enhancement.modules.core.flametongueRefresh.recommended">{recommended} recommended</Trans>,
+          ),
       );
   }
 }

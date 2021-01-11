@@ -1,7 +1,7 @@
-import React from 'react';
+import { Trans } from '@lingui/macro';
+import React, { Fragment } from 'react';
 
 import Contributor from 'interface/ContributorButton';
-import ReadableListing from 'interface/ReadableListing';
 import Config from 'parser/Config';
 
 const SpecListItem = ({
@@ -13,7 +13,7 @@ const SpecListItem = ({
   const className = spec.className.replace(/ /g, '');
   const Component = exampleReport ? 'a' : 'div';
   const builtinfo =
-    contributors.length !== 0 ? 'Built by ' : 'CURRENTLY UNMAINTAINED';
+    contributors.length !== 0 ? <Trans id="interface.specListItem.maintainer">Maintained by:<br /></Trans> : <small><em><Trans id="interface.specListItem.unmaintained">CURRENTLY UNMAINTAINED</Trans></em></small>;
 
   return (
     <Component
@@ -31,21 +31,22 @@ const SpecListItem = ({
         </figure>
       </div>
       <div className="description">
-        <h2 className={className}>
+        <h4 className={className}>
           {spec.specName} {spec.className}
-        </h2>
-        {builtinfo}{' '}
-        <ReadableListing>
-          {contributors.map(contributor => (
+        </h4>
+        <Trans id="interface.specListItem.patchCompatability">Accurate for patch {patchCompatibility}</Trans>
+        <br />
+        {builtinfo}
+        {contributors.map(contributor =>
+          <Fragment key={contributor.nickname}>
             <Contributor
-              key={contributor.nickname}
               link={false}
               {...contributor}
             />
-          ))}
-        </ReadableListing>
-        .<br />
-        Accurate for patch {patchCompatibility}
+            {' '}
+          </Fragment>
+        )}
+        <br />
       </div>
     </Component>
   );

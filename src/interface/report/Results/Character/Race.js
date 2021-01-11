@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Trans } from '@lingui/macro';
 
 const Race = (
   {
     race,
   },
-) => {
-  return (
+) => (
     <>
       <div className="row">
         <div className="col-md-12">
           <h2>
-            Race
+            <Trans id="common.race">Race</Trans>
           </h2>
         </div>
       </div>
@@ -22,7 +22,6 @@ const Race = (
       </div>
     </>
   );
-};
 
 Race.propTypes = {
   race: PropTypes.any.isRequired,

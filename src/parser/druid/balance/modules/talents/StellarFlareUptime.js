@@ -5,21 +5,15 @@ import Enemies from 'parser/shared/modules/Enemies';
 
 import SpellLink from 'common/SpellLink';
 import SPELLS from 'common/SPELLS';
-import SpellIcon from 'common/SpellIcon';
 import { formatPercentage } from 'common/format';
+import { t } from '@lingui/macro';
 
-import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
+import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import UptimeIcon from 'interface/icons/Uptime';
 
 class StellarFlareUptime extends Analyzer {
-  static dependencies = {
-    enemies: Enemies,
-  };
-
-  constructor(...args) {
-    super(...args);
-    this.active = this.selectedCombatant.hasTalent(SPELLS.STELLAR_FLARE_TALENT.id);
-  }
-
   get suggestionThresholds() {
     const stellarFlareUptime = this.enemies.getBuffUptime(SPELLS.STELLAR_FLARE_TALENT.id) / this.owner.fightDuration;
     return {
@@ -33,27 +27,41 @@ class StellarFlareUptime extends Analyzer {
     };
   }
 
+  static dependencies = {
+    enemies: Enemies,
+  };
+  statisticOrder = STATISTIC_ORDER.OPTIONAL();
+
+  constructor(...args) {
+    super(...args);
+    this.active = this.selectedCombatant.hasTalent(SPELLS.STELLAR_FLARE_TALENT.id);
+  }
+
   suggestions(when) {
-    when(this.suggestionThresholds).addSuggestion((suggest, actual, recommended) => {
-      return suggest(<>Your <SpellLink id={SPELLS.STELLAR_FLARE_TALENT.id} /> uptime can be improved. Try to pay more attention to your Stellar Flare on the boss.</>)
-        .icon(SPELLS.STELLAR_FLARE_TALENT.icon)
-        .actual(`${formatPercentage(actual)}% Stellar Flare uptime`)
-        .recommended(`>${formatPercentage(recommended)}% is recommended`);
-    });
+    when(this.suggestionThresholds).addSuggestion((suggest, actual, recommended) => suggest(<>Your <SpellLink id={SPELLS.STELLAR_FLARE_TALENT.id} /> uptime can be improved. Try to pay more attention to your Stellar Flare on the boss.</>)
+      .icon(SPELLS.STELLAR_FLARE_TALENT.icon)
+      .actual(t({
+      id: "druid.balance.suggestions.stellarFlare.uptime",
+      message: `${formatPercentage(actual)}% Stellar Flare uptime`
+    }))
+      .recommended(`>${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {
     const stellarFlareUptime = this.enemies.getBuffUptime(SPELLS.STELLAR_FLARE_TALENT.id) / this.owner.fightDuration;
     return (
-      <StatisticBox
-        icon={<SpellIcon id={SPELLS.STELLAR_FLARE_TALENT.id} />}
-        value={`${formatPercentage(stellarFlareUptime)} %`}
-        label="Stellar Flare uptime"
-      />
+      <Statistic
+        position={STATISTIC_ORDER.CORE(7)}
+        size="flexible"
+      >
+        <BoringSpellValueText spell={SPELLS.STELLAR_FLARE_TALENT}>
+          <>
+            <UptimeIcon /> {formatPercentage(stellarFlareUptime)} % <small>uptime</small>
+          </>
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
-
-  statisticOrder = STATISTIC_ORDER.OPTIONAL();
 }
 
 export default StellarFlareUptime;

@@ -2,7 +2,7 @@ import getFightName from 'common/getFightName';
 import prettyEncodeURI from 'common/prettyEncodeURI';
 import DEFAULT_BUILD from 'parser/DEFAULT_BUILD';
 
-export function makePlainUrl(reportCode = undefined, fightId = undefined, fightName = undefined, playerId = undefined, playerName = undefined, tab = undefined) {
+export function makePlainUrl(reportCode = undefined, fightId = undefined, fightName = undefined, playerId = undefined, playerName = undefined, tab = DEFAULT_BUILD.url) {
   const parts = [];
   if (reportCode) {
     parts.push(`report/${reportCode}`);
@@ -58,9 +58,9 @@ export function makeArmoryUrl(player) {
   if (!profile) {
     return '#';
   }
-  let battleNetUrl = `https://worldofwarcraft.com/en-us/character/${profile.region}/${profile.realm}/${player.name}`;
+  let battleNetUrl = `https://worldofwarcraft.com/en-us/character/${profile.region}/${profile.realm.replace(/'/g, "").replace(/\s/g, "-").toLowerCase()}/${player.name}`;
   if (profile.region === 'CN') {
-    battleNetUrl = `https://www.wowchina.com/zh-cn/character/${profile.realm}/${player.name}`;
+    battleNetUrl = `https://www.wowchina.com/zh-cn/character/${profile.realm.replace(/'/g, "").replace(/\s/g, "-").toLowerCase()}/${player.name}`;
   }
   return battleNetUrl;
 }

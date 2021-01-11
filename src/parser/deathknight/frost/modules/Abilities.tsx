@@ -5,6 +5,7 @@ import SpellLink from 'common/SpellLink';
 
 import CoreAbilities from 'parser/core/modules/Abilities';
 import { SpellbookAbility } from 'parser/core/modules/Ability';
+import COVENANTS from 'game/shadowlands/COVENANTS';
 
 class Abilities extends CoreAbilities {
   spellbook(): SpellbookAbility[] {
@@ -15,14 +16,12 @@ class Abilities extends CoreAbilities {
         spell: SPELLS.PILLAR_OF_FROST,
         buffSpellId: SPELLS.PILLAR_OF_FROST.id,
         category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
-        gcd: {
-          base: 1500,
-        },
-        cooldown: 45,
+        gcd: null,
+        cooldown: 60,
         castEfficiency: {
           suggestion: true,
           recommendedEfficiency: 0.85,
-          extraSuggestion: <>You should aim to use this off CD.  Only save it if <SpellLink id={SPELLS.BREATH_OF_SINDRAGOSA_TALENT.id} /> will be available in less than 30 seconds.</>,
+          extraSuggestion: 'You should aim to use this off CD.',
         },
         timelineSortIndex: 0,
       },
@@ -30,14 +29,12 @@ class Abilities extends CoreAbilities {
         spell: SPELLS.EMPOWER_RUNE_WEAPON,
         buffSpellId: SPELLS.EMPOWER_RUNE_WEAPON.id,
         category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
-        gcd: {
-          base: 1500,
-        },
+        gcd: null,
         cooldown: 120,
         castEfficiency: {
           suggestion: true,
           recommendedEfficiency: 0.80,
-          extraSuggestion: <>You should use this with every <SpellLink id={SPELLS.BREATH_OF_SINDRAGOSA_TALENT.id} /></>,
+          extraSuggestion: <>You should use this with every <SpellLink id={SPELLS.BREATH_OF_SINDRAGOSA_TALENT.id} /> if it is talented. Otherwise use it with <SpellLink id={SPELLS.PILLAR_OF_FROST.id} />.</>,
         },
         timelineSortIndex: 1,
       },
@@ -69,18 +66,30 @@ class Abilities extends CoreAbilities {
         timelineSortIndex: 2,
       },
       {
-        spell: SPELLS.FROSTWYRMS_FURY_TALENT,
+        spell: SPELLS.FROSTWYRMS_FURY,
         category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
         gcd: {
           base: 1500,
         },
         cooldown: 180,
-        enabled: combatant.hasTalent(SPELLS.FROSTWYRMS_FURY_TALENT.id),
         castEfficiency: {
           suggestion: true,
           recommendedEfficiency: 0.90,
           extraSuggestion: <>Although you normally want to use this off CD, you can save it to line it up with <SpellLink id={SPELLS.PILLAR_OF_FROST.id} icon />.  You can also hold it if you know there will be an opportunity to hit more than one enemy in the next 30 seconds.</>,
         },
+      },
+      {
+        spell: SPELLS.HYPOTHERMIC_PRESENCE_TALENT,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
+        gcd: null,
+        cooldown: 45,
+        enabled: combatant.hasTalent(SPELLS.HYPOTHERMIC_PRESENCE_TALENT.id),
+      },
+      {
+        spell: SPELLS.RAISE_DEAD_BLOOD_FROST,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
+        gcd: null,
+        cooldown: 120,
       },
       // ROTATIONAL
       {
@@ -135,14 +144,14 @@ class Abilities extends CoreAbilities {
         enabled: combatant.hasTalent(SPELLS.GLACIAL_ADVANCE_TALENT.id),
       },
       {
-        spell: SPELLS.CHILL_STREAK_TALENT,
-        category: Abilities.SPELL_CATEGORIES.ROTATIONAL,
-        cooldown: 45,
+        spell: SPELLS.SACRIFICIAL_PACT,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,
+        cooldown: 120,
         gcd: {
           base: 1500,
         },
-        enabled: combatant.hasMajor(32),
       },
+
       // DEFENSIVE
       {
         spell: SPELLS.ANTI_MAGIC_SHELL,
@@ -176,6 +185,22 @@ class Abilities extends CoreAbilities {
         cooldown: 120,
         isDefensive: true,
         enabled: combatant.hasTalent(SPELLS.DEATH_PACT_TALENT.id),
+      },
+      {
+        spell: SPELLS.ANTI_MAGIC_ZONE,
+        buffSpellId: SPELLS.ANTI_MAGIC_ZONE_BUFF.id,
+        category: Abilities.SPELL_CATEGORIES.DEFENSIVE,
+        gcd: null,
+        cooldown: 120,
+        isDefensive: true,
+      },
+      {
+        spell: SPELLS.LICHBORNE,
+        buffSpellId: SPELLS.LICHBORNE.id,
+        category: Abilities.SPELL_CATEGORIES.DEFENSIVE,
+        gcd: null,
+        cooldown: 120,
+        isDefensive: true,
       },
       // UTILITY
       {
@@ -259,6 +284,21 @@ class Abilities extends CoreAbilities {
         cooldown: 60,
         enabled: combatant.hasTalent(SPELLS.WRAITH_WALK_TALENT.id),
       },
+      {
+        spell: SPELLS.DEATH_AND_DECAY,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,
+        gcd: {
+          base: 1500,
+        },
+        cooldown: 30,
+      },
+      {
+        spell: SPELLS.DEATH_COIL,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,
+        gcd: {
+          base: 1500,
+        }
+      },
       // RUNES
       {
         spell: SPELLS.RUNE_1,
@@ -279,6 +319,83 @@ class Abilities extends CoreAbilities {
         category: Abilities.SPELL_CATEGORIES.HIDDEN,
         cooldown: haste => 10 / (1 + haste),
         charges: 2,
+      },
+      // covenants
+      {
+        spell: SPELLS.SWARMING_MIST,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,     
+        cooldown: 60,
+        gcd: {
+          base: 1500,
+        },
+        castEfficiency: {
+          suggestion: true,
+          recommendedEfficiency: 0.90,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.VENTHYR.id),
+      },
+      {
+        spell: SPELLS.DOOR_OF_SHADOWS,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,     
+        cooldown: 60,
+        gcd: {
+          base: 1500,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.VENTHYR.id),
+      },
+      {
+        spell: SPELLS.ABOMINATION_LIMB,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,     
+        cooldown: 120,
+        gcd: {
+          base: 1500,
+        },
+        castEfficiency: {
+          suggestion: true,
+          recommendedEfficiency: 0.90,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.NECROLORD.id),
+      },
+      {
+        spell: SPELLS.FLESHCRAFT,
+        category: Abilities.SPELL_CATEGORIES.DEFENSIVE,     
+        cooldown: 120,
+        enabled: combatant.hasCovenant(COVENANTS.NECROLORD.id),
+      },
+      {
+        spell: SPELLS.SHACKLE_THE_UNWORTHY,
+        category: Abilities.SPELL_CATEGORIES.COOLDOWNS,     
+        cooldown: 60,
+        gcd: {
+          base: 1500,
+        },
+        castEfficiency: {
+          suggestion: true,
+          recommendedEfficiency: 0.90,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.KYRIAN.id),
+      },
+      {
+        spell: SPELLS.DEATHS_DUE,
+        category: Abilities.SPELL_CATEGORIES.ROTATIONAL,     
+        cooldown: 30,
+        gcd: {
+          base: 1500,
+        },
+        castEfficiency: {
+          suggestion: true,
+          recommendedEfficiency: 0.90,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.NIGHT_FAE.id),
+      },
+      {
+        spell: SPELLS.SOULSHAPE,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,     
+        cooldown: 30,
+        gcd: {
+          base: 1500,
+        },
+        enabled: combatant.hasCovenant(COVENANTS.NIGHT_FAE.id),
       },
     ];
   }

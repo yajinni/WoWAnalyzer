@@ -13,25 +13,26 @@ class ResourceBreakdown extends React.Component {
   };
 
   prepareGenerated(buildersObj) {
-		return Object.keys(buildersObj)
-			.map(abilityId => ({
-				abilityId: Number(abilityId),
-				generated: buildersObj[abilityId].generated,
-				wasted: buildersObj[abilityId].wasted,
-			}))
-			.sort((a,b) => b.generated - a.generated)
-			.filter(ability => ability.generated > 0);
+    return Object.keys(buildersObj)
+      .map(abilityId => ({
+        abilityId: Number(abilityId),
+        generated: buildersObj[abilityId].generated,
+        wasted: buildersObj[abilityId].wasted,
+      }))
+      .sort((a, b) => b.generated - a.generated)
+      .filter(ability => ability.generated > 0);
   }
+
   prepareSpent(spendersObj) {
-		return Object.keys(spendersObj)
-			.map(abilityId => ({
-				abilityId: Number(abilityId),
-				spent: spendersObj[abilityId].spent,
-				casts: spendersObj[abilityId].casts,
+    return Object.keys(spendersObj)
+      .map(abilityId => ({
+        abilityId: Number(abilityId),
+        spent: spendersObj[abilityId].spent,
+        casts: spendersObj[abilityId].casts,
         maxCP: spendersObj[abilityId].spentByCast.filter(spent => spent === 5).length,
-			}))
-			.sort((a,b) => b.spent - a.spent)
-			.filter(ability => ability.spent > 0);
+      }))
+      .sort((a, b) => b.spent - a.spent)
+      .filter(ability => ability.spent > 0);
   }
 
   render() {
@@ -64,7 +65,7 @@ class ResourceBreakdown extends React.Component {
           <tbody>
             {generated && generated
               .map(ability => (
-                <tr>
+                <tr key={ability.abilityId}>
                   <td style={{ width: '30%' }}>
                     <SpellLink id={ability.abilityId} />
                   </td>
@@ -102,7 +103,7 @@ class ResourceBreakdown extends React.Component {
             <tbody>
               {spent && spent
                 .map(ability => (
-                  <tr>
+                  <tr key={ability.abilityId}>
                     <td style={{ width: '30%' }}>
                       <SpellLink id={ability.abilityId} />
                     </td>

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
 import Checklist from 'parser/shared/modules/features/Checklist';
@@ -7,17 +7,16 @@ import Rule from 'parser/shared/modules/features/Checklist/Rule';
 import Requirement from 'parser/shared/modules/features/Checklist/Requirement';
 import PreparationRule from 'parser/shared/modules/features/Checklist/PreparationRule';
 import GenericCastEfficiencyRequirement from 'parser/shared/modules/features/Checklist/GenericCastEfficiencyRequirement';
+import { AbilityRequirementProps, ChecklistProps } from 'parser/shared/modules/features/Checklist/ChecklistTypes';
 
-const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
-  const AbilityRequirement = (props: any) => (
+const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: ChecklistProps) => {
+  const AbilityRequirement = (props: AbilityRequirementProps) => (
     <GenericCastEfficiencyRequirement
       castEfficiency={castEfficiency.getCastEfficiencyForSpellId(props.spell)}
       {...props}
     />
   );
-  AbilityRequirement.propTypes = {
-    spell: PropTypes.number.isRequired,
-  };
+
 
   return (
     <Checklist>
@@ -31,9 +30,8 @@ const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
       >
         <AbilityRequirement spell={SPELLS.COMBUSTION.id} />
         <AbilityRequirement spell={SPELLS.FIRE_BLAST.id} />
+        <AbilityRequirement spell={SPELLS.PHOENIX_FLAMES.id} />
         {combatant.hasTalent(SPELLS.BLAST_WAVE_TALENT.id) && <AbilityRequirement spell={SPELLS.BLAST_WAVE_TALENT.id} />}
-        {combatant.hasTalent(SPELLS.PHOENIX_FLAMES_TALENT.id) && <AbilityRequirement spell={SPELLS.PHOENIX_FLAMES_TALENT.id} />}
-        {combatant.hasTalent(SPELLS.MIRROR_IMAGE_TALENT.id) && <AbilityRequirement spell={SPELLS.MIRROR_IMAGE_TALENT.id} />}
         {combatant.hasTalent(SPELLS.RUNE_OF_POWER_TALENT.id) && <AbilityRequirement spell={SPELLS.RUNE_OF_POWER_TALENT.id} />}
         {combatant.hasTalent(SPELLS.LIVING_BOMB_TALENT.id) && <AbilityRequirement spell={SPELLS.LIVING_BOMB_TALENT.id} />}
         {combatant.hasTalent(SPELLS.METEOR_TALENT.id) && (
@@ -56,13 +54,11 @@ const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
           thresholds={thresholds.fireBlastCombustionCharges}
           tooltip="When Combustion is getting close to becomming available, it is important to save a couple Fire Blast charges to be used during the Combustion Window. This will help ensure that you can get as many Hot Streak procs as possible during Combustion."
         />
-        {combatant.hasTalent(SPELLS.PHOENIX_FLAMES_TALENT.id) && (
-          <Requirement
-            name="Phoenix Flames Charges"
-            thresholds={thresholds.phoenixFlamesCombustionCharges}
-            tooltip="When outside of Combustion, you should avoid using your Phoenix Flames charges so that they have time to come off cooldown before Combustion is available again. This will ensure that you have a couple charges so you can get as many Hot Streak procs as possible before Combustion ends. If you are about to cap on Phoenix Flames charges, then it is acceptable to use one."
-          />
-        )}
+        <Requirement
+          name="Phoenix Flames Charges"
+          thresholds={thresholds.phoenixFlamesCombustionCharges}
+          tooltip="When outside of Combustion, you should avoid using your Phoenix Flames charges so that they have time to come off cooldown before Combustion is available again. This will ensure that you have a couple charges so you can get as many Hot Streak procs as possible before Combustion ends. If you are about to cap on Phoenix Flames charges, then it is acceptable to use one."
+        />
         {combatant.hasTalent(SPELLS.FIRESTARTER_TALENT.id) && (
           <Requirement
             name="Combustion during Firestarter"
@@ -79,6 +75,11 @@ const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
           name="Bad Fireball Uses"
           thresholds={thresholds.fireballSpellUsageDuringCombustion}
           tooltip="Due to Combustion's short duration, you should never cast Fireball during Combustion. Instead, you should use your instant cast abilities like Fireblast and Phoenix Flames. If you run out of instant abilities, cast Scorch instead since it's cast time is shorter."
+        />
+        <Requirement
+          name="Combustion Active time"
+          tooltip="In order to get the most out of Combustion, which is a large contributor to your damage, you should ensure that you are using every second of the cooldown to cast spells and get damage out. Any time spent not casting anything during Combustion is a major loss of damage."
+          thresholds={thresholds.combustionActiveTime}
         />
       </Rule>
       <Rule
@@ -104,13 +105,11 @@ const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
           thresholds={thresholds.hotStreakPreCasts}
           tooltip="Unless you are in Combustion and have Fire Blast/Phoenix Flames charges, you should always cast an ability that can generate Heating Up before using your Hot Streak proc. As an example, if you have Hot Streak and you cast Fireball > Pyroblast to use your Hot Streak, and one of those spells crit, then you will get Heating Up. If both spells crit, then you will instantly get a new Hot Streak proc."
         />
-        {combatant.hasTalent(SPELLS.PHOENIX_FLAMES_TALENT.id) && (
-          <Requirement
-            name="Phoenix Flames Usage"
-            thresholds={thresholds.phoenixFlamesHeatingUpUsage}
-            tooltip="Because Phoenix Flames is guaranteed to crit, you should only use it to convert Heating Up into Hot Streak."
-          />
-        )}
+        <Requirement
+          name="Phoenix Flames Usage"
+          thresholds={thresholds.phoenixFlamesHeatingUpUsage}
+          tooltip="Because Phoenix Flames is guaranteed to crit, you should only use it to convert Heating Up into Hot Streak."
+        />
         <Requirement
           name="Fire Blast Usage"
           thresholds={thresholds.fireBlastHeatingUpUsage}
@@ -174,15 +173,6 @@ const FireMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
       </PreparationRule>
     </Checklist>
   );
-};
-
-FireMageChecklist.propTypes = {
-  castEfficiency: PropTypes.object.isRequired,
-  combatant: PropTypes.shape({
-    hasTalent: PropTypes.func.isRequired,
-    hasTrinket: PropTypes.func.isRequired,
-  }).isRequired,
-  thresholds: PropTypes.object.isRequired,
 };
 
 export default FireMageChecklist;

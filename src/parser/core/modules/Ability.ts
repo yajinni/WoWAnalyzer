@@ -1,33 +1,19 @@
+import CombatLogParser from 'parser/core/CombatLogParser';
+import ISSUE_IMPORTANCE from 'parser/core/ISSUE_IMPORTANCE';
+import Combatant from 'parser/core/Combatant';
+
+import { TrackedAbility } from 'parser/shared/modules/AbilityTracker';
+
+import Spell from 'common/SPELLS/Spell';
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import CombatLogParser from 'parser/core/CombatLogParser';
-import Combatant from 'parser/core/Combatant';
-import { Event } from '../Events';
+
+import { AnyEvent } from '../Events';
 import Abilities from './Abilities';
 
-export interface AbilityTrackerAbility {
-  casts: number;
-  manaUsed: number;
-  healingHits?: number;
-  healingEffective?: number;
-  healingAbsorbed?: number;
-  healingOverheal?: number;
-  healingCriticalHits?: number;
-  healingCriticalEffective?: number;
-  healingCriticalAbsorbed?: number;
-  healingCriticalOverheal?: number;
-  damageHits?: number;
-  damageEffective?: number;
-  damageAbsorbed?: number;
-  damageCriticalHits?: number;
-  damageCriticalEffective?: number;
-  damageCriticalAbsorbed?: number;
-
-  // TODO: Fix this proper
-  healingIolHits?: number
-}
-export interface SpellbookAbility {
+export interface SpellbookAbility<TrackedAbilityType extends TrackedAbility = TrackedAbility> {
   /**
    * REQUIRED The spell definition. If an array of spell definitions is
    * provided, the first element in the array will be what shows in suggestions
@@ -35,17 +21,7 @@ export interface SpellbookAbility {
    * used to tie multiple cast / buff IDs together as the same ability (with a
    * shared cooldown)
    */
-  spell:
-    | {
-        id: number;
-        name: string;
-        icon: string;
-      }
-    | Array<{
-        id: number;
-        name: string;
-        icon: string;
-      }>;
+  spell: Spell | Spell[];
   /**
    * The name to use if it is different from the name provided by the `spell`
    * object. This should only be used in rare situations.
@@ -61,7 +37,7 @@ export interface SpellbookAbility {
    * for more complicated calls or even to check for buffs. Parameters
    * provided: `hastePercentage`, `selectedCombatant`
    */
-  cooldown?: ((haste: number, trigger?: Event<any>) => number) | number;
+  cooldown?: ((haste: number, trigger?: AnyEvent) => number) | number;
   /**
    * NYI, do not use
    */
@@ -109,7 +85,7 @@ export interface SpellbookAbility {
      * @deprecated Usage should be avoided. This may be removed in the future.
      */
     casts?: (
-      castCount: AbilityTrackerAbility,
+      castCount: TrackedAbilityType,
       parser: CombatLogParser,
     ) => number;
     /**
@@ -121,7 +97,7 @@ export interface SpellbookAbility {
      * If set, this suggestion will get this static importance value. Use this
      * ISSUE_IMPORTANCE enum for this.
      */
-    importance?: string;
+    importance?: ISSUE_IMPORTANCE;
   };
   /**
    * Whether the spell is enabled (available to the player) and should be
@@ -170,14 +146,22 @@ export interface SpellbookAbility {
   /**
    * The spell that'll forcibly shown on the timeline if set.
    */
-  shownSpell?: {
-    id: number;
-    name: string;
-    icon: string;
-  };
+  shownSpell?: Spell;
 }
 
 class Ability {
+   /**
+   * When extending this class with a new propTypes property you MUST include
+   * its parent's propTypes values in your new override value. Otherwise your
+   * class will treat inherited props as misplaced
+   * Example:
+   * import CoreAbility from 'parser/core/modules/Ability';
+   * class Ability extends CoreAbility {
+   *   static propTypes = {
+   *     ...CoreAbility.propTypes,
+   *     //...new property entries here...
+   * }
+   */
   static propTypes: { [key: string]: any } = {
     /**
      * REQUIRED The spell definition. If an array of spell definitions is
@@ -368,7 +352,7 @@ class Ability {
   get cooldown() {
     return this.getCooldown(this.owner.haste.current);
   }
-  getCooldown(haste: number, cooldownTriggerEvent?: Event<any>) {
+  getCooldown(haste: number, cooldownTriggerEvent?: AnyEvent) {
     if (this._cooldown === undefined) {
       // Most abilities will always be active and don't provide this prop at all
       return 0;
@@ -418,12 +402,10 @@ class Ability {
   enabled = true;
   timelineSortIndex: number | null = null;
   /** @deprecated Use the Buffs module to define your buffs instead. If your spec has no Buffs module, this prop will be used to prefill it. */
-  buffSpellId: number | Array<number> | null = null;
+  buffSpellId: number | number[] | null = null;
   shownSpell = null;
 
   /**
-   * When extending this class you MUST copy-paste this function into the new
-   * class. Otherwise your new props will not be set properly.
    * @param owner
    * @param options
    */
@@ -462,11 +444,13 @@ class Ability {
       });
     }
     Object.keys(props).forEach(prop => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       this._setProp(prop, props[prop]);
     });
   }
   _setProp(prop: string, value: any) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     this[prop] = value;
   }

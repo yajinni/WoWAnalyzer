@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 
 import Checklist from 'parser/shared/modules/features/Checklist';
 import PreparationRule from 'parser/shared/modules/features/Checklist/PreparationRule';
@@ -8,9 +8,10 @@ import Requirement from 'parser/shared/modules/features/Checklist/Requirement';
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
 import GenericCastEfficiencyRequirement from 'parser/shared/modules/features/Checklist/GenericCastEfficiencyRequirement';
+import { AbilityRequirementProps } from 'parser/shared/modules/features/Checklist/ChecklistTypes';
 
 const EnhancementShamanChecklist = ({ castEfficiency, combatant, thresholds }: any) => {
-  const AbilityRequirement = (props: any) => (
+  const AbilityRequirement = (props: AbilityRequirementProps) => (
     <GenericCastEfficiencyRequirement
       isMaxCasts
       castEfficiency={castEfficiency.getCastEfficiencyForSpellId(props.spell)}
@@ -18,15 +19,13 @@ const EnhancementShamanChecklist = ({ castEfficiency, combatant, thresholds }: a
     />
   );
 
-  AbilityRequirement.propTypes = {
-    spell: PropTypes.number.isRequired,
-  };
+
 
   return (
     <Checklist>
       <Rule
         name="Always be casting"
-        description={<>You should try to avoid doing nothing during the fight. If you have to move, try casting something instant with range like <SpellLink id={SPELLS.FLAMETONGUE.id} /> or <SpellLink id={SPELLS.ROCKBITER.id} /></>}
+        description={<>You should try to avoid doing nothing during the fight. If you have to move, try casting something instant with range like <SpellLink id={SPELLS.FLAME_SHOCK.id} />, <SpellLink id={SPELLS.FROST_SHOCK.id} />, or an instant <SpellLink id={SPELLS.LIGHTNING_BOLT.id} />/<SpellLink id={SPELLS.CHAIN_LIGHTNING.id} /></>}
       >
         <Requirement name="Downtime" thresholds={thresholds.alwaysBeCasting} />
       </Rule>
@@ -43,40 +42,34 @@ const EnhancementShamanChecklist = ({ castEfficiency, combatant, thresholds }: a
         <AbilityRequirement spell={SPELLS.EARTH_ELEMENTAL.id} />
         {combatant.hasTalent(SPELLS.ASCENDANCE_TALENT_ENHANCEMENT.id) &&
         <AbilityRequirement spell={SPELLS.ASCENDANCE_TALENT_ENHANCEMENT.id} />}
+        {combatant.hasTalent(SPELLS.STORMKEEPER_TALENT_ENHANCEMENT.id) &&
+        <AbilityRequirement spell={SPELLS.STORMKEEPER_TALENT_ENHANCEMENT.id} />}
         {combatant.hasTalent(SPELLS.EARTHEN_SPIKE_TALENT.id) &&
         <AbilityRequirement spell={SPELLS.EARTHEN_SPIKE_TALENT.id} />}
-        {combatant.hasTalent(SPELLS.TOTEM_MASTERY_TALENT_ENHANCEMENT.id) &&
-        <AbilityRequirement spell={SPELLS.TOTEM_MASTERY_TALENT_ENHANCEMENT.id} />}
+        {combatant.hasTalent(SPELLS.SUNDERING_TALENT.id) &&
+        <AbilityRequirement spell={SPELLS.SUNDERING_TALENT.id} />}
       </Rule>
-
       <Rule
-        name="Maintain your buffs"
-        description={"You should maintain your buffs in order to passivly increase your damage done to targets without refreshing them to early."}
+        name="Keep your Windfury Totem active"
+        description={
+          <>
+            You should aim to have 100% uptime on <SpellLink id={SPELLS.WINDFURY_TOTEM_BUFF.id} />
+          </>
+        }
       >
-        <Requirement name={<> <SpellLink id={SPELLS.LIGHTNING_SHIELD_TALENT.id} /> uptime</>} thresholds={thresholds.lightningShieldUptime} />
-
-        {combatant.hasTalent(SPELLS.FURY_OF_AIR_TALENT.id) &&
-        <Requirement name={<> <SpellLink id={SPELLS.FURY_OF_AIR_TALENT.id} /> uptime</>} thresholds={thresholds.furyOfAirUptime} />}
-
-        <Requirement name={<> <SpellLink id={SPELLS.FLAMETONGUE.id} /> uptime</>} thresholds={thresholds.flametongueUptime} />
-        {!combatant.hasTalent(SPELLS.SEARING_ASSAULT_TALENT.id) &&
-        <Requirement name={<> <SpellLink id={SPELLS.FLAMETONGUE.id} /> early refreshes</>} thresholds={thresholds.flametongueEarlyRefreshes} />}
-
-        {combatant.hasTalent(SPELLS.HAILSTORM_TALENT.id) &&
-        <Requirement name={<> <SpellLink id={SPELLS.FROSTBRAND.id} /> uptime</>} thresholds={thresholds.frostbrandUptime} />}
+        <Requirement name={(<><SpellLink id={SPELLS.WINDFURY_TOTEM_BUFF.id} /> uptime</>)} thresholds={thresholds.windfuryTotemUptime} />
       </Rule>
+
+      {/* <Rule
+        name="Maintain your buffs"
+        description={"You should maintain your buffs in order to passively increase your damage done to targets without refreshing them to early."}
+      >
+        <Requirement name={<> <SpellLink id={SPELLS.LIGHTNING_SHIELD.id} /> uptime</>} thresholds={thresholds.lightningShieldUptime} />
+        TODO: ADD LASHING FLAMES UPTIME IF TALENTED
+      </Rule> */}
       <PreparationRule thresholds={thresholds} />
     </Checklist>
   );
-};
-
-EnhancementShamanChecklist.propTypes = {
-  castEfficiency: PropTypes.object.isRequired,
-  combatant: PropTypes.shape({
-    hasTalent: PropTypes.func.isRequired,
-    hasTrinket: PropTypes.func.isRequired,
-  }).isRequired,
-  thresholds: PropTypes.object.isRequired,
 };
 
 export default EnhancementShamanChecklist;

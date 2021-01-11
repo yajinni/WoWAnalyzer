@@ -1,24 +1,23 @@
 import React from 'react';
 
-import { Zerotorescue, HolySchmidt } from 'CONTRIBUTORS';
+import { Abelito75, HolySchmidt } from 'CONTRIBUTORS';
 import SPECS from 'game/SPECS';
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
-import SpellIcon from 'common/SpellIcon';
 import Config from 'parser/Config';
 
 import CHANGELOG from './CHANGELOG';
 
 const config: Config = {
-  contributors: [Zerotorescue, HolySchmidt],
-  patchCompatibility: '8.3',
+  contributors: [Abelito75, HolySchmidt],
+  patchCompatibility: '9.0.2',
   isSupported: true,
   description: (
     <>
       Hey! The Holy Paladin analyzer is one of the most maintained specs on the site. It gets
       updated quickly with new things, and has most things implemented that can be analyzed
       automatically with good enough accuracy. If you think anything is off or wrong, please contact
-      me @Zerotorescue so we can discuss it. I don't mind double or triple checking something if
+      me @Abelito75 so we can discuss it. I don't mind double or triple checking something if
       there's any doubt.
       <br />
       <br />
@@ -52,14 +51,6 @@ const config: Config = {
   ),
   exampleReport: '/report/DPwyKpWBZ6F947mx/2-Normal+Mekkatorque+-+Kill+(7:19)/7-Riftie',
 
-  builds: {
-    GLIMMER: {
-      url: 'glimmer',
-      name: 'Glimmer Paladin',
-      icon: <SpellIcon id={SPELLS.GLIMMER_OF_LIGHT.id} />,
-      visible: true,
-    },
-  },
   //
   spec: SPECS.HOLY_PALADIN,
   changelog: CHANGELOG,

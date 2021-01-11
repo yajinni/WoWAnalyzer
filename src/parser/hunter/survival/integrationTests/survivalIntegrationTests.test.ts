@@ -4,17 +4,12 @@ import integrationTest from 'parser/core/tests/integrationTest';
 
 import CombatLogParser from '../CombatLogParser';
 
-describe('Survival Hunter integration test: Single Target - Birds of Prey', integrationTest(
+describe('Survival Hunter integration test: Single Target', integrationTest(
   CombatLogParser,
-  path.resolve(__dirname, 'survival-single-target-bop.zip'),
+  path.resolve(__dirname, 'survival-single-target.zip'),
 ));
 
-describe('Survival Hunter integration test: Multi Target - Birds of Prey', integrationTest(
+describe('Survival Hunter integration test: Multi Target', integrationTest(
   CombatLogParser,
-  path.resolve(__dirname, 'survival-multi-target-bop.zip'),
-));
-
-describe('Survival Hunter integration test: Multi Target - Wildfire Infusion', integrationTest(
-  CombatLogParser,
-  path.resolve(__dirname, 'survival-multi-target-wfi.zip'),
+  path.resolve(__dirname, 'survival-multi-target.zip'),
 ));

@@ -8,13 +8,17 @@ import { formatThousands, formatNumber, formatPercentage } from 'common/format';
 
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 
 /*
   Roaring Blaze (Tier 90 Destruction talent):
     Conflagrate burns the target for an additional (48% of Spell power) Fire damage over 6 sec.
  */
 class RoaringBlaze extends Analyzer {
+  get dps() {
+    return this.damage / this.owner.fightDuration * 1000;
+  }
+
   damage = 0;
 
   constructor(...args) {
@@ -27,14 +31,10 @@ class RoaringBlaze extends Analyzer {
     this.damage += (event.amount || 0) + (event.absorbed || 0);
   }
 
-  get dps() {
-    return this.damage / this.owner.fightDuration * 1000;
-  }
-
   statistic() {
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(4)}
+        category={STATISTIC_CATEGORY.TALENTS}
         size="small"
         tooltip={`${formatThousands(this.damage)} damage`}
       >

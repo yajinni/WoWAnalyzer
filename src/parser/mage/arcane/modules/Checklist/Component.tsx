@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import ITEMS from 'common/ITEMS';
+
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
 import Checklist from 'parser/shared/modules/features/Checklist';
@@ -8,17 +7,16 @@ import Rule from 'parser/shared/modules/features/Checklist/Rule';
 import Requirement from 'parser/shared/modules/features/Checklist/Requirement';
 import PreparationRule from 'parser/shared/modules/features/Checklist/PreparationRule';
 import GenericCastEfficiencyRequirement from 'parser/shared/modules/features/Checklist/GenericCastEfficiencyRequirement';
+import { AbilityRequirementProps, ChecklistProps } from 'parser/shared/modules/features/Checklist/ChecklistTypes';
 
-const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => {
-  const AbilityRequirement = (props: any) => (
+const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: ChecklistProps) => {
+  const AbilityRequirement = (props: AbilityRequirementProps) => (
     <GenericCastEfficiencyRequirement
       castEfficiency={castEfficiency.getCastEfficiencyForSpellId(props.spell)}
       {...props}
     />
   );
-  AbilityRequirement.propTypes = {
-    spell: PropTypes.number.isRequired,
-  };
+
 
   return (
     <Checklist>
@@ -34,9 +32,7 @@ const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => 
         <AbilityRequirement spell={SPELLS.EVOCATION.id} />
         {combatant.hasTalent(SPELLS.SUPERNOVA_TALENT.id) && <AbilityRequirement spell={SPELLS.SUPERNOVA_TALENT.id} />}
         {combatant.hasTalent(SPELLS.ARCANE_ORB_TALENT.id) && <AbilityRequirement spell={SPELLS.ARCANE_ORB_TALENT.id} />}
-        {combatant.hasTalent(SPELLS.MIRROR_IMAGE_TALENT.id) && <AbilityRequirement spell={SPELLS.MIRROR_IMAGE_TALENT.id} />}
         {combatant.hasTalent(SPELLS.RUNE_OF_POWER_TALENT.id) && <AbilityRequirement spell={SPELLS.RUNE_OF_POWER_TALENT.id} />}
-        {combatant.hasTalent(SPELLS.CHARGED_UP_TALENT.id) && <AbilityRequirement spell={SPELLS.CHARGED_UP_TALENT.id} />}
       </Rule>
       <Rule
         name="Use Arcane Power effectively"
@@ -53,8 +49,13 @@ const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => 
         />
         <Requirement
           name="Arcane Power Pre-Cast Setup"
-          tooltip="In order to effectively utilize Arcane Power, there are certain things you need to ensure are setup before you cast Arcane Power. Making sure you have 4 Arcane Charges, You have more than 40% Mana (Unless you have the Overpowered Talent), and ensuring you cast Rune of Power immediately before Arcane Power (if you have Rune of Power talented) will all help make the most out of your burn phase."
+          tooltip="In order to effectively utilize Arcane Power, there are certain things you need to ensure are setup before you cast Arcane Power. Making sure you have 4 Arcane Charges, You have more than 40% Mana (Unless you have the Overpowered Talent), and ensuring you cast Touch of the Magi immediately before Arcane Power will all help make the most out of your burn phase."
           thresholds={thresholds.arcanePowerCooldown}
+        />
+        <Requirement
+          name="Arcane Power Active time"
+          tooltip="In order to get the most out of Arcane Power, which is a large contributor to your damage, you should ensure that you are using every second of the cooldown to cast spells and get damage out. Any time spent not casting anything during Arcane Power is a major loss of damage."
+          thresholds={thresholds.arcanePowerActiveTime}
         />
 
       </Rule>
@@ -62,11 +63,18 @@ const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => 
         name="Use your talents effectively"
         description="Regardless of which talents you select, you should ensure that you are utilizing them properly. If you are having trouble effectively using a particular talent, you should consider taking a different talent that you can utilize properly or focus on effectively using the talents that you have selected."
       >
-        {combatant.hasTalent(SPELLS.ARCANE_ORB_TALENT.id && !combatant.hasShoulder(ITEMS.MANTLE_OF_THE_FIRST_KIRIN_TOR.id)) && (
+        {combatant.hasTalent(SPELLS.ARCANE_ORB_TALENT.id) && (
           <Requirement
-            name="Arcane Orb Avg. Hits Per Cast"
-            tooltip="Arcane Orb is primarily an AoE Spell, so you should only choose it on fights with multiple targets but you should still cast it on cooldown even if there is only one target available (unless there is about to be multiple targets). Therefore, on average, your Arcane Orb should hit more than 1 mob per cast."
-            thresholds={thresholds.arcaneOrbAverageHits}
+            name="Missed Arcane Orbs"
+            tooltip="Arcane Orb is a skillshot which means that it is important for you to aim it properly in order to get the most out of it. Therefore, on single target you should always ensure that the enemy gets hit by it, and if there are multiple enemies then you should do what you can to ensure all or most of them will get hit by the Orb as well."
+            thresholds={thresholds.arcaneOrbMissedOrbs}
+          />
+        )}
+        {combatant.hasTalent(SPELLS.ARCANE_ECHO_TALENT.id) && (
+          <Requirement
+            name="Bad Touch of the Magi Uses"
+            tooltip="Arcane Echo causes direct damage abilities, like Arcane Missiles, to pulse damage to up to 8 nearby targets. Because of this, you should be non-stop casting Arcane Missiles (whether you have Clearcasting procs or not), into any target with the Touch of the Magi debuff until that debuff is removed."
+            thresholds={thresholds.arcaneEchoLowUsage}
           />
         )}
         {combatant.hasTalent(SPELLS.RULE_OF_THREES_TALENT.id) && (
@@ -123,16 +131,6 @@ const ArcaneMageChecklist = ({ combatant, castEfficiency, thresholds }: any) => 
       <PreparationRule thresholds={thresholds} />
     </Checklist>
   );
-};
-
-ArcaneMageChecklist.propTypes = {
-  castEfficiency: PropTypes.object.isRequired,
-  combatant: PropTypes.shape({
-    hasTalent: PropTypes.func.isRequired,
-    hasTrinket: PropTypes.func.isRequired,
-    hasShoulder: PropTypes.func.isRequired,
-  }).isRequired,
-  thresholds: PropTypes.object.isRequired,
 };
 
 export default ArcaneMageChecklist;

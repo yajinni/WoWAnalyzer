@@ -10,6 +10,8 @@ import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 
+import { t } from '@lingui/macro';
+
 const debug = false;
 
 const BUFF_DURATION = 10000;
@@ -17,6 +19,19 @@ const BUFF_DURATION = 10000;
 const REMOVEBUFF_TOLERANCE = 20;
 
 class Backdraft extends Analyzer {
+  get suggestionThresholds() {
+    const wastedStacksPerMinute = this.wastedStacks / this.owner.fightDuration * 1000 * 60;
+    return {
+      actual: wastedStacksPerMinute,
+      isGreaterThan: {
+        minor: 1,
+        average: 1.5,
+        major: 2,
+      },
+      style: 'number',
+    };
+  }
+
   _maxStacks = 2;
   _stacksPerApplication = 1;
   _currentStacks = 0;
@@ -56,27 +71,15 @@ class Backdraft extends Analyzer {
     this._currentStacks = 0;
   }
 
-  get suggestionThresholds() {
-    const wastedStacksPerMinute = this.wastedStacks / this.owner.fightDuration * 1000 * 60;
-    return {
-      actual: wastedStacksPerMinute,
-      isGreaterThan: {
-        minor: 1,
-        average: 1.5,
-        major: 2,
-      },
-      style: 'number',
-    };
-  }
-
   suggestions(when) {
     when(this.suggestionThresholds)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<>You should use your <SpellLink id={SPELLS.BACKDRAFT.id} /> stacks more. You have wasted {this.wastedStacks} stacks this fight.</>)
-          .icon(SPELLS.BACKDRAFT.icon)
-          .actual(`${actual.toFixed(2)} wasted Backdraft stacks per minute`)
-          .recommended(`< ${recommended} is recommended`);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<>You should use your <SpellLink id={SPELLS.BACKDRAFT.id} /> stacks more. You have wasted {this.wastedStacks} stacks this fight.</>)
+        .icon(SPELLS.BACKDRAFT.icon)
+        .actual(t({
+      id: "warlock.destruction.suggestions.backdraft.wastedPerMinute",
+      message: `${actual.toFixed(2)} wasted Backdraft stacks per minute`
+    }))
+        .recommended(`< ${recommended} is recommended`));
   }
 
   statistic() {

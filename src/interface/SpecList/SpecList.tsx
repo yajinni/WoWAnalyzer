@@ -2,6 +2,7 @@ import React from 'react';
 
 import DocumentTitle from 'interface/DocumentTitle';
 import AVAILABLE_CONFIGS from 'parser';
+import { Trans } from '@lingui/macro';
 
 import './SpecList.css';
 
@@ -12,10 +13,14 @@ const SpecListing = () => (
     <DocumentTitle title="Specializations" />
 
     <div>
-      <h1>Specializations</h1>
+      <h1>
+        <Trans id="interface.specList.specs">Specializations</Trans>
+      </h1>
     </div>
     <small>
-      Click any specialization to view an example report for that spec.
+      <Trans id="interface.specList.specs.label">
+        Click any specialization to view an example report for that spec.
+      </Trans>
     </small>
 
     <div className="spec-listing">
@@ -26,7 +31,7 @@ const SpecListing = () => (
           return 1;
         }
         return a.spec.id - b.spec.id;
-      }).map(config => (
+      }).map((config) => (
         <SpecListItem key={config.spec.id} {...config} />
       ))}
     </div>

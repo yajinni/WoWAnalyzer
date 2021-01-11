@@ -1,6 +1,6 @@
 import RESOURCE_TYPES from 'game/RESOURCE_TYPES';
 import SPELLS from 'common/SPELLS';
-import ResourceTracker from 'parser/shared/modules/resourcetracker/ResourceTracker';
+import ResourceTracker from 'parser/shared/modules/resources/resourcetracker/ResourceTracker';
 
 // Primal Fury may be slightly delayed.
 const PRIMAL_FURY_WINDOW = 50; //ms
@@ -34,7 +34,7 @@ class ComboPointTracker extends ResourceTracker {
 
     // primal fury procs that happen right after a cast that brought us to max CP shouldn't count as waste because it was out of the player's control
     if ((spellId === SPELLS.PRIMAL_FURY.id) &&
-        ((this.owner.currentTimestamp - this.castToMaxCpTimestamp) < PRIMAL_FURY_WINDOW)) {
+      ((this.owner.currentTimestamp - this.castToMaxCpTimestamp) < PRIMAL_FURY_WINDOW)) {
       this.unavoidableWaste += 1;
     }
   }

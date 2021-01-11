@@ -1,8 +1,8 @@
 import React from 'react';
 import SPELLS from 'common/SPELLS/index';
-import ITEMS from 'common/ITEMS/index';
 import SpellLink from 'common/SpellLink';
 import CoreAbilities from 'parser/core/modules/Abilities';
+import COVENANTS from 'game/shadowlands/COVENANTS';
 
 class Abilities extends CoreAbilities {
   spellbook() {
@@ -19,7 +19,7 @@ class Abilities extends CoreAbilities {
         castEfficiency: {
           suggestion: true,
           recommendedEfficiency: 0.9,
-          extraSuggestion: <>This is a great Pain filler spell. Try to always cast it on cooldown, specially when using the <SpellLink id={SPELLS.FALLOUT_TALENT.id} /> talent in order to maximize your <SpellLink id={SPELLS.SOUL_FRAGMENT.id} /> generation.</>,
+          extraSuggestion: <>This is a great Fury filler spell. Try to always cast it on cooldown, specially when using the <SpellLink id={SPELLS.FALLOUT_TALENT.id} /> talent in order to maximize your <SpellLink id={SPELLS.SOUL_FRAGMENT.id} /> generation.</>,
         },
       },
       {
@@ -75,7 +75,7 @@ class Abilities extends CoreAbilities {
         spell: SPELLS.DEMON_SPIKES,
         category: Abilities.SPELL_CATEGORIES.DEFENSIVE,
         cooldown: haste => 20 / (1 + haste),
-        charges: combatant.hasLegs(ITEMS.OBLIVIONS_EMBRACE.id) ? 3 : 2,
+        charges: 2,
         isDefensive: true,
       },
 
@@ -127,8 +127,7 @@ class Abilities extends CoreAbilities {
         },
       },
       {
-        spell: SPELLS.FEL_DEVASTATION_TALENT,
-        enabled: combatant.hasTalent(SPELLS.FEL_DEVASTATION_TALENT.id),
+        spell: SPELLS.FEL_DEVASTATION,
         category: Abilities.SPELL_CATEGORIES.ROTATIONAL_AOE,
         cooldown: 60,
         gcd: {
@@ -144,7 +143,7 @@ class Abilities extends CoreAbilities {
 
       // Sigils
       {
-        spell: [SPELLS.SIGIL_OF_SILENCE_CONCENTRATED,SPELLS.SIGIL_OF_SILENCE_QUICKENED],
+        spell: [SPELLS.SIGIL_OF_SILENCE_CONCENTRATED, SPELLS.SIGIL_OF_SILENCE_QUICKENED],
         category: Abilities.SPELL_CATEGORIES.UTILITY,
         cooldown: 60 * (1 - (combatant.hasTalent(SPELLS.QUICKENED_SIGILS_TALENT.id) ? 0.2 : 0)),
         gcd: {
@@ -152,7 +151,7 @@ class Abilities extends CoreAbilities {
         },
       },
       {
-        spell: [SPELLS.SIGIL_OF_MISERY_CONCENTRATED,SPELLS.SIGIL_OF_MISERY_QUICKENED],
+        spell: [SPELLS.SIGIL_OF_MISERY_CONCENTRATED, SPELLS.SIGIL_OF_MISERY_QUICKENED],
         category: Abilities.SPELL_CATEGORIES.UTILITY,
         cooldown: 60 * (1 - (combatant.hasTalent(SPELLS.QUICKENED_SIGILS_TALENT.id) ? 0.2 : 0)),
         gcd: {
@@ -160,17 +159,18 @@ class Abilities extends CoreAbilities {
         },
       },
       {
-        spell: [SPELLS.SIGIL_OF_FLAME_CONCENTRATED,SPELLS.SIGIL_OF_FLAME_QUICKENED],
+        spell: [SPELLS.SIGIL_OF_FLAME_CONCENTRATED, SPELLS.SIGIL_OF_FLAME_QUICKENED],
         buffSpellId: SPELLS.SIGIL_OF_FLAME_DEBUFF.id,
         category: Abilities.SPELL_CATEGORIES.ROTATIONAL_AOE,
         cooldown: 30 * (1 - (combatant.hasTalent(SPELLS.QUICKENED_SIGILS_TALENT.id) ? 0.2 : 0)),
         gcd: {
           base: 1500,
         },
+        enabled: !(combatant.hasCovenant(COVENANTS.KYRIAN.id) && combatant.hasLegendaryByBonusID(SPELLS.RAZELIKHS_DEFILEMENT.bonusID)),
         castEfficiency: {
-          suggestion: true,
+          suggestion: !(combatant.hasCovenant(COVENANTS.KYRIAN.id) && combatant.hasLegendaryByBonusID(SPELLS.RAZELIKHS_DEFILEMENT.bonusID)),
           recommendedEfficiency: 0.90,
-          extraSuggestion: combatant.hasTalent(SPELLS.FLAME_CRASH_TALENT.id)?<>Line this up with <SpellLink id={SPELLS.INFERNAL_STRIKE.id} /> to double stack <SpellLink id={SPELLS.SIGIL_OF_FLAME_CONCENTRATED.id} /> because of the <SpellLink id={SPELLS.FLAME_CRASH_TALENT.id} /> talent.</>:`Cast on cooldown for a dps increase.`,
+          extraSuggestion: combatant.hasTalent(SPELLS.ABYSSAL_STRIKE_TALENT.id) ? <>Line this up with <SpellLink id={SPELLS.INFERNAL_STRIKE.id} /> to double stack <SpellLink id={SPELLS.SIGIL_OF_FLAME_CONCENTRATED.id} /> because of the <SpellLink id={SPELLS.ABYSSAL_STRIKE_TALENT.id} /> talent.</> : `Cast on cooldown for a dps increase.`,
         },
       },
 
@@ -180,6 +180,7 @@ class Abilities extends CoreAbilities {
         category: Abilities.SPELL_CATEGORIES.UTILITY,
         cooldown: combatant.hasTalent(SPELLS.ABYSSAL_STRIKE_TALENT.id) ? 12 : 20,
         charges: 2,
+        enabled: false, // TODO: change this to true, when infernal strike logging is working, see infernalstrike module for more details.
       },
 
       {
@@ -228,6 +229,44 @@ class Abilities extends CoreAbilities {
         category: Abilities.SPELL_CATEGORIES.HIDDEN,
         gcd: null,
       },
+	  
+	    // Covenant (move these if needed)
+      {
+        spell: [SPELLS.ELYSIAN_DECREE, SPELLS.ELYSIAN_DECREE_REPEAT_DECREE],
+        category: Abilities.SPELL_CATEGORIES.ROTATIONAL,
+        cooldown: 60 * (1 - (combatant.hasTalent(SPELLS.QUICKENED_SIGILS_TALENT.id) ? 0.2 : 0)),
+        gcd: {
+          base: 1500,
+        },
+		    enabled: combatant.hasCovenant(COVENANTS.KYRIAN.id),
+      },
+      {
+        spell: SPELLS.SINFUL_BRAND,
+        category: Abilities.SPELL_CATEGORIES.ROTATIONAL,
+        cooldown: 60,
+        gcd: {
+          base: 1500,
+        },
+		    enabled: combatant.hasCovenant(COVENANTS.VENTHYR.id),
+      },
+      {
+        spell: SPELLS.FODDER_TO_THE_FLAME,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,
+        cooldown: 120,
+        gcd: {
+          base: 1500,
+        },
+		    enabled: combatant.hasCovenant(COVENANTS.NECROLORD.id),
+      },	  
+      {
+        spell: SPELLS.THE_HUNT,
+        category: Abilities.SPELL_CATEGORIES.UTILITY,
+        cooldown: 90,
+        gcd: {
+          base: 1500,
+        },
+		    enabled: combatant.hasCovenant(COVENANTS.NIGHT_FAE.id),
+      },		  
     ];
   }
 }

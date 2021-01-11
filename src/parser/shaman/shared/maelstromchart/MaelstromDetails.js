@@ -3,9 +3,10 @@ import React from 'react';
 import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import Panel from 'interface/statistics/Panel';
 import Analyzer from 'parser/core/Analyzer';
-import ResourceBreakdown from 'parser/shared/modules/resourcetracker/ResourceBreakdown';
+import ResourceBreakdown from 'parser/shared/modules/resources/resourcetracker/ResourceBreakdown';
 import { formatPercentage } from 'common/format';
 import Icon from 'common/Icon';
+import { t } from '@lingui/macro';
 
 import MaelstromTracker from './MaelstromTracker.js';
 
@@ -60,18 +61,20 @@ class MaelstromDetails extends Analyzer {
 
   suggestions(when) {
     when(this.suggestionThresholdsWasted)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(`You overcapped ${this.wasted} Maelstrom. Always prioritize spending it over avoiding the overcap of any other ability.`)
+      .addSuggestion((suggest, actual, recommended) => suggest(`You overcapped ${this.wasted} Maelstrom. Always prioritize spending it over avoiding the overcap of any other ability.`)
           .icon('spell_shadow_mindflay')
-          .actual(`${formatPercentage(actual)}% overcapped Maelstrom`)
-          .recommended(`${formatPercentage(recommended)}% is recommended`);
-      });
+          .actual(t({
+      id: "shaman.shared.suggestions.maelstrom.overcapped",
+      message: `${formatPercentage(actual)}% overcapped Maelstrom`
+    }))
+          .recommended(`${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {
     return [
       (
         <StatisticBox
+          key="StatisticBox"
           position={STATISTIC_ORDER.CORE(1)}
           icon={<Icon icon="spell_shadow_mindflay" />}
           value={`${formatPercentage(this.wastedPercent)} %`}
@@ -81,6 +84,7 @@ class MaelstromDetails extends Analyzer {
       ),
       (
         <Panel
+          key="Panel"
           title="Maelstrom usage"
           position={200}
           pad={false}

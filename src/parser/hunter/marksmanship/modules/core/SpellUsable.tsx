@@ -10,25 +10,29 @@ class SpellUsable extends CoreSpellUsable {
   lastPotentialTriggerForRapidFireReset: CastEvent | null = null;
   rapidFireResets = 0;
 
-  on_byPlayer_cast(event: CastEvent) {
+  onCast(event: CastEvent) {
     const spellId = event.ability.guid;
-    if (this.selectedCombatant.hasTrait(SPELLS.SURGING_SHOTS.id)) {
+    if (this.selectedCombatant.hasLegendaryByBonusID(SPELLS.SURGING_SHOTS_EFFECT.bonusID)) {
       if (spellId === SPELLS.AIMED_SHOT.id) {
         this.lastPotentialTriggerForRapidFireReset = event;
       } else if (spellId === SPELLS.RAPID_FIRE.id) {
         this.lastPotentialTriggerForRapidFireReset = null;
       }
     }
-    if (super.on_byPlayer_cast) {
-      super.on_byPlayer_cast(event);
-    }
+    super.onCast(event);
   }
 
   beginCooldown(spellId: number, cooldownTriggerEvent: CastEvent | DamageEvent) {
-    if (spellId === SPELLS.RAPID_FIRE.id && this.selectedCombatant.hasTrait(SPELLS.SURGING_SHOTS.id)) {
+    if (spellId === SPELLS.RAPID_FIRE.id && this.selectedCombatant.hasLegendaryByBonusID(SPELLS.SURGING_SHOTS_EFFECT.bonusID)) {
       if (this.isOnCooldown(spellId)) {
         this.rapidFireResets += 1;
-        this.endCooldown(spellId, undefined, this.lastPotentialTriggerForRapidFireReset ? this.lastPotentialTriggerForRapidFireReset.timestamp : undefined);
+        this.endCooldown(
+          spellId,
+          undefined,
+          this.lastPotentialTriggerForRapidFireReset
+            ? this.lastPotentialTriggerForRapidFireReset.timestamp
+            : undefined,
+        );
       }
     }
     super.beginCooldown(spellId, cooldownTriggerEvent);

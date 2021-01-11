@@ -3,25 +3,18 @@ import React from 'react';
 import Analyzer from 'parser/core/Analyzer';
 
 import SPELLS from 'common/SPELLS';
-import SpellLink from 'common/SpellLink';
 import { formatThousands } from 'common/format';
 
-import StatisticListBoxItem from 'interface/others/StatisticListBoxItem';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import ItemDamageDone from 'interface/ItemDamageDone';
 
 import DemoPets from '../pets/DemoPets';
 import PETS from '../pets/PETS';
 import { isRandomPet } from '../pets/helpers';
 
 class InnerDemons extends Analyzer {
-  static dependencies = {
-    demoPets: DemoPets,
-  };
-
-  constructor(...args) {
-    super(...args);
-    this.active = this.selectedCombatant.hasTalent(SPELLS.INNER_DEMONS_TALENT.id);
-  }
-
   get damage() {
     const wildImps = this.demoPets.getPetDamage(PETS.WILD_IMP_INNER_DEMONS.guid);
     const otherPetsSummonedByID = this.demoPets.timeline.filter(pet => isRandomPet(pet.guid) && pet.summonedBy === SPELLS.INNER_DEMONS_TALENT.id);
@@ -31,19 +24,31 @@ class InnerDemons extends Analyzer {
     return wildImps + other;
   }
 
-  subStatistic() {
-    const damage = this.damage;
+  static dependencies = {
+    demoPets: DemoPets,
+  };
+
+  constructor(...args) {
+    super(...args);
+    this.active = this.selectedCombatant.hasTalent(SPELLS.INNER_DEMONS_TALENT.id);
+  }
+
+  statistic() {
     return (
-      <StatisticListBoxItem
-        title={<><SpellLink id={SPELLS.INNER_DEMONS_TALENT.id} /> dmg</>}
-        value={this.owner.formatItemDamageDone(damage)}
-        valueTooltip={(
+      <Statistic
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
+        tooltip={(
           <>
-            {formatThousands(damage)} damage<br />
+            {formatThousands(this.damage)} damage<br />
             Note that this only counts the direct damage from them, not Implosion damage (if used) from Wild Imps
           </>
         )}
-      />
+      >
+        <BoringSpellValueText spell={SPELLS.INNER_DEMONS_TALENT}>
+          <ItemDamageDone amount={this.damage} />
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }

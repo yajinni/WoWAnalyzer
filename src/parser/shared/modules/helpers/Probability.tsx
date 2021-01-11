@@ -1,6 +1,5 @@
 import OneVariableBinomialChart from 'interface/others/charts/OneVariableBinomialChart';
 import React from 'react';
-import { formatNumber, formatPercentage } from 'common/format';
 
 /**
  * pn is the mean value of procs
@@ -29,7 +28,7 @@ export function binomialPMF(k: number, n: number, p: number) {
  */
 export function binomialCDF(k: number, n: number, p: number) {
   let probability = 0;
-  for (let i = 0; i <= k; i++) {
+  for (let i = 0; i <= k; i += 1) {
     probability += binomialPMF(i, n, p);
   }
   return probability;
@@ -44,7 +43,7 @@ export function binomialCDF(k: number, n: number, p: number) {
 export function findMax(n: number, pmf: (i: number, n: any) => any) {
   let max = -1;
   let maxP = 0;
-  for (let i = 0; i <= n; i++) {
+  for (let i = 0; i <= n; i += 1) {
     const probability = pmf(i, n);
     if (probability > maxP) {
       max = i;
@@ -67,17 +66,17 @@ function binomialDistribution(n: number, k: number) {
   // (n - k + 1) * (n - k + 2) * ... n / k!
   let numerator = 1;
   let denominator = 1;
-  for (let i = n - k + 1; i <= n; i++) {
+  for (let i = n - k + 1; i <= n; i += 1) {
     numerator *= i;
   }
-  for (let i = 1; i <= k; i++) {
+  for (let i = 1; i <= k; i += 1) {
     denominator *= i;
   }
   return numerator / denominator;
 }
 
 function resetProbabilityArray(actualProcs: number, procAttempts: number, procChance: number | number[]) {
-  const procProbabilities: { x: number; y: number; }[] = Array.from({ length: procAttempts }, (_x, i: number) => {
+  const procProbabilities: Array<{ x: number; y: number; }> = Array.from({ length: procAttempts }, (_x, i: number) => {
     if (typeof procChance === 'number') {
       return { x: i, y: binomialPMF(i, procAttempts, procChance) };
     } else {
@@ -88,7 +87,7 @@ function resetProbabilityArray(actualProcs: number, procAttempts: number, procCh
   return procProbabilities;
 }
 
-function setMinMaxProbabilities(actualProcs: number, procAttempts: number, procChance: number | number[], threshold: number = 0.001) {
+export function setMinMaxProbabilities(actualProcs: number, procAttempts: number, procChance: number | number[], threshold: number = 0.001) {
   const procProbabilities = resetProbabilityArray(actualProcs, procAttempts, procChance);
   const rangeMin = procProbabilities.findIndex(({ y }) => y >= threshold);
   const rangeMax = rangeMin + procProbabilities.slice(rangeMin).findIndex(({ y }) => y < threshold);
@@ -166,7 +165,7 @@ export function poissonBinomialCDF(k: number, n: number, p: number[]) {
   let probability = 0;
   // since Ekj uses the values from "previous row" (Ekj(k - 1, j - 1, ...)), it's better to iterate from 0
   // this way, it produces the least necessary amount of calculations with the lookup table (only the Ekj(k, j - 1) parts)
-  for (let i = 0; i <= k; i++) {
+  for (let i = 0; i <= k; i += 1) {
     probability += Ekj(i, n, p, lookup);
   }
   return probability;
@@ -177,24 +176,15 @@ export function plotOneVariableBinomChart(
   procAttempts: number,
   procChance: number | number[],
   trackedName: string = 'Procs',
-  tooltipText: string = `${trackedName}: `,
-  tooltipFormula: (point: { x: number }) => string = (point: { x: number; }) => `${tooltipText} ${formatNumber(point.x)}`,
+  tooltipText: string = trackedName,
   yDomain: number[] = [0, 0.4],
   xAxis: any = {
     title: trackedName,
-    tickFormat: (value: number) => formatNumber(value),
-    style: {
-      fill: 'white',
-    },
+    tickFormat: '~k',
   },
   yAxis: any = {
     title: 'Likelihood',
-    tickFormat: (value: number) => `${formatPercentage(value, 0)}%`,
-    style: {
-      fill: 'white',
-    },
   },
-  curve: string = 'curveMonotoneX',
 ) {
 
   const { procProbabilities, rangeMin, rangeMax } = setMinMaxProbabilities(actualProcs, procAttempts, procChance);
@@ -206,8 +196,7 @@ export function plotOneVariableBinomChart(
       yDomain={yDomain}
       xAxis={xAxis}
       yAxis={yAxis}
-      curve={curve}
-      tooltip={tooltipFormula}
+      tooltip={tooltipText}
     />
   );
 }

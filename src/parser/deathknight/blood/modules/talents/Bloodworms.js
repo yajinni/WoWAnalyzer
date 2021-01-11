@@ -1,10 +1,14 @@
 import React from 'react';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER, SELECTED_PLAYER_PET } from 'parser/core/Analyzer';
 import SPELLS from 'common/SPELLS/index';
 import AbilityTracker from 'parser/shared/modules/AbilityTracker';
-import TalentStatisticBox from 'interface/others/TalentStatisticBox';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
+import ItemHealingDone from 'interface/ItemHealingDone';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 import { formatThousands } from 'common/format';
+import Events from 'parser/core/Events';
 
 //Worms last 15 sec. But sometimes lag and such makes them expire a little bit early.
 const WORMLIFESPAN = 14900;
@@ -25,16 +29,17 @@ class Bloodworms extends Analyzer {
   constructor(...args) {
     super(...args);
     this.active = this.selectedCombatant.hasTalent(SPELLS.BLOODWORMS_TALENT.id);
+    this.addEventListener(Events.summon.by(SELECTED_PLAYER).spell(SPELLS.BLOODWORM), this.onSummon);
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER_PET), this.onDamage);
+    this.addEventListener(Events.instakill.by(SELECTED_PLAYER_PET).spell(SPELLS.BLOODWORM_DEATH), this.onInstakill);
+    this.addEventListener(Events.heal.to(SELECTED_PLAYER).spell(SPELLS.BLOODWORM_DEATH), this.onHeal);
   }
 
   poppedWorms(bloodworm) {
     return bloodworm.filter(e => e.killedTime - e.summonedTime <= WORMLIFESPAN).length;
   }
 
-  on_byPlayer_summon(event) {
-    if (event.ability.guid !== SPELLS.BLOODWORM.id) {
-      return;
-    }
+  onSummon(event) {
     this.bloodworm.push({
       uniqueID: event.targetInstance,
       summonedTime: event.timestamp,
@@ -43,7 +48,7 @@ class Bloodworms extends Analyzer {
     this.wormID = event.targetID;
   }
 
-  on_byPlayerPet_damage(event) {
+  onDamage(event) {
     if (event.sourceID !== this.wormID) {
       return;
     }
@@ -51,10 +56,7 @@ class Bloodworms extends Analyzer {
   }
 
 
-  on_byPlayerPet_instakill(event) {
-    if (event.ability.guid !== SPELLS.BLOODWORM_DEATH.id) {
-      return;
-    }
+  onInstakill(event) {
     let index = -1;
     this.bloodworm.forEach((e, i) => {
       if (e.uniqueID === event.targetInstance) {
@@ -68,20 +70,16 @@ class Bloodworms extends Analyzer {
     this.bloodworm[index].killedTime = event.timestamp;
   }
 
-  on_toPlayer_heal(event) {
-    if (event.ability.guid !== SPELLS.BLOODWORM_DEATH.id) {
-      return;
-    }
+  onHeal(event) {
     this.totalHealing+= (event.amount || 0) + (event.absorbed || 0);
   }
 
   statistic() {
     return (
-      <TalentStatisticBox
-        talent={SPELLS.BLOODWORMS_TALENT.id}
-        position={STATISTIC_ORDER.OPTIONAL(6)}
-        value={this.owner.formatItemHealingDone(this.totalHealing)}
-        label="Bloodworm Stats"
+      <Statistic
+        position={STATISTIC_ORDER.OPTIONAL(2)}
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
         tooltip={(
           <>
             <strong>Damage:</strong> {formatThousands(this.totalDamage)} / {this.owner.formatItemDamageDone(this.totalDamage)}<br />
@@ -89,7 +87,13 @@ class Bloodworms extends Analyzer {
             <strong>Number of worms popped early:</strong> {this.poppedWorms(this.bloodworm)}
           </>
         )}
-      />
+      >
+        <BoringSpellValueText spell={SPELLS.BLOODWORMS_TALENT}>
+          <>
+            <ItemHealingDone amount={this.totalHealing} />
+          </>
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }

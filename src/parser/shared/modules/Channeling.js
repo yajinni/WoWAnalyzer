@@ -1,8 +1,7 @@
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import EventEmitter from 'parser/core/modules/EventEmitter';
 import CASTS_THAT_ARENT_CASTS from 'parser/core/CASTS_THAT_ARENT_CASTS';
-import SPELLS from 'common/SPELLS';
-import { EventType } from 'parser/core/Events';
+import Events, { EventType } from 'parser/core/Events';
 
 const debug = false;
 
@@ -13,6 +12,12 @@ class Channeling extends Analyzer {
     eventEmitter: EventEmitter,
   };
   _currentChannel = null;
+
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.begincast.by(SELECTED_PLAYER), this.onBegincast);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER), this.onCast);
+  }
 
   beginChannel(event, ability = event.ability) {
     if (this.isChanneling()) {
@@ -32,6 +37,7 @@ class Channeling extends Analyzer {
     debug && this.log('Beginning channel of', ability.name);
     this.eventEmitter.fabricateEvent(channelingEvent, event);
   }
+
   endChannel(event) {
     const currentChannel = this._currentChannel;
     const start = currentChannel ? currentChannel.timestamp : this.owner.fight.start_time;
@@ -54,13 +60,8 @@ class Channeling extends Analyzer {
       beginChannel: currentChannel,
     }, event); // the trigger may be another spell, sometimes the indicator of 1 channel ending is the start of another
   }
+
   cancelChannel(event, ability) {
-    // Manually handle Potion of Replenishment
-    if (this.isChannelingSpell(SPELLS.POTION_OF_REPLENISHMENT.id)) {
-      this.log('Marking', this._currentChannel.ability.name, 'as ended since we started casting something else:', event.ability.name);
-      this.endChannel(event);
-      return;
-    }
     this.eventEmitter.fabricateEvent({
       type: EventType.CancelChannel,
       ability,
@@ -70,23 +71,18 @@ class Channeling extends Analyzer {
     debug && this.warn('Canceled channel of', ability.name);
   }
 
-  on_byPlayer_begincast(event) {
+  onBegincast(event) {
     this.beginChannel(event);
   }
-  on_byPlayer_cast(event) {
+
+  onCast(event) {
     if (CASTS_THAT_ARENT_CASTS.includes(event.ability.guid)) {
       // Some things such as boss mechanics are marked as cast-events even though they're usually just "ticks". This can even occur while channeling. We need to ignore them or it will throw off this module.
       return;
     }
 
-    // Fabricates the required events to show the channeling of Potion of Replenishment.
-    if (event.ability.guid === SPELLS.POTION_OF_REPLENISHMENT.id) {
-      this.beginChannel(event);
-      return;
-    }
-
     // TODO: Account for pre-pull `begincast`
-    const isChanneling = !!this._currentChannel;
+    const isChanneling = Boolean(this._currentChannel);
     if (!isChanneling) {
       return;
     }
@@ -97,9 +93,11 @@ class Channeling extends Analyzer {
       event.channel = this.endChannel(event);
     }
   }
+
   isChanneling() {
-    return !!this._currentChannel;
+    return Boolean(this._currentChannel);
   }
+
   isChannelingSpell(spellId) {
     return this._currentChannel && this._currentChannel.ability.guid === spellId;
   }

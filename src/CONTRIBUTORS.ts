@@ -36,7 +36,7 @@
 */
 
 import SPECS from 'game/SPECS';
-import { Contributor } from 'common/changelog';
+import { Contributor } from 'common/contributor';
 
 // For testing purposes because I am too lazy to work out a solution for testing that does not involve adding regular code
 export const Dummy: Contributor = {
@@ -253,6 +253,10 @@ export const Oratio: Contributor = {
   nickname: 'Oratio',
   github: 'karlpralow',
 };
+export const Ogofo: Contributor = {
+  nickname: 'Ogofo',
+  github: 'Ogofo',
+};
 export const hassebewlen: Contributor = {
   nickname: 'hassebewlen',
   github: 'hasseboulen',
@@ -428,14 +432,18 @@ export const Zeboot: Contributor = {
       spec: SPECS.BREWMASTER_MONK,
       link: 'https://worldofwarcraft.com/en-us/character/us/whisperwind/zebeer',
     }, {
+      name: 'Zeaccent',
+      spec: SPECS.PROTECTION_PALADIN,
+      link: 'https://worldofwarcraft.com/en-us/character/us/whisperwind/Zeaccent',
+    }, ],
+    alts: [{
+      name: 'Zebot',
+      spec: SPECS.PROTECTION_WARRIOR,
+      link: 'https://worldofwarcraft.com/en-us/character/us/area-52/Zebot',
+    }, {
       name: 'Zeboot',
       spec: SPECS.GUARDIAN_DRUID,
       link: 'https://worldofwarcraft.com/en-us/character/us/whisperwind/zeboot',
-    }],
-    alts: [{
-      name: 'Zelightsneak',
-      spec: SPECS.ASSASSINATION_ROGUE,
-      link: 'https://worldofwarcraft.com/en-us/character/us/whisperwind/zelightsneak',
     }],
 };
 export const HawkCorrigan: Contributor = {
@@ -722,7 +730,7 @@ export const LeoZhekov: Contributor = {
   mains: [{
     name: 'Lisossa',
     spec: SPECS.SURVIVAL_HUNTER,
-    link: 'https://worldofwarcraft.com/en-gb/character/Zenedar/Lisossa',
+    link: 'https://worldofwarcraft.com/en-gb/character/Ravencrest/Lisossa',
   }],
 };
 export const Amrux: Contributor = {
@@ -764,8 +772,13 @@ export const Adoraci: Contributor = {
   avatar: require('./interface/images/avatars/Adoraci-avatar.jpg'),
   mains: [{
     name: 'Adoraci',
-    spec: SPECS.DISCIPLINE_PRIEST,
+    spec: SPECS.SHADOW_PRIEST,
     link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/adoraci',
+  }],
+  alts: [{
+    name: 'Zenavi',
+    spec: SPECS.FURY_WARRIOR,
+    link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/zenavi',
   }],
 };
 export const TheJigglr: Contributor = {
@@ -873,3 +886,303 @@ export const Tiphess: Contributor = {
     link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/tjphess',
   }],
 };
+export const Tyndi: Contributor = {
+  nickname: 'Tyndi',
+  github: 'darthelit',
+  discord: 'Tyndi#4337',
+  avatar: require('./interface/images/avatars/tyndi-avatar.png'),
+};
+export const MusicMeister: Contributor = {
+  nickname: 'MusicMeister',
+  github: 'TheMusicMeister',
+  discord: 'The Music Meister#8236',
+  mains: [{
+    name: 'Leviisa',
+    spec: SPECS.ENHANCEMENT_SHAMAN,
+    link: 'https://worldofwarcraft.com/en-us/character/us/illidan/leviisa',
+  }],
+};
+export const Moonrabbit: Contributor = {
+  nickname: 'Moonrabbit',
+  github: 'alliepet',
+};
+export const Vohrr: Contributor = {
+  nickname: 'Vohrr',
+  github: 'pingypong',
+  discord: 'Vohrr#1414',
+  about: 'MW Vet in Peak of Serenity discord',
+  mains:[{
+    name: 'Vohrr',
+    spec: SPECS.MISTWEAVER_MONK,
+    link: 'https://worldofwarcraft.com/en-us/character/us/bleeding-hollow/vohrr',
+  }],
+  alts: [{
+    name: 'Vokori',
+    spec: SPECS.DISCIPLINE_PRIEST,
+    link: 'https://worldofwarcraft.com/en-us/character/us/malganis/vokori',
+  },
+  {
+    name: 'Vohrpal',
+    spec: SPECS.HOLY_PALADIN,
+    link: 'https://worldofwarcraft.com/en-us/character/us/malganis/vohrpal',
+  },
+  {
+    name: 'Zappyvohr',
+    spec: SPECS.RESTORATION_SHAMAN,
+    link: 'https://worldofwarcraft.com/en-us/character/us/malganis/zappyvohr',
+  },
+  {
+    name: 'Vohrbloom',
+    spec: SPECS.RESTORATION_DRUID,
+    link: 'https://worldofwarcraft.com/en-us/character/us/malganis/vohrbloom',
+  }],
+};
+
+export const Vonn: Contributor = {
+  nickname: 'Vonn',
+  github: 'kenrms',
+  discord: 'vønn#2776',
+  avatar: require('./interface/images/avatars/vonn-avatar.jpg'),
+  mains: [{
+    name: 'Vønn',
+    spec: SPECS.ENHANCEMENT_SHAMAN,
+    link: 'https://worldofwarcraft.com/en-us/character/turalyon/vønn',
+  }],
+};
+export const AdamKelly: Contributor = {
+  nickname: 'AdamKelly',
+  github: 'Adammkelly',
+  discord: 'Overload#0899',
+  avatar: require('./interface/images/avatars/karagus-avatar.jpg'),
+  mains: [{
+    name: 'Karagus',
+    spec: SPECS.ELEMENTAL_SHAMAN,
+    link: 'https://worldofwarcraft.com/en-gb/character/eu/defias-brotherhood/Karagus',
+  }],
+};
+export const ChristopherKiss: Contributor = {
+  nickname: 'Chris',
+  github: 'ChristopherKiss',
+};
+export const ChagriAli: Contributor = {
+  nickname: 'chagriali',
+  github: 'chagriali',
+};
+export const Ssabbar: Contributor = {
+  nickname: 'ssabbar',
+  github: 'ssabbar',
+};
+export const Barter: Contributor = {
+  nickname: 'barter',
+  github: 'giubatt'
+};
+export const Jafowler: Contributor = {
+  nickname: 'Jake',
+  github: 'jafowler',
+  discord: 'Xinnk#3169',
+};
+export const Guyius: Contributor = {
+  nickname: 'Guyius',
+  github: 'guyius',
+  discord: 'Guyius#1560',
+};
+export const Amani: Contributor = {
+  nickname: 'Amani',
+  github: 'AmaniZandalari',
+  discord: 'Amani#0001',
+  about: 'Russian localizator and leader of Russian Shaman Discord community Vodovorot',
+  avatar: require('./interface/images/avatars/amani_avatar.png'),
+  mains: [{
+      name: 'Аманя',
+      spec: SPECS.ELEMENTAL_SHAMAN,
+      link: 'https://www.warcraftlogs.com/character/id/42517322',
+    }],
+};
+export const Haelrail: Contributor = {
+  nickname: 'Haelrail',
+  github: 'Haelrail',
+  discord: 'Haelrail#9202',
+  about: 'Russian localizator',
+};
+export const Kruzershtern: Contributor = {
+  nickname: 'Kruzershtern',
+  github: 'Kruzershtern',
+  discord: 'Kruzer#6980',
+  about: 'Russian localizator',
+};
+
+export const Mae: Contributor = {
+  nickname: 'Mae',
+  github: 'invfo',
+  discord: 'Mae#3348',
+  avatar: require('./interface/images/avatars/Mae_avatar.png'),
+  mains: [{
+    name: 'Maerstrom',
+    spec: SPECS.RESTORATION_SHAMAN,
+    link: 'https://worldofwarcraft.com/en-gb/character/eu/draenor/maerstrom'
+  }]
+};
+
+export const Keraldi: Contributor = {
+  nickname: 'Keraldi',
+  github: 'Keraldi',
+  discord: 'Keraldi#0001',
+};
+
+export const VMakaev: Contributor = {
+  nickname: 'VMakaev',
+  github: 'vladimirmakaev',
+  discord: 'Vladimir#5076',
+  mains: [{
+    name: 'Kaylleen',
+    spec: SPECS.DISCIPLINE_PRIEST,
+    link: 'https://worldofwarcraft.com/en-gb/character/eu/silvermoon/kaylleen'
+  }, {
+    name: 'Elastan',
+    spec: SPECS.PROTECTION_PALADIN,
+    link: 'https://worldofwarcraft.com/en-gb/character/eu/silvermoon/elastan'
+  }]
+};
+
+export const Maleficien: Contributor = {
+  nickname: 'Maleficien',
+  github: 'kevindqc',
+  discord: 'DaRkViRuS#1070',
+  mains: [{
+    name: 'Maleficien',
+    spec: SPECS.AFFLICTION_WARLOCK,
+    link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/maleficien'
+  }]
+};
+export const Xcessiv: Contributor = {
+  nickname: 'Xcessiv',
+  github: 'jwmclark',
+  avatar: require('./interface/images/avatars/xcessiv-avatar.jpg'),
+  discord: 'Xcessiv#6732',
+  mains: [{
+    name: 'Xcessiv',
+    spec: SPECS.FERAL_DRUID,
+    link: 'https://worldofwarcraft.com/en-us/character/us/thrall/xcessiv',
+  }],
+};
+
+export const Tora: Contributor = {
+  nickname: "Tora",
+  github: "RobinKa",
+  discord: "Tora#1871",
+  mains: [{
+    name: "Nuhrok",
+    spec: SPECS.FERAL_DRUID,
+    link: "https://worldofwarcraft.com/en-gb/character/eu/tarren-mill/Nuhrok"
+  }],
+  links: {
+    "Website": "https://warlock.ai"
+  },
+};
+export const Kettlepaw: Contributor = {
+  nickname: 'Kettlepaw',
+  github: 'abbottmg',
+  discord: 'abbott#2506',
+  mains: [{
+    name: 'Caeldrim',
+    spec: SPECS.GUARDIAN_DRUID,
+    link: 'https://worldofwarcraft.com/en-us/character/us/wyrmrest-accord/caeldrim',
+  }, {
+    name: 'Kettlepaw',
+    spec: SPECS.BREWMASTER_MONK,
+    link: 'https://worldofwarcraft.com/en-us/character/us/wyrmrest-accord/kettlepaw',
+  }],
+};
+
+export const g3neral: Contributor = {
+  nickname: 'g3neral',
+  github: 'g3neral-wow',
+  discord: 'g3neral#2455',
+  mains: [{
+    name: 'Nethershift',
+    spec: SPECS.FERAL_DRUID,
+    link: 'https://worldofwarcraft.com/en-us/character/us/proudmoore/Nethershift',
+  }],
+};
+
+export const flurreN: Contributor = {
+  nickname: 'flurreN',
+  github: 'flurreN',
+  discord: 'flurreN#6099',
+  mains: [{
+    name: 'Zyg',
+    spec: SPECS.HAVOC_DEMON_HUNTER,
+    link: 'https://worldofwarcraft.com/en-gb/character/eu/stormscale/zyg',
+  }],
+};
+
+export const Carrottopp: Contributor = {
+  nickname: "Carrottopp",
+  github: "Chasson1992",
+  avatar: require('./interface/images/avatars/Carrottopp_avatar.png'),
+  discord: "Carrottopp#2592",
+  mains: [{
+    name: "Carrottopp",
+    spec: SPECS.ARMS_WARRIOR,
+    link: "https://worldofwarcraft.com/en-us/character/us/stormrage/carrottopp",
+  }],
+};
+
+export const Vexxra: Contributor = {
+  nickname: 'Vexxra',
+  github: 'vexxra',
+};
+
+export const TurianSniper: Contributor = {
+  nickname: 'TurianSniper',
+  github: 'tjw87912',
+  discord: 'TurianSniper#2941',
+  mains: [{
+    name: "Nakofel",
+    spec: SPECS.VENGEANCE_DEMON_HUNTER,
+    link: "https://worldofwarcraft.com/en-us/character/us/bleeding-hollow/nakofel",
+  }],  
+};
+
+export const Geeii: Contributor = {
+  nickname: 'Geeii',
+  github: 'radean0909',
+  discord: 'Geei#8447',
+  mains: [{
+    name: "Geeii",
+    spec: SPECS.VENGEANCE_DEMON_HUNTER, 
+    link: "https://worldofwarcraft.com/en-us/character/us/area52/geei",
+  }],
+};
+
+export const Akhtal: Contributor = {
+  nickname: 'Akhtal',
+  github: 'JoeyBG',
+  discord: 'Akhtal#6439',
+  mains: [
+    {
+      name: 'Yllanis',
+      spec: SPECS.AFFLICTION_WARLOCK,
+      link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/Yllanis',
+    },
+    {
+      name: 'Olwië',
+      spec: SPECS.BREWMASTER_MONK,
+      link: 'https://worldofwarcraft.com/en-us/character/us/zuljin/Olwi%C3%AB',
+    },
+  ],
+};
+
+export const Barry: Contributor = {
+  nickname: 'Barry',
+  github: 'bcrabbe',
+  discord: 'Barry#5878',
+  avatar: require('./interface/images/avatars/barry-avatar.jpg'),
+  mains: [
+    {
+      name: 'Druulux',
+      spec: SPECS.RESTORATION_DRUID,
+      link: 'https://worldofwarcraft.com/en-gb/character/eu/silvermoon/druulux',
+    },
+  ],
+}

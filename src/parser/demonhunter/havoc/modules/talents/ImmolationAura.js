@@ -6,40 +6,18 @@ import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 import Events from 'parser/core/Events';
 import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import { formatThousands, formatPercentage } from 'common/format';
+import { t } from '@lingui/macro';
 
 /**
  * Example Report: https://www.warcraftlogs.com/reports/KGJgZPxanBX82LzV/#fight=4&source=20
  */
 
-const IMMOLATION_AURA = [SPELLS.IMMOLATION_AURA_FIRST_STRIKE_DPS, SPELLS.IMMOLATION_AURA_BUFF_DPS];
+const IMMOLATION_AURA = [SPELLS.IMMOLATION_AURA_INITIAL_HIT_DAMAGE, SPELLS.IMMOLATION_AURA_BUFF_DAMAGE];
 
-class ImmolationAura extends Analyzer{
-
-  furyGain = 0;
-  furyWaste = 0;
-  damage = 0;
-
-  constructor(...args) {
-    super(...args);
-    this.active = this.selectedCombatant.hasTalent(SPELLS.IMMOLATION_AURA_TALENT.id);
-    if (!this.active) {
-      return;
-    }
-    this.addEventListener(Events.energize.by(SELECTED_PLAYER).spell(SPELLS.IMMOLATION_AURA_BUFF_DPS), this.onEnergizeEvent);
-    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(IMMOLATION_AURA), this.onDamageEvent);
-  }
-
-  onEnergizeEvent(event) {
-    this.furyGain += event.resourceChange;
-    this.furyWaste += event.waste;
-  }
-
-  onDamageEvent(event) {
-    this.damage += event.amount;
-  }
+class ImmolationAura extends Analyzer {
 
   get furyPerMin() {
-    return ((this.furyGain - this.furyWaste) / (this.owner.fightDuration/60000)).toFixed(2);
+    return ((this.furyGain - this.furyWaste) / (this.owner.fightDuration / 60000)).toFixed(2);
   }
 
   get suggestionThresholds() {
@@ -54,21 +32,45 @@ class ImmolationAura extends Analyzer{
     };
   }
 
-  suggestions(when) {
-    when(this.suggestionThresholds)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<> Avoid casting <SpellLink id={SPELLS.IMMOLATION_AURA_TALENT.id} /> when close to max Fury.</>)
-          .icon(SPELLS.IMMOLATION_AURA_TALENT.icon)
-          .actual(`${formatPercentage(actual)}% Fury wasted`)
-          .recommended(`${formatPercentage(recommended)}% is recommended.`);
-      });
+  furyGain = 0;
+  furyWaste = 0;
+  damage = 0;
+
+  constructor(...args) {
+    super(...args);
+    this.active = this.selectedCombatant.hasTalent(SPELLS.BURNING_HATRED_TALENT.id);
+    if (!this.active) {
+      return;
+    }
+    this.addEventListener(Events.energize.by(SELECTED_PLAYER).spell(IMMOLATION_AURA), this.onEnergizeEvent);
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(IMMOLATION_AURA), this.onDamageEvent);
   }
 
-  statistic(){
+  onEnergizeEvent(event) {
+    this.furyGain += event.resourceChange;
+    this.furyWaste += event.waste;
+  }
+
+  onDamageEvent(event) {
+    this.damage += event.amount;
+  }
+
+  suggestions(when) {
+    when(this.suggestionThresholds)
+      .addSuggestion((suggest, actual, recommended) => suggest(<> Avoid casting <SpellLink id={SPELLS.IMMOLATION_AURA.id} /> when close to max Fury.</>)
+        .icon(SPELLS.IMMOLATION_AURA.icon)
+        .actual(t({
+      id: "demonhunter.havoc.suggestions.immolationAura.furyWasted",
+      message: `${formatPercentage(actual)}% Fury wasted`
+    }))
+        .recommended(`${formatPercentage(recommended)}% is recommended.`));
+  }
+
+  statistic() {
     const effectiveFuryGain = this.furyGain - this.furyWaste;
     return (
       <TalentStatisticBox
-        talent={SPELLS.IMMOLATION_AURA_TALENT.id}
+        talent={SPELLS.IMMOLATION_AURA.id}
         position={STATISTIC_ORDER.OPTIONAL(6)}
         value={(
           <>
@@ -88,4 +90,5 @@ class ImmolationAura extends Analyzer{
     );
   }
 }
+
 export default ImmolationAura;

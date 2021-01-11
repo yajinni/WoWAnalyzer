@@ -82,10 +82,10 @@ class Abilities extends CoreAbilities {
             }
             return true;
           },
-          isHighPriority: ({ timestamp }, selectedCombatant) => {
+          isHighPriority: ({ timestamp }, selectedCombatant) =>
             // Account for reaction time; the player must have had the proc for at least this long
-            return selectedCombatant.hasBuff(SPELLS.GALACTIC_GUARDIAN.id, timestamp - REACTION_TIME_THRESHOLD);
-          },
+            selectedCombatant.hasBuff(SPELLS.GALACTIC_GUARDIAN.id, timestamp - REACTION_TIME_THRESHOLD)
+          ,
         },
         timelineSortIndex: 3,
       },
@@ -184,6 +184,8 @@ class Abilities extends CoreAbilities {
         spell: SPELLS.IRONFUR,
         buffSpellId: SPELLS.IRONFUR.id,
         category: Abilities.SPELL_CATEGORIES.DEFENSIVE,
+        gcd: null,
+        cooldown: .5,
         timelineSortIndex: 7,
       },
       {
@@ -273,16 +275,6 @@ class Abilities extends CoreAbilities {
       {
         spell: SPELLS.INCAPACITATING_ROAR,
         category: Abilities.SPELL_CATEGORIES.UTILITY,
-        enabled: !combatant.hasTalent(SPELLS.INTIMIDATING_ROAR_TALENT.id),
-        cooldown: 30,
-        gcd: {
-          base: 1500,
-        },
-      },
-      {
-        spell: SPELLS.INTIMIDATING_ROAR_TALENT,
-        category: Abilities.SPELL_CATEGORIES.UTILITY,
-        enabled: combatant.hasTalent(SPELLS.INTIMIDATING_ROAR_TALENT.id),
         cooldown: 30,
         gcd: {
           base: 1500,
@@ -291,7 +283,6 @@ class Abilities extends CoreAbilities {
       {
         spell: SPELLS.TYPHOON,
         category: Abilities.SPELL_CATEGORIES.UTILITY,
-        enabled: combatant.hasTalent(SPELLS.TYPHOON_TALENT.id),
         cooldown: 30,
         gcd: {
           base: 1500,

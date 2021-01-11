@@ -1,10 +1,12 @@
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import SPELLS from 'common/SPELLS';
 import Combatants from 'parser/shared/modules/Combatants';
 import HealingValue from 'parser/shared/modules/HealingValue';
 import StatTracker from 'parser/shared/modules/StatTracker';
 import calculateEffectiveHealing from 'parser/core/calculateEffectiveHealing';
-import { calculateAzeriteEffects } from 'common/stats';
+import STAT from 'parser/shared/modules/features/STAT';
+
+import Events from 'parser/core/Events';
 
 import { DRUID_HEAL_INFO, getSpellInfo } from '../../SpellInfo';
 
@@ -47,17 +49,15 @@ class Mastery extends Analyzer {
       [SPELLS.JACINS_RUSE.id]: { amount: 3000 },
     };
 
-    if(this.selectedCombatant.hasTrait(SPELLS.SYNERGISTIC_GROWTH.id)) {
-      this.masteryBuffs[SPELLS.SYNERGISTIC_GROWTH_BUFF.id] = {amount: this.selectedCombatant.traitsBySpellId[SPELLS.SYNERGISTIC_GROWTH.id]
-          .reduce((sum, rank) => sum + calculateAzeriteEffects(SPELLS.SYNERGISTIC_GROWTH.id, rank)[0], 0)};
-    }
-
     Object.values(this.masteryBuffs).forEach(entry => {
       entry.attributableHealing = 0;
     });
+
+    this.addEventListener(Events.heal.by(SELECTED_PLAYER), this.onHeal);
+    this.addEventListener(Events.absorbed.by(SELECTED_PLAYER), this.onAbsorbed);
   }
 
-  on_byPlayer_heal(event) {
+  onHeal(event) {
     const spellId = event.ability.guid;
     const target = this.combatants.getEntity(event);
     const healVal = new HealingValue(event.amount, event.absorbed, event.overheal);
@@ -93,7 +93,7 @@ class Mastery extends Analyzer {
     }
   }
 
-  on_byPlayer_absorbed(event) {
+  onAbsorbed(event) {
     this.totalNoMasteryHealing += event.amount;
   }
 
@@ -212,7 +212,7 @@ class Mastery extends Analyzer {
     const effectiveStackBenefit = effectiveMasteryHealing / oneStackMasteryHealingRaw;
 
     const relativeBuffBenefit = (buffRating => {
-      const buffBonus = hotCount * buffRating / this.statTracker.masteryRatingPerPercent;
+      const buffBonus = hotCount * buffRating / this.statTracker.ratingNeededForNextPercentage(this.statTracker.currentMasteryRating, this.statTracker.statBaselineRatingPerPercent[STAT.MASTERY], this.selectedCombatant.spec.masteryCoefficient);
       return buffBonus / healMasteryMult;
     });
 

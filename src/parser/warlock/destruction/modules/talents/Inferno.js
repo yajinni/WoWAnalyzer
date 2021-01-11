@@ -8,7 +8,7 @@ import { formatThousands } from 'common/format';
 
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 
 import RainOfFire from '../features/RainOfFire';
 import SoulShardTracker from '../soulshards/SoulShardTracker';
@@ -21,17 +21,6 @@ const FRAGMENTS_PER_RAIN_OF_FIRE = 30;
       Rain of Fire damage has a 20% chance to generate a Soul Shard Fragment.
  */
 class Inferno extends Analyzer {
-  static dependencies = {
-    rainOfFire: RainOfFire,
-    soulShardTracker: SoulShardTracker,
-    abilityTracker: AbilityTracker,
-  };
-
-  constructor(...args) {
-    super(...args);
-    this.active = this.selectedCombatant.hasTalent(SPELLS.INFERNO_TALENT.id);
-  }
-
   get averageRainOfFireDamage() {
     // Rain of Fire has different spellId for cast and damage but AbilityTracker picks up both of them
     const rofDamage = this.abilityTracker.getAbility(SPELLS.RAIN_OF_FIRE_DAMAGE.id);
@@ -44,6 +33,17 @@ class Inferno extends Analyzer {
     return ((chaosBolt.damageEffective + chaosBolt.damageAbsorbed) / chaosBolt.casts) || 0;
   }
 
+  static dependencies = {
+    rainOfFire: RainOfFire,
+    soulShardTracker: SoulShardTracker,
+    abilityTracker: AbilityTracker,
+  };
+
+  constructor(...args) {
+    super(...args);
+    this.active = this.selectedCombatant.hasTalent(SPELLS.INFERNO_TALENT.id);
+  }
+
   statistic() {
     // ESTIMATED fragments from Rain of Fire, see comments in SoulShardTracker._getRandomFragmentDistribution()
     const fragments = this.soulShardTracker.getGeneratedBySpell(SPELLS.RAIN_OF_FIRE_DAMAGE.id);
@@ -51,7 +51,7 @@ class Inferno extends Analyzer {
     const estimatedChaosBoltDamage = Math.floor(fragments / FRAGMENTS_PER_CHAOS_BOLT) * this.averageChaosBoltDamage;
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(3)}
+        category={STATISTIC_CATEGORY.TALENTS}
         size="small"
         tooltip={(
           <>

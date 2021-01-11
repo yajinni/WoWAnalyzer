@@ -4,13 +4,21 @@ import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import Events from 'parser/core/Events';
 
 import SPELLS from 'common/SPELLS';
-
-import StatisticListBoxItem from 'interface/others/StatisticListBoxItem';
-import SpellLink from 'common/SpellLink';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
 
 const BUFFER = 350;
 
 class PowerSiphon extends Analyzer {
+  get totalCores() {
+    return this.casts.reduce((total, current) => total + current, 0);
+  }
+
+  get averageCores() {
+    return (this.totalCores / this.casts.length) || 0;
+  }
+
   _cast = null;
   _count = 0;
   casts = [];
@@ -43,20 +51,17 @@ class PowerSiphon extends Analyzer {
     this.casts.push(this._count);
   }
 
-  get totalCores() {
-    return this.casts.reduce((total, current) => total + current, 0);
-  }
-  get averageCores() {
-    return (this.totalCores / this.casts.length) || 0;
-  }
-
-  subStatistic() {
+  statistic() {
     return (
-      <StatisticListBoxItem
-        title={<><SpellLink id={SPELLS.POWER_SIPHON_TALENT.id} /> bonus Cores</>}
-        value={this.totalCores}
-        valueTooltip={`Average Demonic Core stacks per cast: ${this.averageCores.toFixed(2)}`}
-      />
+      <Statistic
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
+        tooltip={`Average Demonic Core stacks per cast: ${this.averageCores.toFixed(2)}`}
+      >
+        <BoringSpellValueText spell={SPELLS.POWER_SIPHON_TALENT}>
+          {this.totalCores} <small>Bonus cores</small>
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }

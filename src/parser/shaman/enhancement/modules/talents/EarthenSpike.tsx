@@ -1,7 +1,7 @@
 import React from 'react';
 
 import SPELLS from 'common/SPELLS/index';
-import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Analyzer, { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
 import calculateEffectiveDamage from 'parser/core/calculateEffectiveDamage';
 import MAGIC_SCHOOLS from 'game/MAGIC_SCHOOLS';
 import Enemies from 'parser/shared/modules/Enemies';
@@ -33,13 +33,10 @@ class EarthenSpike extends Analyzer {
 
   protected damageGained: number = 0;
 
-  constructor(options: any) {
+  constructor(options: Options) {
     super(options);
 
-    if(!this.selectedCombatant.hasTalent(SPELLS.EARTHEN_SPIKE_TALENT.id)) {
-      this.active = false;
-      return;
-    }
+    this.active = this.selectedCombatant.hasTalent(SPELLS.EARTHEN_SPIKE_TALENT.id);
 
     this.addEventListener(
       Events.damage.by(SELECTED_PLAYER)
@@ -51,6 +48,13 @@ class EarthenSpike extends Analyzer {
       Events.damage.by(SELECTED_PLAYER),
       this.onAnyDamage,
     );
+  }
+
+  get buffedSchools() {
+    return [
+      MAGIC_SCHOOLS.ids.PHYSICAL,
+      MAGIC_SCHOOLS.ids.NATURE,
+    ];
   }
 
   onEarthenSpikeDamage(event: DamageEvent) {
@@ -72,13 +76,6 @@ class EarthenSpike extends Analyzer {
     }
 
     this.damageGained += calculateEffectiveDamage(event, EARTHEN_SPIKE.INCREASE);
-  }
-
-  get buffedSchools() {
-    return [
-      MAGIC_SCHOOLS.ids.PHYSICAL,
-      MAGIC_SCHOOLS.ids.NATURE,
-    ];
   }
 
   statistic() {

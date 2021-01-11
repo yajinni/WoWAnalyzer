@@ -7,7 +7,6 @@ import { t } from '@lingui/macro';
 
 import { fetchFights, LogNotFoundError } from 'common/fetchWclApi';
 import { captureException } from 'common/errorLogger';
-import { i18n } from 'interface/RootLocalizationProvider';
 import { setReport } from 'interface/actions/report';
 import { getReportCode } from 'interface/selectors/url/report';
 import makeAnalyzerUrl from 'interface/common/makeAnalyzerUrl';
@@ -64,6 +63,7 @@ class ReportLoader extends React.PureComponent {
     }
   }
   async loadReport(reportCode, refresh = false) {
+    const isAnonymous = reportCode.startsWith('a:');
     try {
       this.resetState();
       const report = await fetchFights(reportCode, refresh);
@@ -72,6 +72,7 @@ class ReportLoader extends React.PureComponent {
       }
       this.setState(null, {
         ...report,
+        isAnonymous,
         code: reportCode, // Pass the code so know which report this is
         // TODO: Remove the code prop
       });
@@ -96,7 +97,12 @@ class ReportLoader extends React.PureComponent {
     });
   }
   renderLoading() {
-    return <ActivityIndicator text={i18n._(t`Pulling report info...`)} />;
+    return (
+      <ActivityIndicator text={t({
+        id: "interface.report.reportLoader",
+        message: `Pulling report info...`
+      })} />
+    );
   }
   render() {
     const error = this.state.error;
@@ -120,8 +126,8 @@ class ReportLoader extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => ({
-  reportCode: getReportCode(state),
+const mapStateToProps = (state, props) => ({
+  reportCode: getReportCode(props.location.pathname),
 });
 export default compose(
   withRouter,

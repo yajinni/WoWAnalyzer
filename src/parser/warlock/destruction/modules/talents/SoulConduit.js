@@ -8,7 +8,7 @@ import { formatPercentage, formatThousands } from 'common/format';
 
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 import { findMax, binomialPMF } from 'parser/shared/modules/helpers/Probability';
 
 import SoulShardTracker from '../soulshards/SoulShardTracker';
@@ -17,6 +17,11 @@ const FRAGMENTS_PER_SHARD = 10;
 const SC_PROC_CHANCE = 0.15;
 
 class SoulConduit extends Analyzer {
+  get averageChaosBoltDamage() {
+    const chaosBolt = this.abilityTracker.getAbility(SPELLS.CHAOS_BOLT.id);
+    return ((chaosBolt.damageEffective + chaosBolt.damageAbsorbed) / chaosBolt.casts) || 0;
+  }
+
   static dependencies = {
     soulShardTracker: SoulShardTracker,
     abilityTracker: AbilityTracker,
@@ -27,11 +32,6 @@ class SoulConduit extends Analyzer {
     this.active = this.selectedCombatant.hasTalent(SPELLS.SOUL_CONDUIT_TALENT.id);
   }
 
-  get averageChaosBoltDamage() {
-    const chaosBolt = this.abilityTracker.getAbility(SPELLS.CHAOS_BOLT.id);
-    return ((chaosBolt.damageEffective + chaosBolt.damageAbsorbed) / chaosBolt.casts) || 0;
-  }
-
   statistic() {
     const generatedShards = this.soulShardTracker.getGeneratedBySpell(SPELLS.SOUL_CONDUIT_SHARD_GEN.id) / FRAGMENTS_PER_SHARD;
     const estimatedDamage = Math.floor(generatedShards / 2) * this.averageChaosBoltDamage; // Chaos Bolt costs 2 shards to cast
@@ -40,7 +40,7 @@ class SoulConduit extends Analyzer {
     const { max } = findMax(totalSpent, (k, n) => binomialPMF(k, n, SC_PROC_CHANCE));
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(5)}
+        category={STATISTIC_CATEGORY.TALENTS}
         size="small"
         tooltip={(
           <>

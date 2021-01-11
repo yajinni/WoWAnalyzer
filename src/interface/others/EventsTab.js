@@ -89,6 +89,12 @@ const FILTERABLE_TYPES = {
   resurrect: {
     name: 'Resurrect',
   },
+  dispel: {
+    name: 'Dispel',
+  },
+  aurabroken: {
+    name: 'Aura Broken',
+  },
 };
 
 class EventsTab extends React.Component {
@@ -108,6 +114,10 @@ class EventsTab extends React.Component {
       search: '',
     };
     this.handleRowClick = this.handleRowClick.bind(this);
+    this.toggleAllOff = Object.keys(FILTERABLE_TYPES).reduce((obj, type) => {
+      obj[type] = false;
+      return obj;
+    }, {});
   }
 
   findEntity(id) {
@@ -125,12 +135,14 @@ class EventsTab extends React.Component {
     }
     return null;
   }
+
   renderEntity(entity) {
     if (!entity) {
       return null;
     }
     return <span className={entity.type}>{entity.name}</span>;
   }
+
   renderAbility(ability) {
     if (!ability) {
       return null;
@@ -143,6 +155,7 @@ class EventsTab extends React.Component {
       </SpellLink>
     );
   }
+
   eventTypeName(type) {
     return this.state.rawNames ? type : (FILTERABLE_TYPES[type] ? FILTERABLE_TYPES[type].name : type);
   }
@@ -152,6 +165,7 @@ class EventsTab extends React.Component {
     const explanation = FILTERABLE_TYPES[type] ? FILTERABLE_TYPES[type].explanation : undefined;
     return this.renderToggle(type, name, explanation);
   }
+
   renderToggle(prop, label, explanation = null) {
     return (
       <div key={prop} className="flex toggle-control">
@@ -168,7 +182,7 @@ class EventsTab extends React.Component {
           </div>
         )}
         <Toggle
-          defaultChecked={this.state[prop]}
+          checked={this.state[prop]}
           icons={false}
           onChange={event => this.setState({ [prop]: event.target.checked })}
           id={`${prop}-toggle`}
@@ -177,6 +191,7 @@ class EventsTab extends React.Component {
       </div>
     );
   }
+
   renderRow(props) {
     const event = props.rowData;
     return defaultTableRowRenderer({
@@ -184,8 +199,13 @@ class EventsTab extends React.Component {
       className: `${props.className} ${event.__modified ? 'modified' : ''} ${event.__fabricated ? 'fabricated' : ''}`,
     });
   }
+
   handleRowClick({ rowData }) {
     console.log(rowData);
+  }
+
+  toggleAllFiltersOff() {
+    this.setState(this.toggleAllOff);
   }
 
   renderSearchBox() {
@@ -206,9 +226,8 @@ class EventsTab extends React.Component {
   render() {
     const { parser } = this.props;
 
-    const searchTerms = this.state.search
-      .split(' ')
-      .filter(searchTerm => searchTerm !== '');
+    const regex = /"([^"]*)"|(\S+)/g;
+    const searchTerms = (this.state.search.match(regex) || []).map(m => m.replace(regex, '$1$2'));
 
     const events = parser.eventHistory
       .filter(event => {
@@ -264,6 +283,12 @@ class EventsTab extends React.Component {
             {this.renderSearchBox()}
             <br />
             {Object.keys(FILTERABLE_TYPES).map(type => this.renderEventTypeToggle(type))}
+            <br />
+            <div className="flex" style={{ paddingLeft: 5 }}>
+              <button className="btn btn-link" onClick={() => this.toggleAllFiltersOff()}>
+                Toggle off all filters
+              </button>
+            </div>
             <br />
             {this.renderToggle('showFabricated', 'Fabricated events', 'These events were not originally found in the combatlog. They were created by us to fix bugs, inconsistencies, or to provide new functionality. You can recognize these events by their green background.')}
             {this.renderToggle('rawNames', 'Raw names')}
@@ -395,7 +420,7 @@ class EventsTab extends React.Component {
                           return (
                             <>
                               <span className={resource.url}>
-                                {formatThousands(rowData.resourceChange)} {resource.name}
+                                {formatThousands(rowData.resourceChange - rowData.waste)} {resource.name}
                               </span>{' '}
                               {resource.icon && <Icon icon={resource.icon} alt={resource.name} />}
                             </>
@@ -426,6 +451,18 @@ class EventsTab extends React.Component {
                             {rowData.overheal ? <span className="overheal">O: {formatThousands(rowData.overheal)}</span> : null}
                           </span>
                         );
+                      }
+                      if (rowData.type === EventType.Energize) {
+                        const resource = RESOURCE_TYPES[rowData.resourceChangeType];
+                        if (resource) {
+                          return (
+                            <>
+                              <span className={resource.url}>
+                                {rowData.waste > 0 ? `${formatThousands(rowData.waste)} wasted` : ''}
+                              </span>
+                            </>
+                          );
+                        }
                       }
                       return null;
                     }}

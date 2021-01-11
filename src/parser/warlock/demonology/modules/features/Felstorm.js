@@ -8,13 +8,31 @@ import SpellLink from 'common/SpellLink';
 import { formatPercentage } from 'common/format';
 import Events from 'parser/core/Events';
 
+import { t } from '@lingui/macro';
+
 const FELSTORM_COOLDOWN = 30;
 // when Demonic Strength is cast, then AFTER the cast, Felguard charges at the target, and after he arrives, does the Felstorm
 // this delay is so that every Felstorm caused by Demonic Strength accounts for the charge "travel" time
 const DEMONIC_STRENGTH_BUFFER = 1500;
 
-
 class Felstorm extends Analyzer {
+  get maxCasts() {
+    return Math.ceil(calculateMaxCasts(FELSTORM_COOLDOWN, this.owner.fightDuration));
+  }
+
+  get suggestionThresholds() {
+    const percentage = (this.mainPetFelstormCount / this.maxCasts) || 0;
+    return {
+      actual: percentage,
+      isLessThan: {
+        minor: 0.9,
+        average: 0.8,
+        major: 0.7,
+      },
+      style: 'percentage',
+    };
+  }
+
   _lastDemonicStrengthCast = null;
   mainPetFelstormCount = 0;
 
@@ -40,31 +58,15 @@ class Felstorm extends Analyzer {
     }
   }
 
-  get maxCasts() {
-    return Math.ceil(calculateMaxCasts(FELSTORM_COOLDOWN, this.owner.fightDuration));
-  }
-
-  get suggestionThresholds(){
-    const percentage = (this.mainPetFelstormCount / this.maxCasts) || 0;
-    return {
-      actual: percentage,
-      isLessThan: {
-        minor: 0.9,
-        average: 0.8,
-        major: 0.7,
-      },
-      style: 'percentage',
-    };
-  }
-
   suggestions(when) {
     when(this.suggestionThresholds)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<>You should use your Felguard's <SpellLink id={SPELLS.FELSTORM_BUFF.id} /> more often, preferably on cooldown.</>)
-          .icon(SPELLS.FELSTORM_BUFF.icon)
-          .actual(`${this.mainPetFelstormCount} out of ${this.maxCasts} (${formatPercentage(actual)} %) Felstorm casts.`)
-          .recommended(`> ${formatPercentage(recommended)} % is recommended`);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<>You should use your Felguard's <SpellLink id={SPELLS.FELSTORM_BUFF.id} /> more often, preferably on cooldown.</>)
+        .icon(SPELLS.FELSTORM_BUFF.icon)
+        .actual(t({
+      id: "warlock.demonology.suggestions.felstorm.casts",
+      message: `${this.mainPetFelstormCount} out of ${this.maxCasts} (${formatPercentage(actual)} %) Felstorm casts.`
+    }))
+        .recommended(`> ${formatPercentage(recommended)} % is recommended`));
   }
 }
 

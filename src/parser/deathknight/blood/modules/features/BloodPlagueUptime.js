@@ -2,9 +2,12 @@ import React from 'react';
 import Analyzer from 'parser/core/Analyzer';
 import Enemies from 'parser/shared/modules/Enemies';
 import SPELLS from 'common/SPELLS';
-import SpellIcon from 'common/SpellIcon';
 import { formatPercentage } from 'common/format';
-import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
+import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import Statistic from 'interface/statistics/Statistic';
+import { t } from '@lingui/macro';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import UptimeIcon from 'interface/icons/Uptime';
 
 class BloodPlagueUptime extends Analyzer {
   static dependencies = {
@@ -29,25 +32,29 @@ class BloodPlagueUptime extends Analyzer {
 
   suggestions(when) {
     when(this.uptimeSuggestionThresholds)
-        .addSuggestion((suggest, actual, recommended) => {
-          return suggest('Your Blood Plague uptime can be improved. Keeping Blood Boil on cooldown should keep it up at all times.')
+        .addSuggestion((suggest, actual, recommended) => suggest('Your Blood Plague uptime can be improved. Keeping Blood Boil on cooldown should keep it up at all times.')
             .icon(SPELLS.BLOOD_PLAGUE.icon)
-            .actual(`${formatPercentage(actual)}% Blood Plague uptime`)
-            .recommended(`>${formatPercentage(recommended)}% is recommended`);
-        });
+            .actual(t({
+      id: "deathknight.blood.suggestions.bloodPlague.uptime",
+      message: `${formatPercentage(actual)}% Blood Plague uptime`
+    }))
+            .recommended(`>${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {
     return (
-      <StatisticBox
-        icon={<SpellIcon id={SPELLS.BLOOD_PLAGUE.id} />}
-        value={`${formatPercentage(this.uptime)} %`}
-        label="Blood Plague uptime"
-      />
+      <Statistic
+        size="small"
+        position={STATISTIC_ORDER.CORE(2)}
+      >
+        <BoringSpellValueText spell={SPELLS.BLOOD_PLAGUE}>
+          <>
+            <UptimeIcon /> {formatPercentage(this.uptime)}% <small>uptime</small>
+          </>
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
-
-  statisticOrder = STATISTIC_ORDER.CORE(2);
 }
 
 export default BloodPlagueUptime;

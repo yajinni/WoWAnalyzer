@@ -5,12 +5,16 @@ import {
   formatNumber,
   formatPercentage,
 } from 'common/format';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
+import { ThresholdStyle } from 'parser/core/ParseResults';
 import CrossIcon from 'interface/icons/Cross';
 import Statistic from 'interface/statistics/Statistic';
 import BoringValueText from 'interface/statistics/components/BoringValueText';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
-import { CastEvent } from '../../core/Events';
+import CASTS_THAT_ARENT_CASTS from 'parser/core/CASTS_THAT_ARENT_CASTS';
+import CASTABLE_WHILE_CASTING_SPELLS from 'parser/core/CASTABLE_WHILE_CASTING_SPELLS';
+
+import Events, { CastEvent, BeginCastEvent } from '../../core/Events';
 
 const debug = false;
 const MS_BUFFER = 100;
@@ -18,7 +22,7 @@ const MS_BUFFER = 100;
 class CancelledCasts extends Analyzer {
   castsCancelled = 0;
   castsFinished = 0;
-  beginCastSpell: CastEvent | undefined = undefined;
+  beginCastSpell: BeginCastEvent | undefined = undefined;
   wasCastStarted: boolean = false;
   cancelledSpellList: {
     [key: number]: {
@@ -28,9 +32,16 @@ class CancelledCasts extends Analyzer {
   } = {};
   IGNORED_ABILITIES: number[] = [];
 
-  on_byPlayer_begincast(event: CastEvent) {
+  constructor(options: Options){
+    super(options);
+    this.addEventListener(Events.begincast.by(SELECTED_PLAYER), this.onBeginCast);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER), this.onCast);
+    this.addEventListener(Events.fightend, this.onFightend);
+  }
+
+  onBeginCast(event: BeginCastEvent) {
     const spellId = event.ability.guid;
-    if (this.IGNORED_ABILITIES.includes(spellId)) {
+    if (this.IGNORED_ABILITIES.includes(spellId) || CASTS_THAT_ARENT_CASTS.includes(spellId) || CASTABLE_WHILE_CASTING_SPELLS.includes(spellId)) {
       return;
     }
     if (this.wasCastStarted && this.beginCastSpell !== undefined &&
@@ -44,10 +55,10 @@ class CancelledCasts extends Analyzer {
     this.wasCastStarted = true;
   }
 
-  on_byPlayer_cast(event: CastEvent) {
+  onCast(event: CastEvent) {
     const spellId = event.ability.guid;
     const beginCastAbility = this.beginCastSpell && this.beginCastSpell.ability;
-    if (this.IGNORED_ABILITIES.includes(spellId) || !beginCastAbility) {
+    if (this.IGNORED_ABILITIES.includes(spellId) || CASTS_THAT_ARENT_CASTS.includes(spellId) || CASTABLE_WHILE_CASTING_SPELLS.includes(spellId) || !beginCastAbility) {
       return;
     }
     if (beginCastAbility.guid !== spellId && this.wasCastStarted) {
@@ -91,11 +102,11 @@ class CancelledCasts extends Analyzer {
         average: 0.05,
         major: 0.15,
       },
-      style: 'percentage',
+      style: ThresholdStyle.PERCENTAGE,
     };
   }
 
-  on_fightend() {
+  onFightend() {
     debug &&
     console.log(
       formatMilliseconds(this.owner.fightDuration),
@@ -115,7 +126,6 @@ class CancelledCasts extends Analyzer {
       <Statistic
         position={STATISTIC_ORDER.CORE(10)}
         size="small"
-        label="test"
         className="value"
         tooltip={(
           <>

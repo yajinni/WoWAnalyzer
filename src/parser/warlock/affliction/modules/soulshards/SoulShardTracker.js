@@ -1,4 +1,4 @@
-import ResourceTracker from 'parser/shared/modules/resourcetracker/ResourceTracker';
+import ResourceTracker from 'parser/shared/modules/resources/resourcetracker/ResourceTracker';
 import RESOURCE_TYPES from 'game/RESOURCE_TYPES';
 
 class SoulShardTracker extends ResourceTracker {
@@ -7,7 +7,7 @@ class SoulShardTracker extends ResourceTracker {
     this.resource = RESOURCE_TYPES.SOUL_SHARDS;
   }
 
-  on_byPlayer_cast(event) {
+  onCast(event) {
     if (!this.shouldProcessCastEvent(event)) {
       return;
     }
@@ -17,7 +17,7 @@ class SoulShardTracker extends ResourceTracker {
     event.classResources[index].amount /= 10;
     event.classResources[index].cost /= 10;
     event.classResources[index].max /= 10;
-    super.on_byPlayer_cast && super.on_byPlayer_cast(event);
+    super.onCast && super.onCast(event);
   }
 
   _getClassResourceIndex(event) {

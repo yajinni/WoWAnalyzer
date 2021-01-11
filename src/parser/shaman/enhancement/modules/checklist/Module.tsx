@@ -7,11 +7,10 @@ import PreparationRuleAnalyzer from 'parser/shared/modules/features/Checklist/Pr
 
 import Component from './Component';
 import AlwaysBeCasting from '../features/AlwaysBeCasting';
-import Flametongue from '../core/Flametongue';
-import Hailstorm from '../talents/Hailstorm';
-import FuryOfAir from '../talents/FuryOfAir';
-import LightningShield from '../talents/LightningShield';
-import FlametongueRefresh from '../core/FlametongueRefresh';
+import WindfuryTotem from '../core/WindfuryTotem';
+// import Flametongue from '../core/Flametongue';
+// import Hailstorm from '../talents/Hailstorm';
+// import FlametongueRefresh from '../core/FlametongueRefresh';
 
 class Checklist extends BaseChecklist {
   static dependencies = {
@@ -19,22 +18,20 @@ class Checklist extends BaseChecklist {
     castEfficiency: CastEfficiency,
     preparationRuleAnalyzer: PreparationRuleAnalyzer,
     alwaysBeCasting: AlwaysBeCasting,
-    lightningShield: LightningShield,
-    flametongue: Flametongue,
-    flametongueRefresh: FlametongueRefresh,
-    hailstorm: Hailstorm,
-    furyOfAir: FuryOfAir,
+    windfuryTotem: WindfuryTotem,
+    // flametongue: Flametongue,
+    // flametongueRefresh: FlametongueRefresh,
+    // hailstorm: Hailstorm,
   };
 
   protected combatants!: Combatants;
   protected castEfficiency!: CastEfficiency;
   protected preparationRuleAnalyzer!: PreparationRuleAnalyzer;
   protected alwaysBeCasting!: AlwaysBeCasting;
-  protected lightningShield!: LightningShield;
-  protected flametongue!: Flametongue;
-  protected flametongueRefresh!: FlametongueRefresh;
-  protected hailstorm!: Hailstorm;
-  protected furyOfAir!: FuryOfAir;
+  protected windfuryTotem!: WindfuryTotem;
+  // protected flametongue!: Flametongue;
+  // protected flametongueRefresh!: FlametongueRefresh;
+  //protected hailstorm!: Hailstorm;
 
   render() {
     return (
@@ -45,13 +42,10 @@ class Checklist extends BaseChecklist {
           ...this.preparationRuleAnalyzer.thresholds,
 
           alwaysBeCasting: this.alwaysBeCasting.suggestionThresholds,
-
+          windfuryTotemUptime: this.windfuryTotem.uptimeThreshold,
           // Buffs uptime and refreshes
-          lightningShieldUptime: this.lightningShield.lightningShieldUptimeThreshold,
-          flametongueUptime: this.flametongue.flametongueUptimeThreshold,
-          flametongueEarlyRefreshes: this.flametongueRefresh.flametongueEarlyRefreshThreshold,
-          frostbrandUptime: this.hailstorm.frostbrandUptimeThresholds,
-          furyOfAirUptime: this.furyOfAir.furyOfAirUptimeThresholds,
+          // flametongueUptime: this.flametongue.flametongueUptimeThreshold,
+          // flametongueEarlyRefreshes: this.flametongueRefresh.flametongueEarlyRefreshThreshold,
         }}
       />
     );

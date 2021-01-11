@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import Enemies from 'parser/shared/modules/Enemies';
 import DamageTracker from 'parser/shared/modules/AbilityTracker';
 
@@ -9,53 +9,12 @@ import SpellLink from 'common/SpellLink';
 import { formatPercentage, formatNumber } from 'common/format';
 import TalentStatisticBox from 'interface/others/TalentStatisticBox';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import { t } from '@lingui/macro';
+import Events from 'parser/core/Events';
 
 class SoulBarrier extends Analyzer {
-  static dependencies = {
-    damageTracker: DamageTracker,
-    enemies: Enemies,
-  };
-
-  casts = 0;
-  totalAbsorbed = 0;
-  buffApplied = 0;
-  buffRemoved = 0;
-  buffLength = 0;
-  avgBuffLength = 0;
-  totalBuffLength = 0;
-
-
-  constructor(...args) {
-    super(...args);
-    this.active = this.selectedCombatant.hasTalent(SPELLS.SOUL_BARRIER_TALENT.id);
-  }
-
   get uptime() {
     return this.selectedCombatant.getBuffUptime(SPELLS.SOUL_BARRIER_TALENT.id) / this.owner.fightDuration;
-  }
-
-  on_toPlayer_applybuff(event) {
-    if (event.ability.guid !== SPELLS.SOUL_BARRIER_TALENT.id) {
-      return;
-    }
-    this.casts += 1;
-    this.buffApplied = event.timestamp;
-  }
-
-  on_toPlayer_absorbed(event) {
-    if (event.ability.guid !== SPELLS.SOUL_BARRIER_TALENT.id) {
-      return;
-    }
-    this.totalAbsorbed+= event.amount;
-  }
-
-  on_toPlayer_removebuff(event) {
-    if (event.ability.guid !== SPELLS.SOUL_BARRIER_TALENT.id) {
-      return;
-    }
-    this.buffRemoved = event.timestamp;
-    this.buffLength = this.buffRemoved - this.buffApplied;
-    this.totalBuffLength += this.buffLength;
   }
 
   get suggestionThresholdsEfficiency() {
@@ -70,14 +29,53 @@ class SoulBarrier extends Analyzer {
     };
   }
 
+  static dependencies = {
+    damageTracker: DamageTracker,
+    enemies: Enemies,
+  };
+  casts = 0;
+  totalAbsorbed = 0;
+  buffApplied = 0;
+  buffRemoved = 0;
+  buffLength = 0;
+  avgBuffLength = 0;
+  totalBuffLength = 0;
+
+  constructor(...args) {
+    super(...args);
+    this.active = this.selectedCombatant.hasTalent(SPELLS.SOUL_BARRIER_TALENT.id);
+    this.addEventListener(Events.applybuff.to(SELECTED_PLAYER).spell(SPELLS.SOUL_BARRIER_TALENT), this.onApplyBuff);
+    this.addEventListener(Events.absorbed.to(SELECTED_PLAYER).spell(SPELLS.SOUL_BARRIER_TALENT), this.onAbsorb);
+    this.addEventListener(Events.removebuff.to(SELECTED_PLAYER).spell(SPELLS.SOUL_BARRIER_TALENT), this.onRemoveBuff);
+  }
+
+  onApplyBuff(event) {
+    this.casts += 1;
+    this.buffApplied = event.timestamp;
+  }
+
+  onAbsorb(event) {
+    this.totalAbsorbed += event.amount;
+  }
+
+  onRemoveBuff(event) {
+    if (event.ability.guid !== SPELLS.SOUL_BARRIER_TALENT.id) {
+      return;
+    }
+    this.buffRemoved = event.timestamp;
+    this.buffLength = this.buffRemoved - this.buffApplied;
+    this.totalBuffLength += this.buffLength;
+  }
+
   suggestions(when) {
     when(this.suggestionThresholdsEfficiency)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<>Your uptime with <SpellLink id={SPELLS.SOUL_BARRIER_TALENT.id} /> can be improved.</>)
-          .icon(SPELLS.SOUL_BARRIER_TALENT.icon)
-          .actual(`${formatPercentage(actual)}% Soul Barrier`)
-          .recommended(`>${formatPercentage(recommended)}% is recommended`);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<>Your uptime with <SpellLink id={SPELLS.SOUL_BARRIER_TALENT.id} /> can be improved.</>)
+        .icon(SPELLS.SOUL_BARRIER_TALENT.icon)
+        .actual(t({
+      id: "demonhunter.vengeance.suggestions.soulBarrier.uptime",
+      message: `${formatPercentage(actual)}% Soul Barrier`
+    }))
+        .recommended(`>${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {

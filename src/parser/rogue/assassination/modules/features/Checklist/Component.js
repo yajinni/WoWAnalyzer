@@ -85,9 +85,6 @@ const AssassinationRogueChecklist = ({ combatant, castEfficiency, thresholds }) 
         {combatant.hasTalent(SPELLS.EXSANGUINATE_TALENT.id) && (
           <AbilityRequirement spell={SPELLS.EXSANGUINATE_TALENT.id} />
         )}
-        {combatant.hasTalent(SPELLS.TOXIC_BLADE_TALENT.id) && (
-          <AbilityRequirement spell={SPELLS.TOXIC_BLADE_TALENT.id} />
-        )}
         {combatant.hasTalent(SPELLS.MARKED_FOR_DEATH_TALENT.id) && (
           <AbilityRequirement spell={SPELLS.MARKED_FOR_DEATH_TALENT.id} />
         )}
@@ -167,7 +164,6 @@ AssassinationRogueChecklist.propTypes = {
   castEfficiency: PropTypes.object.isRequired,
   combatant: PropTypes.shape({
     hasTalent: PropTypes.func.isRequired,
-    hasTrinket: PropTypes.func.isRequired,
   }).isRequired,
   thresholds: PropTypes.object.isRequired,
 };

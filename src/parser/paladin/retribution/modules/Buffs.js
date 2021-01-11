@@ -7,47 +7,31 @@ class Buffs extends CoreBuffs {
     const combatant = this.selectedCombatant;
     return [
       {
-        spellId: SPELLS.EMPYREAN_POWER_BUFF.id,
-        enabled: combatant.hasTrait(SPELLS.EMPYREAN_POWER.id),
-        timelineHightlight: true,
-      },
-      {
-        spellId: SPELLS.INQUISITION_TALENT.id,
-        enabled: combatant.hasTalent(SPELLS.INQUISITION_TALENT),
-        timelineHightlight: true,
+        spellId: SPELLS.EMPYREAN_POWER_TALENT_BUFF.id,
+        enabled: combatant.hasTalent(SPELLS.EMPYREAN_POWER_TALENT.id),
+        timelineHighlight: true,
       },
       {
         spellId: SPELLS.DIVINE_PURPOSE_BUFF.id,
-        enabled: combatant.hasTalent(SPELLS.DIVINE_PURPOSE_TALENT_RETRIBUTION),
-        timelineHightlight: true,
+        enabled: combatant.hasTalent(SPELLS.DIVINE_PURPOSE_TALENT),
+        timelineHighlight: true,
       },
       {
-        spellId: SPELLS.RETRIBUTION_BUFF.id,
-      },
-      {
-        spellId: SPELLS.THE_FIRES_OF_JUSTICE_BUFF.id,
+        spellId: SPELLS.FIRES_OF_JUSTICE_BUFF.id,
       },
       {
         spellId: SPELLS.RIGHTEOUS_VERDICT_BUFF.id,
-      },
-      {
-        spellId: SPELLS.AVENGERS_MIGHT_BUFF.id,
-        enabled: combatant.hasTrait(SPELLS.AVENGERS_MIGHT.id),
-      },
-      {
-        spellId: SPELLS.RELENTLESS_INQUISITOR_BUFF.id,
-        enabled: combatant.hasTrait(SPELLS.RELENTLESS_INQUISITOR.id),
       },
       // Throughput cooldowns
       {
         spellId: SPELLS.AVENGING_WRATH.id,
         enabled: !combatant.hasTalent(SPELLS.CRUSADE_TALENT),
-        timelineHightlight: true,
+        timelineHighlight: true,
       },
       {
         spellId: SPELLS.CRUSADE_TALENT.id,
         enabled: combatant.hasTalent(SPELLS.CRUSADE_TALENT),
-        timelineHightlight: true,
+        timelineHighlight: true,
       },
       // Utility
       {
@@ -71,14 +55,8 @@ class Buffs extends CoreBuffs {
         spellId: SPELLS.BLESSING_OF_PROTECTION.id,
       },
       {
-        spellId: SPELLS.GREATER_BLESSING_OF_KINGS.id,
-      },
-      {
-        spellId: SPELLS.GREATER_BLESSING_OF_WISDOM.id,
-      },
-      {
         spellId: Object.keys(BLOODLUST_BUFFS).map(item => Number(item)),
-        timelineHightlight: true,
+        timelineHighlight: true,
       },
     ];
   }

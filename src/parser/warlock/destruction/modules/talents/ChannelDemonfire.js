@@ -9,13 +9,16 @@ import { formatThousands, formatNumber, formatPercentage } from 'common/format';
 
 import Statistic from 'interface/statistics/Statistic';
 import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
-import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
 
 class ChannelDemonfire extends Analyzer {
+  get dps() {
+    return this.damage / this.owner.fightDuration * 1000;
+  }
+
   static dependencies = {
     enemies: Enemies,
   };
-
   damage = 0;
 
   constructor(...args) {
@@ -28,14 +31,10 @@ class ChannelDemonfire extends Analyzer {
     this.damage += event.amount + (event.absorbed || 0);
   }
 
-  get dps() {
-    return this.damage / this.owner.fightDuration * 1000;
-  }
-
   statistic() {
     return (
       <Statistic
-        position={STATISTIC_ORDER.OPTIONAL(5)}
+        category={STATISTIC_CATEGORY.TALENTS}
         size="small"
         tooltip={`${formatThousands(this.damage)} damage`}
       >

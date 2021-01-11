@@ -1,9 +1,12 @@
 import SPELLS from 'common/SPELLS';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+
+import Events from 'parser/core/Events';
+
 import BlackoutCombo from './BlackoutCombo';
 import SharedBrews from '../core/SharedBrews';
 
-const KEG_SMASH_REDUCTION = 4000;
+const KEG_SMASH_REDUCTION = 3000;
 const BOC_KEG_SMASH_REDUCTION = 2000;
 
 class KegSmash extends Analyzer {
@@ -21,40 +24,31 @@ class KegSmash extends Analyzer {
   wastedBocCDR = 0;
 
   _bocBuffActive = false;
-  
-  on_byPlayer_applybuff(event) {
-    const spellId = event.ability.guid;
-    if(SPELLS.BLACKOUT_COMBO_BUFF.id === spellId) {
-      this._bocBuffActive = true;
-    }
+
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.applybuff.by(SELECTED_PLAYER).spell(SPELLS.BLACKOUT_COMBO_BUFF), this.onGainBOC);
+    this.addEventListener(Events.refreshbuff.by(SELECTED_PLAYER).spell(SPELLS.BLACKOUT_COMBO_BUFF), this.onGainBOC);
+    this.addEventListener(Events.removebuff.by(SELECTED_PLAYER).spell(SPELLS.BLACKOUT_COMBO_BUFF), this.onLoseBOC);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER).spell(SPELLS.KEG_SMASH), this.onCast);
   }
 
-  on_byPlayer_refreshbuff(event) {
-    const spellId = event.ability.guid;
-    if(SPELLS.BLACKOUT_COMBO_BUFF.id === spellId) {
-      this._bocBuffActive = true;
-    }
+  onGainBOC(event) {
+    this._bocBuffActive = true;
   }
 
-  on_byPlayer_removebuff(event) {
-    const spellId = event.ability.guid;
-    if(SPELLS.BLACKOUT_COMBO_BUFF.id === spellId) {
-      this._bocBuffActive = false;
-    }
+  onLoseBOC(event) {
+    this._bocBuffActive = false;
   }
 
-  on_byPlayer_cast(event) {
-    const spellId = event.ability.guid;
-    if(SPELLS.KEG_SMASH.id !== spellId) {
-      return;
-    }
+  onCast(event) {
     this.totalCasts += 1;
 
     const actualReduction = this.brews.reduceCooldown(KEG_SMASH_REDUCTION);
     this.cdr += actualReduction;
     this.wastedCDR += KEG_SMASH_REDUCTION - actualReduction;
 
-    if(this._bocBuffActive) {
+    if (this._bocBuffActive) {
       this.bocHits += 1; // assuming (not a big assumption) that we get ≥ 1 hit per cast
 
       // possible for minor loss of correctness due to potential gap

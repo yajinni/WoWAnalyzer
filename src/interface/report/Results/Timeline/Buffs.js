@@ -44,7 +44,7 @@ class Buffs extends React.PureComponent {
     }
     const spellId = event.ability.guid;
     const buff = this.props.buffs.getBuff(spellId);
-    if (!buff || !buff.timelineHightlight) {
+    if (!buff || !buff.timelineHighlight) {
       return false;
     }
 
@@ -118,7 +118,7 @@ class Buffs extends React.PureComponent {
       <Tooltip
         key={`buff-${left}-${event.ability.guid}`}
         content={(
-          <Trans>
+          <Trans id="interface.report.results.timeline.buffs.tooltip.gainedAbilityForXSec">
             {formatDuration(fightDuration, 3)}: gained {event.ability.name} for {(duration / 1000).toFixed(2)}s
           </Trans>
         )}

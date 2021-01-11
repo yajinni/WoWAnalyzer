@@ -4,8 +4,8 @@ import CoreAlwaysBeCasting from 'parser/shared/modules/AlwaysBeCasting';
 
 import SPELLS from 'common/SPELLS';
 import { formatPercentage } from 'common/format';
-import { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import SpellLink from 'common/SpellLink';
+import { t } from '@lingui/macro';
 
 class AlwaysBeCasting extends CoreAlwaysBeCasting {
   get downtimeSuggestionThresholds() {
@@ -24,16 +24,15 @@ class AlwaysBeCasting extends CoreAlwaysBeCasting {
     const boss = this.owner.boss;
 
     if (!boss || !boss.fight.disableDowntimeSuggestion) {
-      when(this.downtimeSuggestionThresholds).addSuggestion((suggest, actual, recommended) => {
-        return suggest(<>While some downtime is inevitable in fights with movement, you should aim to reduce downtime to prevent capping Runes.  You can reduce downtime by casting ranged/filler abilities like <SpellLink id={SPELLS.BLOODDRINKER_TALENT.id} /> or <SpellLink id={SPELLS.BLOOD_BOIL.id} /></>)
+      when(this.downtimeSuggestionThresholds).addSuggestion((suggest, actual, recommended) => suggest(<>While some downtime is inevitable in fights with movement, you should aim to reduce downtime to prevent capping Runes.  You can reduce downtime by casting ranged/filler abilities like <SpellLink id={SPELLS.BLOODDRINKER_TALENT.id} /> or <SpellLink id={SPELLS.BLOOD_BOIL.id} /></>)
           .icon('spell_mage_altertime')
-          .actual(`${formatPercentage(actual)}% downtime`)
-          .recommended(`<${formatPercentage(recommended)}% is recommended`);
-      });
+          .actual(t({
+        id: "deathknight.blood.suggestions.alwaysBeCasting.downtime",
+        message: `${formatPercentage(actual)}% downtime`
+      }))
+          .recommended(`<${formatPercentage(recommended)}% is recommended`));
     }
   }
-
-  statisticOrder = STATISTIC_ORDER.CORE(1);
 }
 
 export default AlwaysBeCasting;

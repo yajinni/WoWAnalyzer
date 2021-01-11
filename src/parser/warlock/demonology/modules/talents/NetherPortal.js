@@ -3,14 +3,23 @@ import React from 'react';
 import Analyzer from 'parser/core/Analyzer';
 
 import SPELLS from 'common/SPELLS';
-import SpellLink from 'common/SpellLink';
 import { formatThousands } from 'common/format';
 
-import StatisticListBoxItem from 'interface/others/StatisticListBoxItem';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import ItemDamageDone from 'interface/ItemDamageDone';
 
 import DemoPets from '../pets/DemoPets';
 
 class NetherPortal extends Analyzer {
+  get damage() {
+    const petsSummonedByNP = this.demoPets.timeline.filter(pet => pet.summonedBy === SPELLS.NETHER_PORTAL_TALENT.id);
+    return petsSummonedByNP
+      .map(pet => this.demoPets.getPetDamage(pet.guid, pet.instance))
+      .reduce((total, current) => total + current, 0);
+  }
+
   static dependencies = {
     demoPets: DemoPets,
   };
@@ -20,22 +29,19 @@ class NetherPortal extends Analyzer {
     this.active = this.selectedCombatant.hasTalent(SPELLS.NETHER_PORTAL_TALENT.id);
   }
 
-  get damage() {
-    const petsSummonedByNP = this.demoPets.timeline.filter(pet => pet.summonedBy === SPELLS.NETHER_PORTAL_TALENT.id);
-    return petsSummonedByNP
-      .map(pet => this.demoPets.getPetDamage(pet.guid, pet.instance))
-      .reduce((total, current) => total + current, 0);
-  }
-
-  subStatistic() {
-    const damage = this.damage;
+  statistic() {
     return (
-      <StatisticListBoxItem
-        title={<><SpellLink id={SPELLS.NETHER_PORTAL_TALENT.id} /> dmg</>}
-        value={this.owner.formatItemDamageDone(damage)}
-        valueTooltip={`${formatThousands(damage)} damage`}
-      />
+      <Statistic
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
+        tooltip={`${formatThousands(this.damage)} damage`}
+      >
+        <BoringSpellValueText spell={SPELLS.NETHER_PORTAL_TALENT}>
+          <ItemDamageDone amount={this.damage} />
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }
+
 export default NetherPortal;

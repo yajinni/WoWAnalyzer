@@ -5,7 +5,7 @@ import Panel from 'interface/others/Panel';
 import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import Icon from 'common/Icon';
 import { formatPercentage } from 'common/format';
-import ResourceBreakdown from 'parser/shared/modules/resourcetracker/ResourceBreakdown';
+import ResourceBreakdown from 'parser/shared/modules/resources/resourcetracker/ResourceBreakdown';
 
 import EnergyTracker from './EnergyTracker';
 
@@ -14,10 +14,6 @@ const AVERAGE_THRESHOLD = 0.1;
 const MAJOR_THRESHOLD = 0.2;
 
 class EnergyDetails extends Analyzer {
-  static dependencies = {
-    energyTracker: EnergyTracker,
-  };
-
   get wasted() {
     return this.energyTracker.wasted || 0;
   }
@@ -41,6 +37,10 @@ class EnergyDetails extends Analyzer {
       style: 'percentage',
     };
   }
+
+  static dependencies = {
+    energyTracker: EnergyTracker,
+  };
 
   statistic() {
     return (
@@ -67,7 +67,7 @@ class EnergyDetails extends Analyzer {
         </Panel>
       ),
     };
- }
+  }
 
 }
 

@@ -7,19 +7,27 @@ import BoringSpellValueText from 'interface/statistics/components/BoringSpellVal
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 import EnemyInstances, { encodeTargetString } from 'parser/shared/modules/EnemyInstances';
 import AbilityTracker from 'parser/shared/modules/AbilityTracker';
-import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import EventHistory from 'parser/shared/modules/EventHistory';
+import SpellUsable from 'parser/shared/modules/SpellUsable';
+import Analyzer, { SELECTED_PLAYER, Options } from 'parser/core/Analyzer';
+import { When, ThresholdStyle } from 'parser/core/ParseResults';
 import Events, { CastEvent, DamageEvent, ChangeBuffStackEvent } from 'parser/core/Events';
-import { SHATTER_DEBUFFS } from '../../constants';
-import { CAST_BUFFER } from '../../constants';
+import { MS_BUFFER_100, SHATTER_DEBUFFS } from 'parser/mage/shared/constants';
+import { Trans } from '@lingui/macro';
 
 class IceLance extends Analyzer {
   static dependencies = {
     enemies: EnemyInstances,
     abilityTracker: AbilityTracker,
+    eventHistory: EventHistory,
+    spellUsable: SpellUsable,
   };
   protected enemies!: EnemyInstances;
   protected abilityTracker!: AbilityTracker;
+  protected eventHistory!: EventHistory;
+  protected spellUsable!: SpellUsable;
 
+  hasGlacialFragments: boolean;
   hadFingersProc = false;
   iceLanceTargetId = "";
   nonShatteredCasts = 0;
@@ -29,10 +37,9 @@ class IceLance extends Analyzer {
   overwrittenFingersProcs = 0;
   expiredFingersProcs = 0;
 
-  constructor(options: any) {
+  constructor(options: Options) {
     super(options);
-    this.active = this.owner.build === undefined;
-
+    this.hasGlacialFragments = this.selectedCombatant.hasLegendaryByBonusID(SPELLS.GLACIAL_FRAGMENTS.bonusID);
     this.addEventListener(Events.cast.by(SELECTED_PLAYER).spell(SPELLS.ICE_LANCE), this.onCast);
     this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(SPELLS.ICE_LANCE_DAMAGE), this.onDamage);
     this.addEventListener(Events.changebuffstack.by(SELECTED_PLAYER).spell(SPELLS.FINGERS_OF_FROST), this.onFingersStackChange);
@@ -54,8 +61,17 @@ class IceLance extends Analyzer {
     if (this.iceLanceTargetId !== damageTarget) {
       return;
     }
+
+    //If the player has Glacial Fragments, Blizzard is active (checking its CD because the spell lasts as long as it's cooldown), and the target is in a Blizzard, then do not count it against the player
+    const recentBlizzardHit = this.eventHistory.last(1, 1000, Events.damage.by(SELECTED_PLAYER).spell(SPELLS.BLIZZARD_DAMAGE))[0];
+    const blizzardOnCooldown = this.spellUsable.isOnCooldown(SPELLS.BLIZZARD.id);
+    if (this.hasGlacialFragments && recentBlizzardHit && blizzardOnCooldown) {
+      return;
+    }
+
+
     const enemy = this.enemies.getEntity(event);
-    if (enemy && !SHATTER_DEBUFFS.some(effect => enemy.hasBuff(effect, event.timestamp)) && this.hadFingersProc === false) {
+    if (enemy && !SHATTER_DEBUFFS.some(effect => enemy.hasBuff(effect.id, event.timestamp)) && !this.hadFingersProc) {
       this.nonShatteredCasts += 1;
     }
   }
@@ -65,7 +81,7 @@ class IceLance extends Analyzer {
     const stackChange = event.stacksGained;
     if (stackChange > 0) {
       this.totalFingersProcs += stackChange;
-    } else if (this.iceLanceCastTimestamp && this.iceLanceCastTimestamp + CAST_BUFFER > event.timestamp) {
+    } else if (this.iceLanceCastTimestamp && this.iceLanceCastTimestamp + MS_BUFFER_100 > event.timestamp) {
       // just cast ice lance, so this stack removal probably a proc used
     } else if (event.newStacks === 0) {
       this.expiredFingersProcs += (-stackChange); // stacks zero out, must be expiration
@@ -94,7 +110,7 @@ class IceLance extends Analyzer {
         average: 0.85,
         major: 0.70,
       },
-      style: 'percentage',
+      style: ThresholdStyle.PERCENTAGE,
     };
   }
 
@@ -106,18 +122,16 @@ class IceLance extends Analyzer {
         average: 0.15,
         major: 0.25,
       },
-      style: 'percentage',
+      style: ThresholdStyle.PERCENTAGE,
     };
   }
 
-  suggestions(when: any) {
+  suggestions(when: When) {
     when(this.nonShatteredIceLanceThresholds)
-      .addSuggestion((suggest: any, actual: any, recommended: any) => {
-        return suggest(<>You cast <SpellLink id={SPELLS.ICE_LANCE.id} /> {this.nonShatteredCasts} times ({formatPercentage(actual)}%) without <SpellLink id={SPELLS.SHATTER.id} />. Make sure that you are only casting Ice Lance when the target has <SpellLink id={SPELLS.WINTERS_CHILL.id} /> (or other Shatter effects), if you have a <SpellLink id={SPELLS.FINGERS_OF_FROST.id} /> proc, or if you are moving and you cant cast anything else.</>)
+      .addSuggestion((suggest, actual, recommended) => suggest(<>You cast <SpellLink id={SPELLS.ICE_LANCE.id} /> {this.nonShatteredCasts} times ({formatPercentage(actual)}%) without <SpellLink id={SPELLS.SHATTER.id} />. Make sure that you are only casting Ice Lance when the target has <SpellLink id={SPELLS.WINTERS_CHILL.id} /> (or other Shatter effects), if you have a <SpellLink id={SPELLS.FINGERS_OF_FROST.id} /> proc, or if you are moving and you cant cast anything else.</>)
           .icon(SPELLS.ICE_LANCE.icon)
-          .actual(`${formatPercentage(actual)}% missed`)
-          .recommended(`<${formatPercentage(recommended)}% is recommended`);
-      });
+          .actual(<Trans id="mage.frost.suggestions.iceLance.nonShatterCasts">{formatPercentage(actual)}% missed</Trans>)
+          .recommended(`<${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {
@@ -125,7 +139,7 @@ class IceLance extends Analyzer {
       <Statistic
         position={STATISTIC_ORDER.CORE(30)}
         size="flexible"
-        tooltip={'This is the percentage of Ice Lance casts that were shattered. The only time it is acceptable to cast Ice Lance without Shatter is if you are moving and you cant use anything else.'}
+        tooltip="This is the percentage of Ice Lance casts that were shattered. The only time it is acceptable to cast Ice Lance without Shatter is if you are moving and you cant use anything else."
       >
         <BoringSpellValueText spell={SPELLS.ICE_LANCE}>
           {`${formatPercentage(this.shatteredPercent, 0)}%`} <small>Casts shattered</small>

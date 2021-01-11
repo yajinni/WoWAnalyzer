@@ -2,10 +2,11 @@ import React from 'react';
 
 import SPELLS from 'common/SPELLS';
 import SpellLink from 'common/SpellLink';
-import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER, Options } from 'parser/core/Analyzer';
+import { When, ThresholdStyle } from 'parser/core/ParseResults';
 import Events, { ApplyBuffEvent, DamageEvent } from 'parser/core/Events';
 import SUGGESTION_IMPORTANCE from 'parser/core/ISSUE_IMPORTANCE';
-import { FIRESTARTER_THRESHOLD, HOT_STREAK_CONTRIBUTORS } from '../../constants';
+import { FIRESTARTER_THRESHOLD, FIRE_DIRECT_DAMAGE_SPELLS } from 'parser/mage/shared/constants';
 
 const debug = false;
 
@@ -15,11 +16,11 @@ class CombustionFirestarter extends Analyzer {
   combustionDuringFirestarter = false;
   healthPercent = 1;
 
-  constructor(options: any) {
+  constructor(options: Options) {
     super(options);
     this.active = this.selectedCombatant.hasTalent(SPELLS.FIRESTARTER_TALENT.id);
     this.addEventListener(Events.applybuff.by(SELECTED_PLAYER).spell(SPELLS.COMBUSTION), this.onCombustion);
-    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(HOT_STREAK_CONTRIBUTORS), this.onDamage);
+    this.addEventListener(Events.damage.by(SELECTED_PLAYER).spell(FIRE_DIRECT_DAMAGE_SPELLS), this.onDamage);
   }
 
   //Checks to see if a new Combustion was cast. This variable is marked false once a damage event is triggered since we only want the first damage event in the Combustion (to get the health percentage)
@@ -48,17 +49,15 @@ class CombustionFirestarter extends Analyzer {
     return {
       actual: this.combustionDuringFirestarter,
       isEqual: true,
-      style: 'boolean',
+      style: ThresholdStyle.BOOLEAN,
     };
   }
 
-  suggestions(when: any) {
+  suggestions(when: When) {
     when(this.SuggestionThresholds)
-      .addSuggestion((suggest: any) => {
-        return suggest(<>You used <SpellLink id={SPELLS.COMBUSTION.id} /> while <SpellLink id={SPELLS.FIRESTARTER_TALENT.id} /> was active (While the boss was at 90% health or higher). Since Firestarter makes your spells a guaranteed crit anyway, you should wait until the boss is at 89% to use your Combustion.</>)
+      .addSuggestion((suggest) => suggest(<>You used <SpellLink id={SPELLS.COMBUSTION.id} /> while <SpellLink id={SPELLS.FIRESTARTER_TALENT.id} /> was active (While the boss was at 90% health or higher). Since Firestarter makes your spells a guaranteed crit anyway, you should wait until the boss is at 89% to use your Combustion.</>)
           .icon(SPELLS.COMBUSTION.icon)
-          .staticImportance(SUGGESTION_IMPORTANCE.MAJOR);
-      });
+          .staticImportance(SUGGESTION_IMPORTANCE.MAJOR));
   }
 }
 export default CombustionFirestarter;

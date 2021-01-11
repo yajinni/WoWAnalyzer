@@ -8,6 +8,8 @@ import StatTracker from 'parser/shared/modules/StatTracker';
 import HealingValue from 'parser/shared/modules/HealingValue';
 import CritEffectBonus from 'parser/shared/modules/helpers/CritEffectBonus';
 
+import Events from 'parser/core/Events';
+
 import SPELL_INFO from './StatValuesSpellInfo';
 import MasteryEffectiveness from './MasteryEffectiveness';
 
@@ -27,7 +29,12 @@ class StatValues extends BaseHealerStatValues {
   spellInfo = SPELL_INFO;
   qeLive = true;
 
-  on_feed_heal(event) {
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.feedheal, this.onFeedHeal);
+  }
+
+  onFeedHeal(event) {
     const spellInfo = this._getSpellInfo(event);
     const healVal = new HealingValue(event.feed, 0, 0);
     const targetHealthPercentage = (event.hitPoints - event.amount) / event.maxHitPoints; // hitPoints contains HP *after* the heal
@@ -38,9 +45,8 @@ class StatValues extends BaseHealerStatValues {
     const spellId = event.ability.guid;
     const critChanceBreakdown = super._getCritChance(event);
 
-    const hasTidalWaves = this.selectedCombatant.hasBuff(SPELLS.TIDAL_WAVES_BUFF.id, event.timestamp, BUFFER_MS, BUFFER_MS);
-
-    if (spellId === SPELLS.HEALING_SURGE_RESTORATION.id && hasTidalWaves) {
+    const hasTidalWaves = this.selectedCombatant.hasBuff(SPELLS.TIDAL_WAVES_BUFF.id, event.timestamp, 0, BUFFER_MS);
+    if (spellId === SPELLS.HEALING_SURGE.id && hasTidalWaves) {
       critChanceBreakdown.baseCritChance += 0.4;
     }
 
@@ -51,7 +57,7 @@ class StatValues extends BaseHealerStatValues {
     if (healVal.overheal) {
       return 0;
     }
-    if(event.ability.guid === SPELLS.RIPTIDE.id && !event.tick) {
+    if (event.ability.guid === SPELLS.RIPTIDE.id && !event.tick) {
       return 0;
     }
     return super._hasteHpm(event, healVal);
@@ -68,7 +74,7 @@ class StatValues extends BaseHealerStatValues {
     }
 
     const masteryEffectiveness = event.masteryEffectiveness;
-    const healIncreaseFromOneMastery = this.statTracker.statMultiplier.mastery / this.statTracker.masteryRatingPerPercent * masteryEffectiveness;
+    const healIncreaseFromOneMastery = this.statTracker.statMultiplier.mastery / this.statTracker.ratingNeededForNextPercentage(this.statTracker.currentMasteryRating, this.statTracker.statBaselineRatingPerPercent[STAT.MASTERY], this.selectedCombatant.spec.masteryCoefficient) * masteryEffectiveness;
     const baseHeal = healVal.effective / (1 + this.statTracker.currentMasteryPercentage * masteryEffectiveness);
 
     return baseHeal * healIncreaseFromOneMastery;
@@ -79,12 +85,12 @@ class StatValues extends BaseHealerStatValues {
       STAT.INTELLECT,
       {
         stat: STAT.CRITICAL_STRIKE,
-        tooltip: 'Weight does not include Resurgence mana gain.',
+        tooltip: <Trans id="shaman.restoration.statValues.crit">Weight does not include Resurgence mana gain.</Trans>,
       },
       {
         stat: STAT.HASTE_HPCT,
         tooltip: (
-          <Trans>
+          <Trans id="shaman.restoration.statValues.hpct">
             HPCT stands for "Healing per Cast Time". This is the max value that Haste would be worth if you would cast everything you are already casting (that scales with Haste) faster. Mana and overhealing are not accounted for in any way.<br /><br />
 
             The real value of Haste (HPCT) will be between 0 and the shown value. It depends on various things, such as if you have the mana left to spend, if the gained casts would overheal, and how well you are at casting spells end-to-end. If you are going OOM before the end of the fight you might instead want to drop some Haste or cast fewer bad heals. If you had mana left-over, Haste could help you convert that into healing. If your Haste usage is optimal Haste will then be worth the shown max value.<br /><br />

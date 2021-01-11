@@ -1,4 +1,4 @@
-import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Analyzer, { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
 import Events, { ApplyBuffEvent, CastEvent, DamageEvent } from 'parser/core/Events';
 import SPELLS from 'common/SPELLS/shaman';
 import SpellUsable from 'parser/shared/modules/SpellUsable';
@@ -22,7 +22,7 @@ class Stormbringer extends Analyzer {
 
   protected damageGained: number = 0;
 
-  constructor(options: any) {
+  constructor(options: Options) {
     super(options);
 
     this.addEventListener(
@@ -57,14 +57,6 @@ class Stormbringer extends Analyzer {
   onStormstrikeUseWithStormbringerBuff(event: CastEvent) {
     if (!this.selectedCombatant.hasBuff(SPELLS.STORMBRINGER_BUFF.id)) {
       return;
-    }
-
-    if (this.spellUsable.isOnCooldown(SPELLS.STORMSTRIKE_CAST.id)) {
-      this.spellUsable.endCooldown(SPELLS.STORMSTRIKE_CAST.id);
-    }
-
-    if (this.spellUsable.isOnCooldown(SPELLS.WINDSTRIKE_CAST.id)) {
-      this.spellUsable.endCooldown(SPELLS.WINDSTRIKE_CAST.id);
     }
   }
 

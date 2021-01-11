@@ -4,9 +4,11 @@ import { formatPercentage } from 'common/format';
 import SpellIcon from 'common/SpellIcon';
 import SpellLink from 'common/SpellLink';
 import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import SpellUsable from 'parser/shared/modules/SpellUsable';
 import SPELLS from 'common/SPELLS';
+import Events from 'parser/core/Events';
+import { t } from '@lingui/macro';
 
 const GORE_DURATION = 10000;
 const debug = false;
@@ -21,38 +23,36 @@ class Gore extends Analyzer {
   consumedGoreProc = 0;
   overwrittenGoreProc = 0;
   nonGoreMangle = 0;
+  statisticOrder = STATISTIC_ORDER.CORE(5);
 
-  on_byPlayer_applybuff(event) {
-    const spellId = event.ability.guid;
-    if (SPELLS.GORE_BEAR.id === spellId) {
-      if (this.spellUsable.isOnCooldown(SPELLS.MANGLE_BEAR.id)) {
-        this.spellUsable.endCooldown(SPELLS.MANGLE_BEAR.id);
-      }
-      this.lastGoreProcTime = event.timestamp;
-      debug && console.log('Gore applied');
-      this.totalProcs += 1;
-    }
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.applybuff.by(SELECTED_PLAYER).spell(SPELLS.GORE_BEAR), this.onApplyBuff);
+    this.addEventListener(Events.refreshbuff.by(SELECTED_PLAYER).spell(SPELLS.GORE_BEAR), this.onRefreshBuff);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER).spell(SPELLS.MANGLE_BEAR), this.onCast);
   }
 
-  on_byPlayer_refreshbuff(event) {
-    const spellId = event.ability.guid;
-    if (SPELLS.GORE_BEAR.id === spellId) {
-      // Captured Overwritten Gore Buffs for use in wasted buff calculations
-      if (this.spellUsable.isOnCooldown(SPELLS.MANGLE_BEAR.id)) {
-        this.spellUsable.endCooldown(SPELLS.MANGLE_BEAR.id);
-      }
-      this.lastGoreProcTime = event.timestamp;
-      debug && console.log('Gore Overwritten');
-      this.totalProcs += 1;
-      this.overwrittenGoreProc += 1;
+  onApplyBuff(event) {
+    if (this.spellUsable.isOnCooldown(SPELLS.MANGLE_BEAR.id)) {
+      this.spellUsable.endCooldown(SPELLS.MANGLE_BEAR.id);
     }
+    this.lastGoreProcTime = event.timestamp;
+    debug && console.log('Gore applied');
+    this.totalProcs += 1;
   }
 
-  on_byPlayer_cast(event) {
-    const spellId = event.ability.guid;
-    if (SPELLS.MANGLE_BEAR.id !== spellId) {
-      return;
+  onRefreshBuff(event) {
+    // Captured Overwritten Gore Buffs for use in wasted buff calculations
+    if (this.spellUsable.isOnCooldown(SPELLS.MANGLE_BEAR.id)) {
+      this.spellUsable.endCooldown(SPELLS.MANGLE_BEAR.id);
     }
+    this.lastGoreProcTime = event.timestamp;
+    debug && console.log('Gore Overwritten');
+    this.totalProcs += 1;
+    this.overwrittenGoreProc += 1;
+  }
+
+  onCast(event) {
     if (this.lastGoreProcTime !== event.timestamp) {
       if (this.lastGoreProcTime === 0) {
         this.nonGoreMangle += 1;
@@ -73,13 +73,14 @@ class Gore extends Analyzer {
     const unusedGoreProcs = 1 - (this.consumedGoreProc / this.totalProcs);
 
     when(unusedGoreProcs).isGreaterThan(0.3)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<span>You wasted {formatPercentage(unusedGoreProcs)}% of your <SpellLink id={SPELLS.GORE_BEAR.id} /> procs. Try to use the procs as soon as you get them so they are not overwritten.</span>)
-          .icon(SPELLS.GORE_BEAR.icon)
-          .actual(`${formatPercentage(unusedGoreProcs)}% unused`)
-          .recommended(`${Math.round(formatPercentage(recommended))}% or less is recommended`)
-          .regular(recommended + 0.15).major(recommended + 0.3);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<span>You wasted {formatPercentage(unusedGoreProcs)}% of your <SpellLink id={SPELLS.GORE_BEAR.id} /> procs. Try to use the procs as soon as you get them so they are not overwritten.</span>)
+        .icon(SPELLS.GORE_BEAR.icon)
+        .actual(t({
+      id: "druid.guardian.suggestions.gore.unused",
+      message: `${formatPercentage(unusedGoreProcs)}% unused`
+    }))
+        .recommended(`${Math.round(formatPercentage(recommended))}% or less is recommended`)
+        .regular(recommended + 0.15).major(recommended + 0.3));
   }
 
   statistic() {
@@ -94,7 +95,6 @@ class Gore extends Analyzer {
       />
     );
   }
-  statisticOrder = STATISTIC_ORDER.CORE(5);
 }
 
 export default Gore;

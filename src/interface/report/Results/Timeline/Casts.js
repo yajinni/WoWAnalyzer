@@ -128,7 +128,7 @@ class Casts extends React.PureComponent {
     let castReason;
     if (event.isCancelled) {
       className += ' cancelled';
-      castReason = <Trans>Cast never finished.</Trans>;
+      castReason = <Trans id="interface.report.results.timeline.casts.neverFinished">Cast never finished.</Trans>;
     }
     // If the beginchannel has a meta prop use that.
     // If it doesn't, look inside the trigger (which should be a begincast).
@@ -153,7 +153,8 @@ class Casts extends React.PureComponent {
   }
   renderIcon(event, { className = '', style = {}, children, tooltip } = {}) {
     const left = this.getOffsetLeft(event.timestamp);
-    const icon = (
+
+    const linkIcon = children => (
       <SpellLink
         id={event.ability.guid}
         icon={false}
@@ -163,12 +164,17 @@ class Casts extends React.PureComponent {
           ...style,
         }}
       >
+        {children}
+      </SpellLink>
+    );
+    const icon = (
+      <>
         <Icon
           icon={event.ability.abilityIcon.replace('.jpg', '')}
           alt={event.ability.name}
         />
         {children}
-      </SpellLink>
+      </>
     );
 
     return (
@@ -178,9 +184,11 @@ class Casts extends React.PureComponent {
       >
         {tooltip ? (
           <Tooltip content={tooltip}>
-            {icon}
+            <div className={`cast ${className}`} style={{ left, ...style }}>
+               {icon}
+            </div>
           </Tooltip>
-        ) : icon}
+        ) : linkIcon(icon)}
       </React.Fragment>
     );
   }
@@ -193,7 +201,7 @@ class Casts extends React.PureComponent {
       <Tooltip
         key={`channel-${left}-${event.ability.guid}`}
         content={(
-          <Trans>
+          <Trans id="interface.report.results.timeline.casts.tooltip.xSecChannelByAbility">
             {formatDuration(fightDuration, 3)}: {(event.duration / 1000).toFixed(2)}s channel by {event.ability.name}
           </Trans>
         )}
@@ -217,7 +225,7 @@ class Casts extends React.PureComponent {
       <Tooltip
         key={`gcd-${left}-${event.ability.guid}`}
         content={(
-          <Trans>
+          <Trans id="interface.report.results.timeline.casts.tooltip.xSecGCDByAbility">
             {formatDuration(fightDuration, 3)}: {(event.duration / 1000).toFixed(2)}s Global Cooldown by {event.ability.name}
           </Trans>
         )}

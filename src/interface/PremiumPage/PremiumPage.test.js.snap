@@ -23,7 +23,10 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
           className="panel-heading"
         >
           <h1>
-            WoWAnalyzer premium
+            <Trans
+              id="interface.premiumPage.premium"
+              message="WoWAnalyzer premium"
+            />
           </h1>
         </div>
         <div
@@ -47,18 +50,22 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               }
             }
           >
-            Help out development and unlock 
-            <span
-              style={
+            <Trans
+              components={
                 Object {
-                  "color": "#fab700",
-                  "fontWeight": 700,
+                  "0": <span
+                    style={
+                      Object {
+                        "color": "#fab700",
+                        "fontWeight": 700,
+                      }
+                    }
+                  />,
                 }
               }
-            >
-              WoWAnalyzer Premium
-            </span>
-            !
+              id="interface.premiumPage.premium.helpout"
+              message="Help out development and unlock <0>WoWAnalyzer Premium</0>!"
+            />
           </div>
           <div
             className="row"
@@ -72,7 +79,10 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to unlock WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToUnlock"
+                message="How to unlock WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -86,10 +96,15 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
                 }
               }
             >
-              <h2>
-                Patreon
-              </h2>
-              Help fund further development by becoming a patron on Patreon. Pledge whatever you want!
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                  }
+                }
+                id="interface.premiumPage.helpPatreon"
+                message="<0>Patreon</0>Help fund further development by becoming a patron on Patreon. Pledge whatever you want!"
+              />
               <br />
               <br />
               <PatreonButton />
@@ -97,21 +112,23 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
             <div
               className="col-md-6"
             >
-              <h2>
-                GitHub
-              </h2>
-              Improve the analysis of a spec or build a new feature to get 1 month of Premium free
-              <TooltipElement
-                className=""
-                content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
-                direction="down"
-                hoverable={false}
-                style={Object {}}
-                tooltipClassName=""
-              >
-                *
-              </TooltipElement>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                    "1": <TooltipElement
+                      className=""
+                      content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
+                      direction="down"
+                      hoverable={false}
+                      style={Object {}}
+                      tooltipClassName=""
+                    />,
+                  }
+                }
+                id="interface.premiumPage.helpGitHub"
+                message="<0>GitHub</0>Improve the analysis of a spec or build a new feature to get 1 month of Premium free<1>undefined</1>."
+              />
               <br />
               <br />
               <GithubButton />
@@ -129,7 +146,10 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              WoWAnalyzer Premium unlocks the following things:
+              <Trans
+                id="interface.premiumPage.unlocks"
+                message="WoWAnalyzer Premium unlocks the following things:"
+              />
             </div>
           </div>
           <div>
@@ -144,19 +164,19 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  New things
-                </h2>
-                <strong>
-                  Nothing develops itself.
-                </strong>
-                 Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via 
-                <a
-                  href="https://www.bountysource.com/teams/wowanalyzer"
-                >
-                  Bountysource
-                </a>
-                 as a motivation to get developers to build them.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                      "2": <a
+                        href="https://www.bountysource.com/teams/wowanalyzer"
+                      />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.new"
+                  message="<0>New things</0><1>Nothing develops itself.</1> Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via <2>Bountysource</2> as a motivation to get developers to build them."
+                />
               </div>
             </div>
             <div
@@ -170,13 +190,16 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Updates for patches
-                </h2>
-                <strong>
-                  Updating for patches is a lot of work.
-                </strong>
-                 We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.updates"
+                  message="<0>Updates for patches</0><1>Updating for patches is a lot of work.</1> We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches."
+                />
               </div>
             </div>
             <div
@@ -190,13 +213,16 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  No ads
-                </h2>
-                <strong>
-                  Nobody likes them, but we need them.
-                </strong>
-                 Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.noAds"
+                  message="<0>No ads</0><1>Nobody likes them, but we need them.</1> Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter."
+                />
               </div>
             </div>
             <div
@@ -216,13 +242,16 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Discord name color
-                </h2>
-                <strong>
-                  We'll help anyone, but sometimes we can't avoid favoritism.
-                </strong>
-                 Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discord"
+                  message="<0>Discord name color</0><1>We'll help anyone, but sometimes we can't avoid favoritism.</1> Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color."
+                />
               </div>
             </div>
             <div
@@ -236,13 +265,16 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Access to secret channels on Discord
-                </h2>
-                <strong>
-                  You don't know what you're missing out on.
-                </strong>
-                 Get access to special Discord channels to discuss things privately in the sub-community.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discordChannels"
+                  message="<0>Access to secret channels on Discord</0><1>You don't know what you're missing out on.</1> Get access to special Discord channels to discuss things privately in the sub-community."
+                />
               </div>
             </div>
           </div>
@@ -258,7 +290,10 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to login for WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToLogin"
+                message="How to login for WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -267,13 +302,17 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
             <div
               className="col-md-12"
             >
-              Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away 
-              <a
-                href="/discord"
-              >
-                at Discord
-              </a>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <a
+                      href="/discord"
+                    />,
+                  }
+                }
+                id="interface.premiumPage.howToLoginDescription"
+                message="Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away <0>at Discord</0>."
+              />
             </div>
           </div>
         </div>
@@ -285,26 +324,32 @@ exports[`PremiumPage matches snapshot when logged in with GitHub 1`] = `
           className="panel-heading"
         >
           <h2>
-            You
+            <Trans
+              id="interface.premiumPage.you"
+              message="You"
+            />
           </h2>
         </div>
         <div
           className="panel-body pad"
         >
-          Hello 
-          Martijn Hols
-          . Your Premium is currently 
-          <span
-            className="text-danger"
-          >
-            Inactive
-          </span>
-           
-          because of a recent GitHub contribution (active until 
-          Mon, 02 Jul 2018 11:48:40 GMT
-          )
-          . 
-          You can get Premium by becoming a Patron on Patreon or by making a contribution to application on GitHub. Try logging in again if you wish to refresh your status.
+          <Trans
+            id="interface.premiumPage.status"
+            message="Hello {0}. Your Premium is currently {1} {2} {3}. {4}"
+            values={
+              Object {
+                "0": "Martijn Hols",
+                "1": <span
+                  className="text-danger"
+                >
+                  {"id":"interface.premiumPage.status.inactive","message":"Inactive"}
+                </span>,
+                "2": undefined,
+                "3": " {\\"id\\":\\"interface.premiumPage.status.gitHub\\",\\"message\\":\\"because of a recent GitHub contribution (active until {0})\\",\\"values\\":{\\"0\\":\\"Mon, 02 Jul 2018 11:48:40 GMT\\"}}",
+                "4": "{\\"id\\":\\"interface.premiumPage.status.getPremium\\",\\"message\\":\\"You can get Premium by becoming a Patron on Patreon or by making a contribution to application on GitHub. Try logging in again if you wish to refresh your status.\\"}",
+              }
+            }
+          />
         </div>
       </div>
     </div>
@@ -335,7 +380,10 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
           className="panel-heading"
         >
           <h1>
-            WoWAnalyzer premium
+            <Trans
+              id="interface.premiumPage.premium"
+              message="WoWAnalyzer premium"
+            />
           </h1>
         </div>
         <div
@@ -359,18 +407,22 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               }
             }
           >
-            Help out development and unlock 
-            <span
-              style={
+            <Trans
+              components={
                 Object {
-                  "color": "#fab700",
-                  "fontWeight": 700,
+                  "0": <span
+                    style={
+                      Object {
+                        "color": "#fab700",
+                        "fontWeight": 700,
+                      }
+                    }
+                  />,
                 }
               }
-            >
-              WoWAnalyzer Premium
-            </span>
-            !
+              id="interface.premiumPage.premium.helpout"
+              message="Help out development and unlock <0>WoWAnalyzer Premium</0>!"
+            />
           </div>
           <div
             className="row"
@@ -384,7 +436,10 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to unlock WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToUnlock"
+                message="How to unlock WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -398,10 +453,15 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
                 }
               }
             >
-              <h2>
-                Patreon
-              </h2>
-              Help fund further development by becoming a patron on Patreon. Pledge whatever you want!
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                  }
+                }
+                id="interface.premiumPage.helpPatreon"
+                message="<0>Patreon</0>Help fund further development by becoming a patron on Patreon. Pledge whatever you want!"
+              />
               <br />
               <br />
               <PatreonButton />
@@ -409,21 +469,23 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
             <div
               className="col-md-6"
             >
-              <h2>
-                GitHub
-              </h2>
-              Improve the analysis of a spec or build a new feature to get 1 month of Premium free
-              <TooltipElement
-                className=""
-                content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
-                direction="down"
-                hoverable={false}
-                style={Object {}}
-                tooltipClassName=""
-              >
-                *
-              </TooltipElement>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                    "1": <TooltipElement
+                      className=""
+                      content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
+                      direction="down"
+                      hoverable={false}
+                      style={Object {}}
+                      tooltipClassName=""
+                    />,
+                  }
+                }
+                id="interface.premiumPage.helpGitHub"
+                message="<0>GitHub</0>Improve the analysis of a spec or build a new feature to get 1 month of Premium free<1>undefined</1>."
+              />
               <br />
               <br />
               <GithubButton />
@@ -441,7 +503,10 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              WoWAnalyzer Premium unlocks the following things:
+              <Trans
+                id="interface.premiumPage.unlocks"
+                message="WoWAnalyzer Premium unlocks the following things:"
+              />
             </div>
           </div>
           <div>
@@ -456,19 +521,19 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  New things
-                </h2>
-                <strong>
-                  Nothing develops itself.
-                </strong>
-                 Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via 
-                <a
-                  href="https://www.bountysource.com/teams/wowanalyzer"
-                >
-                  Bountysource
-                </a>
-                 as a motivation to get developers to build them.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                      "2": <a
+                        href="https://www.bountysource.com/teams/wowanalyzer"
+                      />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.new"
+                  message="<0>New things</0><1>Nothing develops itself.</1> Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via <2>Bountysource</2> as a motivation to get developers to build them."
+                />
               </div>
             </div>
             <div
@@ -482,13 +547,16 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Updates for patches
-                </h2>
-                <strong>
-                  Updating for patches is a lot of work.
-                </strong>
-                 We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.updates"
+                  message="<0>Updates for patches</0><1>Updating for patches is a lot of work.</1> We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches."
+                />
               </div>
             </div>
             <div
@@ -502,13 +570,16 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  No ads
-                </h2>
-                <strong>
-                  Nobody likes them, but we need them.
-                </strong>
-                 Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.noAds"
+                  message="<0>No ads</0><1>Nobody likes them, but we need them.</1> Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter."
+                />
               </div>
             </div>
             <div
@@ -528,13 +599,16 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Discord name color
-                </h2>
-                <strong>
-                  We'll help anyone, but sometimes we can't avoid favoritism.
-                </strong>
-                 Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discord"
+                  message="<0>Discord name color</0><1>We'll help anyone, but sometimes we can't avoid favoritism.</1> Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color."
+                />
               </div>
             </div>
             <div
@@ -548,13 +622,16 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Access to secret channels on Discord
-                </h2>
-                <strong>
-                  You don't know what you're missing out on.
-                </strong>
-                 Get access to special Discord channels to discuss things privately in the sub-community.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discordChannels"
+                  message="<0>Access to secret channels on Discord</0><1>You don't know what you're missing out on.</1> Get access to special Discord channels to discuss things privately in the sub-community."
+                />
               </div>
             </div>
           </div>
@@ -570,7 +647,10 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to login for WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToLogin"
+                message="How to login for WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -579,13 +659,17 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
             <div
               className="col-md-12"
             >
-              Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away 
-              <a
-                href="/discord"
-              >
-                at Discord
-              </a>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <a
+                      href="/discord"
+                    />,
+                  }
+                }
+                id="interface.premiumPage.howToLoginDescription"
+                message="Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away <0>at Discord</0>."
+              />
             </div>
           </div>
         </div>
@@ -597,23 +681,32 @@ exports[`PremiumPage matches snapshot when logged in with Patreon 1`] = `
           className="panel-heading"
         >
           <h2>
-            You
+            <Trans
+              id="interface.premiumPage.you"
+              message="You"
+            />
           </h2>
         </div>
         <div
           className="panel-body pad"
         >
-          Hello 
-          Martijn Hols
-          . Your Premium is currently 
-          <span
-            className="text-danger"
-          >
-            Inactive
-          </span>
-           because of your Patreonage
-          . 
-          You can get Premium by becoming a Patron on Patreon or by making a contribution to application on GitHub. Try logging in again if you wish to refresh your status.
+          <Trans
+            id="interface.premiumPage.status"
+            message="Hello {0}. Your Premium is currently {1} {2} {3}. {4}"
+            values={
+              Object {
+                "0": "Martijn Hols",
+                "1": <span
+                  className="text-danger"
+                >
+                  {"id":"interface.premiumPage.status.inactive","message":"Inactive"}
+                </span>,
+                "2": " {\\"id\\":\\"interface.premiumPage.status.patreon\\",\\"message\\":\\"because of your Patreonage\\"}",
+                "3": undefined,
+                "4": "{\\"id\\":\\"interface.premiumPage.status.getPremium\\",\\"message\\":\\"You can get Premium by becoming a Patron on Patreon or by making a contribution to application on GitHub. Try logging in again if you wish to refresh your status.\\"}",
+              }
+            }
+          />
         </div>
       </div>
     </div>
@@ -644,7 +737,10 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
           className="panel-heading"
         >
           <h1>
-            WoWAnalyzer premium
+            <Trans
+              id="interface.premiumPage.premium"
+              message="WoWAnalyzer premium"
+            />
           </h1>
         </div>
         <div
@@ -668,18 +764,22 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               }
             }
           >
-            Help out development and unlock 
-            <span
-              style={
+            <Trans
+              components={
                 Object {
-                  "color": "#fab700",
-                  "fontWeight": 700,
+                  "0": <span
+                    style={
+                      Object {
+                        "color": "#fab700",
+                        "fontWeight": 700,
+                      }
+                    }
+                  />,
                 }
               }
-            >
-              WoWAnalyzer Premium
-            </span>
-            !
+              id="interface.premiumPage.premium.helpout"
+              message="Help out development and unlock <0>WoWAnalyzer Premium</0>!"
+            />
           </div>
           <div
             className="row"
@@ -693,7 +793,10 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to unlock WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToUnlock"
+                message="How to unlock WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -707,10 +810,15 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
                 }
               }
             >
-              <h2>
-                Patreon
-              </h2>
-              Help fund further development by becoming a patron on Patreon. Pledge whatever you want!
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                  }
+                }
+                id="interface.premiumPage.helpPatreon"
+                message="<0>Patreon</0>Help fund further development by becoming a patron on Patreon. Pledge whatever you want!"
+              />
               <br />
               <br />
               <PatreonButton />
@@ -718,21 +826,23 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
             <div
               className="col-md-6"
             >
-              <h2>
-                GitHub
-              </h2>
-              Improve the analysis of a spec or build a new feature to get 1 month of Premium free
-              <TooltipElement
-                className=""
-                content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
-                direction="down"
-                hoverable={false}
-                style={Object {}}
-                tooltipClassName=""
-              >
-                *
-              </TooltipElement>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <h2 />,
+                    "1": <TooltipElement
+                      className=""
+                      content="Only commits that are merged to the master branch are eligible. Your work will have to pass a pull request review before it can be merged."
+                      direction="down"
+                      hoverable={false}
+                      style={Object {}}
+                      tooltipClassName=""
+                    />,
+                  }
+                }
+                id="interface.premiumPage.helpGitHub"
+                message="<0>GitHub</0>Improve the analysis of a spec or build a new feature to get 1 month of Premium free<1>undefined</1>."
+              />
               <br />
               <br />
               <GithubButton />
@@ -750,7 +860,10 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              WoWAnalyzer Premium unlocks the following things:
+              <Trans
+                id="interface.premiumPage.unlocks"
+                message="WoWAnalyzer Premium unlocks the following things:"
+              />
             </div>
           </div>
           <div>
@@ -765,19 +878,19 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  New things
-                </h2>
-                <strong>
-                  Nothing develops itself.
-                </strong>
-                 Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via 
-                <a
-                  href="https://www.bountysource.com/teams/wowanalyzer"
-                >
-                  Bountysource
-                </a>
-                 as a motivation to get developers to build them.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                      "2": <a
+                        href="https://www.bountysource.com/teams/wowanalyzer"
+                      />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.new"
+                  message="<0>New things</0><1>Nothing develops itself.</1> Your contributions will help fund new things for the site, making it even better. We'll post bounties on the best ideas via <2>Bountysource</2> as a motivation to get developers to build them."
+                />
               </div>
             </div>
             <div
@@ -791,13 +904,16 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Updates for patches
-                </h2>
-                <strong>
-                  Updating for patches is a lot of work.
-                </strong>
-                 We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.updates"
+                  message="<0>Updates for patches</0><1>Updating for patches is a lot of work.</1> We need to apply all spell changes, add new traits, add support for the new fights, make screenshots, add fight phases, buffs and debuffs, etc. Your contributions make it possible for us to keep specs updated as they're changed in patches."
+                />
               </div>
             </div>
             <div
@@ -811,13 +927,16 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  No ads
-                </h2>
-                <strong>
-                  Nobody likes them, but we need them.
-                </strong>
-                 Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.noAds"
+                  message="<0>No ads</0><1>Nobody likes them, but we need them.</1> Any contribution is worth more than the ads, so we'll remove ads from the platform for you so you can consume our content with less distractions and less clutter."
+                />
               </div>
             </div>
             <div
@@ -837,13 +956,16 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Discord name color
-                </h2>
-                <strong>
-                  We'll help anyone, but sometimes we can't avoid favoritism.
-                </strong>
-                 Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discord"
+                  message="<0>Discord name color</0><1>We'll help anyone, but sometimes we can't avoid favoritism.</1> Get a distinct Discord name color befitting your contribution. See Patreon for Patron specific name colors. Serious GitHub contributors get the yellow contributor name color."
+                />
               </div>
             </div>
             <div
@@ -857,13 +979,16 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
               <div
                 className="flex-main"
               >
-                <h2>
-                  Access to secret channels on Discord
-                </h2>
-                <strong>
-                  You don't know what you're missing out on.
-                </strong>
-                 Get access to special Discord channels to discuss things privately in the sub-community.
+                <Trans
+                  components={
+                    Object {
+                      "0": <h2 />,
+                      "1": <strong />,
+                    }
+                  }
+                  id="interface.premiumPage.unlocks.discordChannels"
+                  message="<0>Access to secret channels on Discord</0><1>You don't know what you're missing out on.</1> Get access to special Discord channels to discuss things privately in the sub-community."
+                />
               </div>
             </div>
           </div>
@@ -879,7 +1004,10 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
             <div
               className="col-md-12 text-center text-muted"
             >
-              How to login for WoWAnalyzer Premium:
+              <Trans
+                id="interface.premiumPage.howToLogin"
+                message="How to login for WoWAnalyzer Premium:"
+              />
             </div>
           </div>
           <div
@@ -888,13 +1016,17 @@ exports[`PremiumPage matches snapshot when logged out 1`] = `
             <div
               className="col-md-12"
             >
-              Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away 
-              <a
-                href="/discord"
-              >
-                at Discord
-              </a>
-              .
+              <Trans
+                components={
+                  Object {
+                    "0": <a
+                      href="/discord"
+                    />,
+                  }
+                }
+                id="interface.premiumPage.howToLoginDescription"
+                message="Logging in is easy, just click one of the buttons on the panel to the left. If you have any more questions ask away <0>at Discord</0>."
+              />
             </div>
           </div>
         </div>

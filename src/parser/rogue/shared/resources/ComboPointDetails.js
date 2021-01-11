@@ -5,7 +5,7 @@ import Panel from 'interface/others/Panel';
 import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import Icon from 'common/Icon';
 import { formatPercentage } from 'common/format';
-import ResourceBreakdown from 'parser/shared/modules/resourcetracker/ResourceBreakdown';
+import ResourceBreakdown from 'parser/shared/modules/resources/resourcetracker/ResourceBreakdown';
 
 import ComboPointTracker from './ComboPointTracker';
 
@@ -14,10 +14,6 @@ const AVERAGE_THRESHOLD = 0.1;
 const MAJOR_THRESHOLD = 0.2;
 
 class ComboPointDetails extends Analyzer {
-  static dependencies = {
-    comboPointTracker: ComboPointTracker,
-  };
-
   get wasted() {
     return this.comboPointTracker.wasted || 0;
   }
@@ -41,6 +37,10 @@ class ComboPointDetails extends Analyzer {
       style: 'percentage',
     };
   }
+
+  static dependencies = {
+    comboPointTracker: ComboPointTracker,
+  };
 
   statistic() {
     return (
@@ -67,7 +67,7 @@ class ComboPointDetails extends Analyzer {
         </Panel>
       ),
     };
- }
+  }
 }
 
 export default ComboPointDetails;

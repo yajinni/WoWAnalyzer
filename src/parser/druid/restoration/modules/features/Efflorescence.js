@@ -1,11 +1,16 @@
 import React from 'react';
-import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
 import { formatPercentage } from 'common/format';
-import SpellIcon from 'common/SpellIcon';
+import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import UptimeIcon from 'interface/icons/Uptime';
+import Statistic from 'interface/statistics/Statistic';
 import SpellLink from 'common/SpellLink';
+import SpellIcon from 'common/SpellIcon';
+import BoringValue from 'interface/statistics/components/BoringValueText';
 
 import SPELLS from 'common/SPELLS';
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
+import Events from 'parser/core/Events';
+import { t } from '@lingui/macro';
 
 const DURATION = 30000;
 
@@ -14,21 +19,20 @@ class Efflorescence extends Analyzer {
   castUptime = 0;
   castTimestamps = []; // TODO this array not really used yet, but I plan to use it to catch early refreshes
 
-  on_byPlayer_cast(event) {
-    if (event.ability.guid !== SPELLS.EFFLORESCENCE_CAST.id) {
-      return;
-    }
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.cast.by(SELECTED_PLAYER).spell(SPELLS.EFFLORESCENCE_CAST), this.onCast);
+    this.addEventListener(Events.heal.by(SELECTED_PLAYER).spell(SPELLS.EFFLORESCENCE_HEAL), this.onHeal);
+  }
 
+  onCast(event) {
     if (this.lastCastTimestamp !== null) {
       this.castUptime += Math.min(DURATION, event.timestamp - this.lastCastTimestamp);
     }
     this.castTimestamps.push(event.timestamp);
   }
 
-  on_byPlayer_heal(event) {
-    if (event.ability.guid !== SPELLS.EFFLORESCENCE_HEAL.id) {
-      return;
-    }
+  onHeal(event) {
     // if efflo heals before the first cast, we assume it was from a precast
     if (this.castTimestamps.length === 0) {
       this.precastUptime = event.timestamp - this.owner.fight.start_time;
@@ -63,26 +67,31 @@ class Efflorescence extends Analyzer {
 
   suggestions(when) {
     when(this.suggestionThresholds)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<span>Your <SpellLink id={SPELLS.EFFLORESCENCE_CAST.id} /> uptime can be improved.</span>)
+      .addSuggestion((suggest, actual, recommended) => suggest(<span>Your <SpellLink id={SPELLS.EFFLORESCENCE_CAST.id} /> uptime can be improved.</span>)
           .icon(SPELLS.EFFLORESCENCE_CAST.icon)
-          .actual(`${formatPercentage(this.uptimePercent)}% uptime`)
-          .recommended(`>${Math.round(formatPercentage(recommended))}% is recommended`);
-      });
+          .actual(t({
+      id: "druid.restoration.efflorescence.uptime",
+      message: `${formatPercentage(this.uptimePercent)}% uptime`
+    }))
+          .recommended(`>${Math.round(formatPercentage(recommended))}% is recommended`));
 
     // TODO suggestion for early refreshes
   }
 
   statistic() {
     return (
-      <StatisticBox
-        icon={<SpellIcon id={SPELLS.EFFLORESCENCE_CAST.id} />}
-        value={`${formatPercentage(this.uptimePercent)} %`}
-        label="Efflorescence Uptime"
-      />
+      <Statistic
+        position={STATISTIC_ORDER.CORE(12)}
+        size="flexible"
+      >
+        <BoringValue label={<><SpellIcon id={SPELLS.EFFLORESCENCE_CAST.id} /> Efflorescence uptime</>} >
+          <>
+            <UptimeIcon /> {formatPercentage(this.uptimePercent)} %
+          </>
+        </BoringValue>
+      </Statistic>
     );
   }
-  statisticOrder = STATISTIC_ORDER.CORE(12);
 }
 
 export default Efflorescence;

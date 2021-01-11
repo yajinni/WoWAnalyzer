@@ -6,6 +6,7 @@ import SpellLink from 'common/SpellLink';
 import { formatPercentage } from 'common/format';
 import TalentStatisticBox from 'interface/others/TalentStatisticBox';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
+import { t } from '@lingui/macro';
 
 class MarkOfBlood extends Analyzer {
   static dependencies = {
@@ -35,12 +36,13 @@ class MarkOfBlood extends Analyzer {
 
   suggestions(when) {
     when(this.uptimeSuggestionThresholds)
-        .addSuggestion((suggest, actual, recommended) => {
-          return suggest(<>Your <SpellLink id={SPELLS.MARK_OF_BLOOD_TALENT.id} /> uptime can be improved.</>)
+        .addSuggestion((suggest, actual, recommended) => suggest(<>Your <SpellLink id={SPELLS.MARK_OF_BLOOD_TALENT.id} /> uptime can be improved.</>)
             .icon(SPELLS.MARK_OF_BLOOD_TALENT.icon)
-            .actual(`${formatPercentage(actual)}% Mark Of Blood Uptime`)
-            .recommended(`>${formatPercentage(recommended)}% is recommended`);
-        });
+            .actual(t({
+      id: "deathknight.blood.suggestions.markOfBlood.uptime",
+      message: `${formatPercentage(actual)}% Mark Of Blood Uptime`
+    }))
+            .recommended(`>${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {

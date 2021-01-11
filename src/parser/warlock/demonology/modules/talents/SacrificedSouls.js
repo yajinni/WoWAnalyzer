@@ -5,25 +5,30 @@ import Events from 'parser/core/Events';
 import calculateEffectiveDamage from 'parser/core/calculateEffectiveDamage';
 
 import SPELLS from 'common/SPELLS';
-import SpellLink from 'common/SpellLink';
 import { formatThousands } from 'common/format';
-
-import StatisticListBoxItem from 'interface/others/StatisticListBoxItem';
+import STATISTIC_CATEGORY from 'interface/others/STATISTIC_CATEGORY';
+import Statistic from 'interface/statistics/Statistic';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import ItemDamageDone from 'interface/ItemDamageDone';
 
 import DemoPets from '../pets/DemoPets';
 
 const BONUS_DAMAGE_PER_PET = 0.04;
 const MAX_TRAVEL_TIME = 3000; // Shadow Bolt is the slowest, takes around 2 seconds to land from max distance, add a little more to account for target movement
 const debug = false;
+
 /*
   Sacrificed Souls:
     Shadow Bolt and Demonbolt deal 5% additional damage per demon you have summoned.
  */
 class SacrificedSouls extends Analyzer {
+  get totalBonusDamage() {
+    return this._shadowBoltDamage + this._demonboltDamage;
+  }
+
   static dependencies = {
     demoPets: DemoPets,
   };
-
   _shadowBoltDamage = 0;
   _demonboltDamage = 0;
   _queue = [];
@@ -53,8 +58,8 @@ class SacrificedSouls extends Analyzer {
     this._queue = this._queue.filter(cast => cast.timestamp > (event.timestamp - MAX_TRAVEL_TIME));
     const castIndex = this._queue
       .findIndex(cast => cast.targetID === event.targetID
-                      && cast.targetInstance === event.targetInstance
-                      && cast.spellId === event.ability.guid);
+        && cast.targetInstance === event.targetInstance
+        && cast.spellId === event.ability.guid);
     if (castIndex === -1) {
       debug && this.error('Encountered damage event with no cast associated. Queue', JSON.parse(JSON.stringify(this._queue)), 'event', event);
       return;
@@ -69,21 +74,13 @@ class SacrificedSouls extends Analyzer {
     }
   }
 
-  get totalBonusDamage() {
-    return this._shadowBoltDamage + this._demonboltDamage;
-  }
-
-  subStatistic() {
+  statistic() {
     const hasPS = this.selectedCombatant.hasTalent(SPELLS.POWER_SIPHON_TALENT.id);
     return (
-      <StatisticListBoxItem
-        title={<><SpellLink id={SPELLS.SACRIFICED_SOULS_TALENT.id} /> bonus dmg</>}
-        value={(
-          <>
-            {this.owner.formatItemDamageDone(this.totalBonusDamage)}${hasPS ? '*' : ''}
-          </>
-        )}
-        valueTooltip={(
+      <Statistic
+        category={STATISTIC_CATEGORY.TALENTS}
+        size="flexible"
+        tooltip={(
           <>
             {formatThousands(this.totalBonusDamage)} bonus damage<br />
             Bonus Shadow Bolt damage: {formatThousands(this._shadowBoltDamage)} ({this.owner.formatItemDamageDone(this._shadowBoltDamage)})<br />
@@ -96,7 +93,11 @@ class SacrificedSouls extends Analyzer {
             )}
           </>
         )}
-      />
+      >
+        <BoringSpellValueText spell={SPELLS.SACRIFICED_SOULS_TALENT}>
+          <ItemDamageDone amount={this.totalBonusDamage} />
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }

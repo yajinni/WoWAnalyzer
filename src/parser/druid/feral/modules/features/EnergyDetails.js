@@ -2,7 +2,7 @@ import React from 'react';
 
 import Analyzer from 'parser/core/Analyzer';
 import Panel from 'interface/others/Panel';
-import ResourceBreakdown from 'parser/shared/modules/resourcetracker/ResourceBreakdown';
+import ResourceBreakdown from 'parser/shared/modules/resources/resourcetracker/ResourceBreakdown';
 
 import EnergyTracker from './EnergyTracker';
 
@@ -24,7 +24,7 @@ class EnergyDetails extends Analyzer {
         </Panel>
       ),
     };
- }
+  }
 }
 
 export default EnergyDetails;

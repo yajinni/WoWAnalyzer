@@ -25,25 +25,18 @@ import ComboPointTracker from './modules/combopoints/ComboPointTracker';
 import ComboPointDetails from './modules/combopoints/ComboPointDetails';
 import FinisherUse from './modules/combopoints/FinisherUse';
 
-import SavageRoarUptime from './modules/talents/SavageRoarUptime';
 import MoonfireUptime from './modules/talents/MoonfireUptime';
-import SavageRoarDmg from './modules/talents/SavageRoarDmg';
 import MoonfireSnapshot from './modules/talents/MoonfireSnapshot';
 import Predator from './modules/talents/Predator';
 import Bloodtalons from './modules/talents/Bloodtalons';
 import BrutalSlashHitCount from './modules/talents/BrutalSlashHitCount';
+import SavageRoar from './modules/talents/SavageRoar';
 
 import PredatorySwiftness from './modules/spells/PredatorySwiftness';
 import ThrashHitCount from './modules/spells/ThrashHitCount';
 import SwipeHitCount from './modules/spells/SwipeHitCount';
 import TigersFuryEnergy from './modules/spells/TigersFuryEnergy';
 import Shadowmeld from './modules/racials/Shadowmeld';
-
-import WildFleshrending from './modules/azeritetraits/WildFleshrending';
-import UntamedFerocity from './modules/azeritetraits/UntamedFerocity';
-import JungleFury from './modules/azeritetraits/JungleFury';
-import IronJaws from './modules/azeritetraits/IronJaws';
-import GushingLacerations from './modules/azeritetraits/GushingLacerations';
 
 class CombatLogParser extends CoreCombatLogParser {
   static specModules = {
@@ -80,9 +73,8 @@ class CombatLogParser extends CoreCombatLogParser {
     shadowmeld: Shadowmeld,
 
     // talents
-    savageRoarUptime: SavageRoarUptime,
     moonfireUptime: MoonfireUptime,
-    savageRoarDmg: SavageRoarDmg,
+    savageRoar: SavageRoar,
     predator: Predator,
     bloodtalons: Bloodtalons,
     brutalSlashHitCount: BrutalSlashHitCount,
@@ -91,13 +83,6 @@ class CombatLogParser extends CoreCombatLogParser {
     comboPointTracker: ComboPointTracker,
     comboPointDetails: ComboPointDetails,
     finisherUse: FinisherUse,
-
-    // azerite traits
-    wildFleshrending: WildFleshrending,
-    untamedFerocity: UntamedFerocity,
-    jungleFury: JungleFury,
-    ironJaws: IronJaws,
-    gushingLacerations: GushingLacerations,
   };
 }
 

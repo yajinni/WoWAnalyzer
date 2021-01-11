@@ -12,11 +12,9 @@ import StatisticBar from 'interface/statistics/StatisticBar';
 import UptimeBar from 'interface/statistics/components/UptimeBar';
 import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 
-class ImmolateUptime extends Analyzer {
-  static dependencies = {
-    enemies: Enemies,
-  };
+import { t } from '@lingui/macro';
 
+class ImmolateUptime extends Analyzer {
   get uptime() {
     return this.enemies.getBuffUptime(SPELLS.IMMOLATE_DEBUFF.id) / this.owner.fightDuration;
   }
@@ -33,14 +31,19 @@ class ImmolateUptime extends Analyzer {
     };
   }
 
+  static dependencies = {
+    enemies: Enemies,
+  };
+
   suggestions(when) {
     when(this.suggestionThresholds)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<>Your <SpellLink id={SPELLS.IMMOLATE_DEBUFF.id} /> uptime can be improved. Try to pay more attention to it as it provides a significant amount of Soul Shard Fragments over the fight and is also a big portion of your total damage.</>)
-          .icon(SPELLS.IMMOLATE_DEBUFF.icon)
-          .actual(`${formatPercentage(actual)}% Immolate uptime`)
-          .recommended(`>${formatPercentage(recommended)}% is recommended`);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<>Your <SpellLink id={SPELLS.IMMOLATE_DEBUFF.id} /> uptime can be improved. Try to pay more attention to it as it provides a significant amount of Soul Shard Fragments over the fight and is also a big portion of your total damage.</>)
+        .icon(SPELLS.IMMOLATE_DEBUFF.icon)
+        .actual(t({
+      id: "warlock.destruction.suggestions.immolate.uptime",
+      message: `${formatPercentage(actual)}% Immolate uptime`
+    }))
+        .recommended(`>${formatPercentage(recommended)}% is recommended`));
   }
 
   statistic() {
@@ -62,7 +65,6 @@ class ImmolateUptime extends Analyzer {
               uptimeHistory={history}
               start={this.owner.fight.start_time}
               end={this.owner.fight.end_time}
-              style={{ height: '100%' }}
             />
           </div>
         </div>

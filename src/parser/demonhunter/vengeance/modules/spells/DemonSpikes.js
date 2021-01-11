@@ -1,26 +1,53 @@
 import React from 'react';
 
-import Analyzer from 'parser/core/Analyzer';
+import Analyzer, { SELECTED_PLAYER } from 'parser/core/Analyzer';
 import SpellUsable from 'parser/shared/modules/SpellUsable';
 
 import SPELLS from 'common/SPELLS/index';
-import SpellIcon from 'common/SpellIcon';
 import SpellLink from 'common/SpellLink';
 import { formatPercentage } from 'common/format';
 import SCHOOLS from 'game/MAGIC_SCHOOLS';
+import BoringSpellValueText from 'interface/statistics/components/BoringSpellValueText';
+import Statistic from 'interface/statistics/Statistic';
+import STATISTIC_ORDER from 'interface/others/STATISTIC_ORDER';
 
-import StatisticBox, { STATISTIC_ORDER } from 'interface/others/StatisticBox';
+import { t } from '@lingui/macro';
+import Events from 'parser/core/Events';
 
 class DemonSpikes extends Analyzer {
+  get mitigatedUptime() {
+    return formatPercentage(this.hitsWithDS / (this.hitsWithDS + this.hitsWithoutDS));
+  }
+
+  get hitsWithDSOffCDPercent() {
+    return this.hitsWithDSOffCD / (this.hitsWithDS + this.hitsWithoutDS);
+  }
+
+  get suggestionThresholdsEfficiency() {
+    return {
+      actual: this.hitsWithDSOffCDPercent,
+      isGreaterThan: {
+        minor: 0.2,
+        average: 0.3,
+        major: 0.4,
+      },
+      style: 'percentage',
+    };
+  }
+
   static dependencies = {
     spellUsable: SpellUsable,
   };
-
   hitsWithDS = 0;
   hitsWithoutDS = 0;
   hitsWithDSOffCD = 0;
 
-  on_toPlayer_damage(event) {
+  constructor(options) {
+    super(options);
+    this.addEventListener(Events.damage.to(SELECTED_PLAYER), this.onDamageTaken);
+  }
+
+  onDamageTaken(event) {
     // Physical
     if (event.ability.type !== SCHOOLS.ids.PHYSICAL) {
       return;
@@ -37,36 +64,16 @@ class DemonSpikes extends Analyzer {
     }
   }
 
-  get mitigatedUptime() {
-    return formatPercentage(this.hitsWithDS / (this.hitsWithDS + this.hitsWithoutDS));
-  }
-
-  get hitsWithDSOffCDPercent(){
-    return this.hitsWithDSOffCD / (this.hitsWithDS+ this.hitsWithoutDS);
-  }
-
-  get suggestionThresholdsEfficiency() {
-    return {
-      actual: this.hitsWithDSOffCDPercent,
-      isGreaterThan: {
-        minor: 0.20,
-        average: 0.30,
-        major: 0.40,
-      },
-      style: 'percentage',
-    };
-  }
-
   suggestions(when) {
     when(this.suggestionThresholdsEfficiency)
-      .addSuggestion((suggest, actual, recommended) => {
-        return suggest(<> Cast <SpellLink id={SPELLS.DEMON_SPIKES.id} /> more regularly while actively tanking the boss or when they use a big phsyical attack. You missed having it up for {formatPercentage(this.hitsWithDSOffCDPercent)}% of physical hits.</>)
-          .icon(SPELLS.DEMON_SPIKES.icon)
-          .actual(`${formatPercentage(actual)}% unmitigated physical hits`)
-          .recommended(`<${formatPercentage(recommended)}% is recommended`);
-      });
+      .addSuggestion((suggest, actual, recommended) => suggest(<> Cast <SpellLink id={SPELLS.DEMON_SPIKES.id} /> more regularly while actively tanking the boss or when they use a big phsyical attack. You missed having it up for {formatPercentage(this.hitsWithDSOffCDPercent)}% of physical hits.</>)
+        .icon(SPELLS.DEMON_SPIKES.icon)
+        .actual(t({
+      id: "demonhunter.vengeance.suggestions.demonSpikes.unmitgatedHits",
+      message: `${formatPercentage(actual)}% unmitigated physical hits`
+    }))
+        .recommended(`<${formatPercentage(recommended)}% is recommended`));
   }
-
 
   statistic() {
     const demonSpikesUptime = this.selectedCombatant.getBuffUptime(SPELLS.DEMON_SPIKES_BUFF.id);
@@ -74,11 +81,9 @@ class DemonSpikes extends Analyzer {
     const demonSpikesUptimePercentage = demonSpikesUptime / this.owner.fightDuration;
 
     return (
-      <StatisticBox
+      <Statistic
         position={STATISTIC_ORDER.CORE(2)}
-        icon={<SpellIcon id={SPELLS.DEMON_SPIKES.id} />}
-        value={`${this.mitigatedUptime}%`}
-        label="Hits mitigated by Demon Spikes"
+        size="flexible"
         tooltip={(
           <>
             Demon Spikes usage breakdown:
@@ -90,7 +95,13 @@ class DemonSpikes extends Analyzer {
             <b>Your overall uptime was {formatPercentage(demonSpikesUptimePercentage)}%</b>.
           </>
         )}
-      />
+      >
+        <BoringSpellValueText spell={SPELLS.DEMON_SPIKES}>
+          <>
+            {this.mitigatedUptime}% <small>hits mitigated</small>
+          </>
+        </BoringSpellValueText>
+      </Statistic>
     );
   }
 }
